@@ -1,1 +1,0 @@
-me cago en tu madre david
