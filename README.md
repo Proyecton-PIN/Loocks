@@ -6,10 +6,10 @@ React Native + Expo (Front):
 - Documentación React Native
 - Documentación Expo
 
-Nodejs + Nestjs (Back):
-- TypeScript
-- Documentación Nestjs*
+Spring Boot (Backend)
+- Java
 
 ### Tutoriales 
 - [React Native + Expo](https://www.youtube.com/watch?v=U23lNFm_J70)
 - [React Native + Expo](https://www.youtube.com/watch?v=qi87b6VcIHY)
+- [Spring boot](https://spring.io/guides/tutorials/rest)
