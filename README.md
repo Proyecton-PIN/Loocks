@@ -7,7 +7,7 @@ React Native + Expo (Front):
 - Documentación Expo
 
 Spring Boot (Backend)
-- Java
+- Java 21
 
 ### Tutoriales 
 - [React Native + Expo](https://www.youtube.com/watch?v=U23lNFm_J70)
