@@ -15,6 +15,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -30,6 +32,7 @@ public class Articulo {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(nullable = false)
   private String nombre;
 
   private String marca;
@@ -37,7 +40,7 @@ public class Articulo {
   @Temporal(TemporalType.DATE)
   private Date fechaCompra;
 
-  @Column(length = 8)
+  @Column(length = 8, nullable = false)
   private String colorPrimario; // RRGGBBAA
 
   private List<String> coloresSecundarios; // RRGGBBAA
@@ -45,23 +48,28 @@ public class Articulo {
   @Enumerated(EnumType.ORDINAL)
   private Estacion estacion;
 
+  @Column(nullable = false)
   private String fotoDelanteUrl;
 
   private String fotoTraseraUrl;
 
   private LocalDate fechaUltimoUso;
 
+  @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
   private Integer usos;
 
   @ManyToMany
+  @JoinTable(name = "articulo_outfit")
   private List<Outfit> outfits;
 
-  @ManyToOne(cascade = CascadeType.REMOVE)
+  @ManyToOne
+  @JoinColumn(name = "armario_id", nullable = false)
   private Armario armario;
 
-  @OneToMany
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "articulo")
   private List<Prestamo> prestamos;
 
-  @ManyToMany(mappedBy = "articulo")
+  @ManyToMany
+  @JoinTable(name = "articulo_tag")
   private List<Tag> tags;
 }

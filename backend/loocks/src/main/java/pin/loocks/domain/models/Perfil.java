@@ -3,6 +3,7 @@ package pin.loocks.domain.models;
 import java.sql.Date;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,24 +20,36 @@ import jakarta.persistence.TemporalType;
 public class Perfil {
   @Id
   @GeneratedValue(strategy =  GenerationType.UUID)
-  private Long id;
-  @Column(unique = true)
+  private String id;
+
+  @Column(unique = true, nullable = false)
   private String nombreUsuario;
+
+  @Column(nullable = false)
   private String nombre;
+
+  @Column(nullable = false)
   private String apellidos;
+
+  @Column(nullable = false)
   private String email;
+
+  @Column(nullable = false)
   private String password;
+
   private String fotoPerfilUrl;
+
+  @Column(nullable = false)
   @Temporal(TemporalType.DATE)
   private Date fechaNacimiento;
 
-  @OneToMany(mappedBy = "perfil")
+  @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Armario> armarios;
 
-  @OneToMany(mappedBy = "perfil")
-  private List<Outfit> outifts;
+  @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Outfit> outfits;
 
-  @ManyToMany()
+  @ManyToMany
   @JoinTable(
     name = "amigos",
     joinColumns = @JoinColumn(name = "perfil_id"),
@@ -44,6 +57,6 @@ public class Perfil {
   )
   private List<Perfil> amigos;
 
-  @OneToMany(mappedBy = "perfil")
+  @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Planificacion> planificaciones;
 }

@@ -2,12 +2,11 @@ package pin.loocks.domain.models;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 
 @Entity
@@ -16,21 +15,12 @@ public class Tag {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(nullable = false)
   private String value;
 
-  @ManyToMany
-  @JoinTable(
-    name = "outfit_tag",
-    joinColumns = @JoinColumn(name = "outfit_id"),
-    inverseJoinColumns = @JoinColumn(name = "tag_id")
-  )
+  @ManyToMany(mappedBy = "tags")
   private List<Outfit> outfits;
 
-  @ManyToMany
-  @JoinTable(
-    name = "articulo_tag",
-    joinColumns = @JoinColumn(name = "articulo_id"),
-    inverseJoinColumns = @JoinColumn(name = "tag_id")
-  )
+  @ManyToMany(mappedBy = "tags")
   private List<Articulo> articulos;
 }

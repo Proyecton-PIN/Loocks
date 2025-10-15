@@ -3,6 +3,7 @@ package pin.loocks.domain.models;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,22 +24,20 @@ public class Outfit {
 
   private String mood;
   
+  @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
   private boolean isFavorito;
 
-  @ManyToMany(mappedBy = "outfit")
-  @JoinTable(
-    name = "articulo_outfit",
-    joinColumns = @JoinColumn(name = "outfit_id"),
-    inverseJoinColumns = @JoinColumn(name = "articulo_id")
-  )
+  @ManyToMany(mappedBy = "outfits")
   private List<Articulo> articulos;
 
-  @ManyToOne(cascade = CascadeType.REMOVE)
+  @ManyToOne
+  @JoinColumn(name = "perfil_id", nullable = false)
   private Perfil perfil;
 
-  @OneToMany(mappedBy = "outfit")
+  @OneToMany(mappedBy = "outfit", cascade = CascadeType.ALL)
   private List<OutfitLog> logs;
 
-  @ManyToMany(mappedBy = "outfit")
+  @ManyToMany
+  @JoinTable(name = "outfit_tag")
   private List<Tag> tags;
 }
