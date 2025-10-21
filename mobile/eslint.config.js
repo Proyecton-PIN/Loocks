@@ -8,5 +8,10 @@ module.exports = defineConfig([
   eslintPluginPrettierRecommended,
   {
     ignores: ['dist/*'],
+    extends: ['expo', 'prettier'],
+    plugins: ['prettier'],
+    rules: {
+      'prettier/prettier': 'error',
+    },
   },
 ]);
