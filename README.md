@@ -2,6 +2,7 @@
 React Native + Expo (Front) + Spring Boot (Backend)
 
 ## Ejecutar Back
+***Crear modificar .env.template y renombrarlo a .env***
 ```
 cd backend/loocks
 ```
