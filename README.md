@@ -34,7 +34,8 @@ pnpm i
 
 ## Bibliografía
 - [Spring boot](https://spring.io/guides/tutorials/rest)
-- [React Native + Expo (Tutorial 1)](https://www.youtube.com/watch?v=U23lNFm_J70)
+- [React Native + Expo (Tutorial 1 / Parte 1)](https://www.youtube.com/watch?v=U23lNFm_J70)
+- [React Native + Expo (Tutorial 1 / Parte 2](https://www.youtube.com/watch?v=ZDoiMLqWz2E)
 - [React Native + Expo (Tutorial 2)](https://www.youtube.com/watch?v=qi87b6VcIHY)
 - [Documentación Spring Boot](https://spring.io/projects/spring-boot)
 - [Documentación React Natvie](https://reactnative.dev/docs/getting-started)
