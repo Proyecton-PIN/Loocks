@@ -15,12 +15,12 @@ cd backend/loocks
 cd mobile
 ```
 ```
-pnpm expo start
+npm start
 ```
 
 ## Cargar dependencias en Front
 ```
-pnpm i
+npm i
 ```
 
 ## Extensiones
@@ -31,6 +31,9 @@ pnpm i
 - [Spring Boot Extension Pack](https://marketplace.visualstudio.com/items?itemName=vmware.vscode-boot-dev-pack)
 - [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight)
 - [Todo Tree](https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.todo-tree)
+- [EsLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [Tailwindcss](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
 
 ## Bibliografía
 - [Spring boot](https://spring.io/guides/tutorials/rest)
