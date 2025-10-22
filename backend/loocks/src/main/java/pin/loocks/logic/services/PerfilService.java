@@ -1,6 +1,8 @@
 package pin.loocks.logic.services;
 
-import org.springframework.security.core.userdetails.User;
+import java.util.Collections;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,6 +13,7 @@ import pin.loocks.domain.models.Perfil;
 
 @Service
 public class PerfilService implements UserDetailsService {
+  @Autowired
   private final PerfilRepository perfilRepository;
 
   PerfilService(PerfilRepository repo){
@@ -19,13 +22,16 @@ public class PerfilService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    Perfil perfil = perfilRepository.getByEmail(email)
-      .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
+    Perfil perfil = perfilRepository.getByEmail(email);
+    
+    if(perfil == null){
+      throw new UsernameNotFoundException("Email no encontrado: " + email);
+    }
 
-    return User.builder()
-      .username(perfil.getEmail())
-      .password(perfil.getPassword())
-      .authorities("ROLE_USER")
-      .build();
+    return new org.springframework.security.core.userdetails.User(
+      perfil.getEmail(),
+      perfil.getPassword(),
+      Collections.emptyList()
+    );
   }
 }

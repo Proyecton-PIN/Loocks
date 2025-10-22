@@ -16,6 +16,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Getter;
+import pin.loocks.domain.dtos.RegisterRequestDTO;
 
 @Getter
 @Entity
@@ -61,4 +62,13 @@ public class Perfil {
 
   @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Planificacion> planificaciones;
+
+  public Perfil(RegisterRequestDTO request) {
+    this.nombre = request.getNombre();
+    this.nombreUsuario = request.getNombreUsuario();
+    this.apellidos = request.getApellidos();
+    this.email = request.getEmail();
+    this.password = request.getPassword();
+    this.fechaNacimiento = request.getFechaNacimiento();
+  }
 }
