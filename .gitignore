@@ -23,3 +23,4 @@ lerna-debug.log*
 .temp
 .tmp
 .vscode/*
+mobile/package-lock.json
