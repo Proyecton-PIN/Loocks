@@ -21,7 +21,7 @@ import pin.loocks.domain.models.Perfil;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class PerfilController {
   @Autowired
   private final AuthenticationManager authenticationManager;
