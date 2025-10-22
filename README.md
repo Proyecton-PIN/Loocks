@@ -18,6 +18,21 @@ cd mobile
 npm start
 ```
 
+## Ejecutar front nativo
+
+```
+cd mobile
+npx expo prebuild
+npx expo run:android
+```
+### Si falla
+```
+// android/gradle.properties
+
+org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m
+org.gradle.java.home=path to java sdk
+```
+
 ## Cargar dependencias en Front
 ```
 npm i
