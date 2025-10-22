@@ -8,12 +8,7 @@ export default function RootLayout() {
   return (
     <View className="flex-1">
       <StatusBar style="auto" />
-      <Stack
-        initialRouteName="login"
-        screenOptions={{
-          headerShown: false,
-        }}
-      />
+      <Stack />
     </View>
   );
 }
