@@ -4,7 +4,7 @@
     "slug": "loocks",
     "version": "1.0.0",
     "orientation": "portrait",
-  "icon": "./assets/image.png",
+    "icon": "",
     "scheme": "loocks",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -14,23 +14,24 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-  "foregroundImage": "./assets/image.png",
-  "backgroundImage": "./assets/image.png",
-  "monochromeImage": "./assets/image.png"
+        "foregroundImage": "",
+        "backgroundImage": "",
+        "monochromeImage": ""
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.loocks"
     },
     "web": {
       "output": "static",
-  "favicon": "./assets/image.png"
+      "favicon": ""
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-    "image": "./assets/image.png",
+          "image": "",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -44,6 +45,5 @@
       "typedRoutes": true,
       "reactCompiler": true
     }
-    
   }
 }
