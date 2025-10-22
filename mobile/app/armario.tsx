@@ -1,29 +1,31 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Stack } from "expo-router";
-import { useState } from "react";
-import type { ListRenderItem } from "react-native";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
-import BotonCamara from "../components/boton-camara";
+import { Ionicons } from '@expo/vector-icons';
+import { Stack } from 'expo-router';
+import { useState } from 'react';
+import type { ListRenderItem } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import BotonCamara from '../components/boton-camara';
 
 type Prenda = { id: string; img?: any };
 type Outfit = { id: string; name: string };
 type Mood = { id: string; name: string };
 
 export default function Armario() {
-  const [activeTab, setActiveTab] = useState<"prendas" | "outfits" | "moods">("prendas");
+  const [activeTab, setActiveTab] = useState<'prendas' | 'outfits' | 'moods'>(
+    'prendas',
+  );
 
-  const prendas: Prenda[] = []; // Vacío por ahora
+  const prendas: Prenda[] = [];
   const outfits: Outfit[] = [];
   const moods: Mood[] = [];
 
-  const renderPrenda: ListRenderItem<Prenda> = ({ item }) => (
+  const renderPrenda: ListRenderItem<Prenda> = () => (
     <View className="w-[48%] h-44 bg-neutral-800 rounded-xl mb-3 items-center justify-center">
       <Ionicons name="shirt-outline" size={40} color="#555" />
       <Text className="text-gray-500 mt-2 text-sm">Prenda</Text>
     </View>
   );
 
-  const renderOutfit: ListRenderItem<Outfit> = ({ item }) => (
+  const renderOutfit: ListRenderItem<Outfit> = () => (
     <View className="w-full bg-neutral-800 rounded-xl p-6 mb-3 items-center justify-center">
       <Ionicons name="color-palette-outline" size={40} color="#555" />
       <Text className="text-gray-500 mt-2 text-sm">Outfit</Text>
@@ -45,51 +47,57 @@ export default function Armario() {
       <View className="flex-row justify-between items-center mt-10 mb-5">
         <Text className="text-white text-3xl font-semibold py-6">loocks</Text>
         <View className="flex-row items-center space-x-2">
-          <Ionicons className="mr-6" name="search-outline" size={28} color="white" />
           <Ionicons name="person-circle-outline" size={30} color="#00aaff" />
         </View>
       </View>
 
       {/* Estadísticas */}
       <View className="flex-row justify-between mb-6">
-        <View className="bg-neutral-900 p-3 rounded-xl w-[31%]">
-          <Text className="text-gray-400 text-xs">Prendas</Text>
-          <Text className="text-white text-xl font-bold">127</Text>
-          <Text className="text-gray-500 text-xs">+12 este mes</Text>
+        <View className="bg-neutral-900 justify-between p-3 rounded-xl w-[31%]">
+          <Text className="text-gray-400 text-xm">Prendas</Text>
+          <Text className="text-white my-4 text-4xl font-bold">127</Text>
+          <Text className="text-gray-500 text-xm">+12 este mes</Text>
         </View>
-        <View className="bg-neutral-900 p-3 rounded-xl w-[31%]">
-          <Text className="text-gray-400 text-xs">Uso promedio</Text>
-          <Text className="text-white text-xl font-bold">68%</Text>
-          <Text className="text-gray-500 text-xs">+5% vs mes anterior</Text>
+        <View className="bg-neutral-900  justify-between p-3 rounded-xl w-[31%]">
+          <Text className="text-gray-400 text-xm">Uso promedio</Text>
+          <Text className="text-white my-4 text-4xl font-bold">68%</Text>
+          <Text className="text-gray-500 text-xm">+5% este mes</Text>
         </View>
-        <View className="bg-neutral-900 p-3 rounded-xl w-[31%]">
-          <Text className="text-gray-400 text-xs">Outfits</Text>
-          <Text className="text-white text-xl font-bold">34</Text>
-          <Text className="text-gray-500 text-xs">8 nuevos</Text>
+        <View className="bg-neutral-900  justify-between p-3 rounded-xl w-[31%]">
+          <Text className="text-gray-400 text-xm">Outfits</Text>
+          <Text className="text-white my-4 text-4xl font-bold">34</Text>
+          <Text className="text-gray-500 text-xm">8 nuevos</Text>
         </View>
       </View>
 
       {/* Tabs funcionales */}
       <View className="flex-row justify-around border-b border-neutral-700 mb-4">
-        {(["prendas", "outfits", "moods"] as const).map((tab) => (
+        {(['prendas', 'outfits', 'moods'] as const).map((tab) => (
           <TouchableOpacity
             key={tab}
             onPress={() => setActiveTab(tab)}
-            className={`pb-2 ${activeTab === tab ? "border-b-2 border-white" : ""}`}
+            className={`pb-2 ${activeTab === tab ? 'border-b-2 border-white' : ''}`}
           >
             <Text
-              className={`${activeTab === tab ? "text-white" : "text-gray-400"} capitalize`}
+              className={`${activeTab === tab ? 'text-white' : 'text-gray-400'} capitalize`}
             >
               {tab}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
+          {/* Botón Añadir según pestaña */}
+          
+      {activeTab === 'prendas' && <BotonCamara />}
 
-      {/* Añadir prenda solo visible en pestaña "prendas" */}
-      {activeTab === "prendas" && (
+      {activeTab === 'outfits' && (
         <TouchableOpacity className="border border-dashed border-neutral-600 rounded-xl py-4 mb-6 items-center">
-          <Text className="text-white">+ Añadir prenda</Text>
+          <Text className="text-white">+ Añadir outfit</Text>
+        </TouchableOpacity>
+      )}
+      {activeTab === 'moods' && (
+        <TouchableOpacity className="border border-dashed border-neutral-600 rounded-xl py-4 mb-6 items-center">
+          <Text className="text-white">+ Añadir mood</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -97,15 +105,16 @@ export default function Armario() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "prendas":
+      case 'prendas':
         return (
           <FlatList
+            key="prendas"
             data={prendas}
             keyExtractor={(item) => item.id}
             renderItem={renderPrenda}
             numColumns={2}
             ListHeaderComponent={ListHeader}
-            columnWrapperStyle={{ justifyContent: "space-between" }}
+            columnWrapperStyle={{ justifyContent: 'space-between' }}
             contentContainerStyle={{ paddingBottom: 120 }}
             ListEmptyComponent={
               <Text className="text-gray-500 text-center mt-10">
@@ -114,12 +123,14 @@ export default function Armario() {
             }
           />
         );
-      case "outfits":
+      case 'outfits':
         return (
           <FlatList
+            key="outfits"
             data={outfits}
             keyExtractor={(item) => item.id}
             renderItem={renderOutfit}
+            numColumns={1}
             ListHeaderComponent={ListHeader}
             contentContainerStyle={{ paddingBottom: 120 }}
             ListEmptyComponent={
@@ -129,12 +140,14 @@ export default function Armario() {
             }
           />
         );
-      case "moods":
+      case 'moods':
         return (
           <FlatList
+            key="moods"
             data={moods}
             keyExtractor={(item) => item.id}
             renderItem={renderMood}
+            numColumns={1}
             ListHeaderComponent={ListHeader}
             contentContainerStyle={{ paddingBottom: 120 }}
             ListEmptyComponent={
@@ -152,9 +165,7 @@ export default function Armario() {
       {renderContent()}
 
       {/* Botón inferior */}
-      <View className="absolute bottom-6 left-0 right-0 items-center">
-        <BotonCamara />
-      </View>
+      <View className="absolute bottom-6 left-0 right-0 items-center"></View>
     </View>
   );
 }
