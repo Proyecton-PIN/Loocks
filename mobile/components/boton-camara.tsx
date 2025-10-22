@@ -10,7 +10,7 @@ export default function BotonCamara() {
 
   const solicitarPermisos = async () => {
     const { status: camaraStatus } = await Camera.requestCameraPermissionsAsync();
-    const { status: audioStatus } = await Camera.requestMicrophonePermissionsAsync();
+    //const { status: audioStatus } = await Camera.requestMicrophonePermissionsAsync();
 
     if (camaraStatus !== "granted") {
       Alert.alert("Permiso denegado", "Se necesita acceso a la cámara.");
@@ -49,23 +49,40 @@ export default function BotonCamara() {
         <Image source={{ uri: foto }} className="w-56 h-72 mt-4 rounded-lg" />
       )}
 
-      <Modal visible={mostrarCamara} animationType="slide">
-  <CameraView ref={camaraRef} className="flex-1">
-          <TouchableOpacity
-            onPress={tomarFoto}
-            className="absolute bottom-10 self-center bg-white px-6 py-3 rounded-full"
-          >
-            <Text className="text-black font-bold">Tomar Foto</Text>
-          </TouchableOpacity>
+      <Modal visible={mostrarCamara} animationType="slide" transparent={true}>
+  <View style={{ flex: 1, backgroundColor: "transparent" }}>
+    <CameraView ref={camaraRef} style={{ flex: 1 }}>
+      <TouchableOpacity
+        onPress={tomarFoto}
+        style={{
+          position: "absolute",
+          bottom: 30,
+          alignSelf: "center",
+          backgroundColor: "white",
+          padding: 15,
+          borderRadius: 50,
+        }}
+      >
+        <Text style={{ color: "black", fontWeight: "bold" }}>Tomar Foto</Text>
+      </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => setMostrarCamara(false)}
-            className="absolute top-10 left-5 bg-red-500 px-4 py-2 rounded"
-          >
-            <Text className="text-white">Cerrar</Text>
-          </TouchableOpacity>
-  </CameraView>
-      </Modal>
+      <TouchableOpacity
+        onPress={() => setMostrarCamara(false)}
+        style={{
+          position: "absolute",
+          top: 40,
+          left: 20,
+          backgroundColor: "red",
+          padding: 10,
+          borderRadius: 10,
+        }}
+      >
+        <Text style={{ color: "white", fontWeight: "bold" }}>Cerrar</Text>
+      </TouchableOpacity>
+    </CameraView>
+  </View>
+</Modal>
+
     </View>
   );
 }
