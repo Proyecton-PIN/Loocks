@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "proyecton",
-    "slug": "proyecton",
+    "name": "Loocks",
+    "slug": "loocks",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "proyecton",
+    "scheme": "loocks",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

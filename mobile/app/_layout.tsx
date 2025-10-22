@@ -6,9 +6,14 @@ import '../global.css';
 
 export default function RootLayout() {
   return (
-    <View style={{ flex: 1 }}>
+    <View className="flex-1">
       <StatusBar style="auto" />
-      <Stack />
+      <Stack
+        initialRouteName="login"
+        screenOptions={{
+          headerShown: false,
+        }}
+      />
     </View>
   );
 }
