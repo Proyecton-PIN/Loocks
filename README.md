@@ -23,6 +23,13 @@ npm start
 npm i
 ```
 
+## Ver documentación api
+```
+http://server:port/swagger-ui/index.html
+```
+
+## [Librerías Spring Boot](https://mvnrepository.com/)
+
 ## Extensiones
 - [Auto Close Tag](https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-close-tag)
 - [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)
