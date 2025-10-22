@@ -10,26 +10,20 @@ export default function BotonCamara() {
 
   const solicitarPermisos = async () => {
     try {
-      const { status: camaraStatus } = await Camera.requestCameraPermissionsAsync();
-      if (camaraStatus !== "granted") {
+      const { status: cameraStatus } = await Camera.requestCameraPermissionsAsync();
+      if (cameraStatus !== "granted") {
         Alert.alert("Permiso denegado", "Se necesita acceso a la cámara.");
         return;
       }
-    } catch (err) {
-      console.warn("Error solicitando permisos de cámara:", err);
-      Alert.alert("Error", "No se pudieron solicitar permisos de la cámara.");
-      return;
-    }
 
-    try {
-      const { status: mediaStatus } = await MediaLibrary.requestPermissionsAsync();
-      if (mediaStatus !== "granted") {
-        Alert.alert("Permiso denegado", "Se necesita acceso a la galería.");
+      const { status: microphoneStatus } = await Camera.requestMicrophonePermissionsAsync();
+      if (microphoneStatus !== "granted") {
+        Alert.alert("Permiso denegado", "Se necesita acceso al micrófono.");
         return;
       }
     } catch (err) {
-      console.warn("Error solicitando permisos de la galería:", err);
-      Alert.alert("Error", "No se pudieron solicitar permisos de la galería.");
+      console.warn("Error solicitando permisos:", err);
+      Alert.alert("Error", "No se pudieron solicitar permisos necesarios.");
       return;
     }
 
