@@ -43,14 +43,6 @@ export default function Armario() {
     <View>
       <Stack.Screen options={{ headerShown: false }} />
 
-      {/* Header */}
-      <View className="flex-row justify-between items-center mt-10 mb-5">
-        <Text className="text-white text-3xl font-semibold py-6">loocks</Text>
-        <View className="flex-row items-center space-x-2">
-          <Ionicons name="person-circle-outline" size={30} color="#00aaff" />
-        </View>
-      </View>
-
       {/* Estadísticas */}
       <View className="flex-row justify-between mb-6">
         <View className="bg-neutral-900 justify-between p-3 rounded-xl w-[31%]">
