@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Stack, Tabs } from 'expo-router';
+import { Stack } from 'expo-router';
 import { Text, View } from 'react-native';
 import 'react-native-reanimated';
 import '../global.css';
@@ -22,8 +22,6 @@ export default function RootLayout() {
           <Stack.Screen key={page} name={page} />
         ))}
       </Stack>
-      <Tabs>
-      </Tabs>
     </View>
   );
 }
