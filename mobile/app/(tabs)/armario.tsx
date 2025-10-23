@@ -3,7 +3,7 @@ import { Stack } from 'expo-router';
 import { useState } from 'react';
 import type { ListRenderItem } from 'react-native';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
-import BotonCamara from '../components/boton-camara';
+import BotonCamara from '../../components/boton-camara';
 
 type Prenda = { id: string; img?: any };
 type Outfit = { id: string; name: string };
