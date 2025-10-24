@@ -63,16 +63,16 @@ export default function login() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-black flex flex-col">
       <div className="flex-1 flex flex-col justify-center px-6 py-8">
         <div className="mb-12 text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Iniciar Sesión</h1>
-          <p className="text-gray-600">Ingresa tus credenciales</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Iniciar Sesión</h1>
+          <p className="text-gray-400">Ingresa tus credenciales</p>
         </div>
 
-        <div className="space-y-5">
+        <div className="space-y-5 mb-60">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">
               Correo Electrónico
             </label>
             <div className="relative">
@@ -92,7 +92,7 @@ export default function login() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-2">
               Contraseña
             </label>
             <div className="relative">
