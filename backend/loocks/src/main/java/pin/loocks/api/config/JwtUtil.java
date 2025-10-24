@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -29,19 +28,23 @@ public class JwtUtil {
   }
 
   public String generateToken(String value) {
+    Date current = new Date();
+    Date expiration = new Date(current.getTime() + jwtExpirationMs);
+
     return Jwts.builder()
-      .setSubject(value)
-      .setIssuedAt(new Date())
-      .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-      .signWith(SignatureAlgorithm.HS256, key)
+      .subject(value)
+      .issuedAt(current)
+      .expiration(expiration)
+      .signWith(key)
       .compact();
   }
 
   public String getEmailFromToken(String token) {
     return Jwts.parser()
-      .setSigningKey(key)
-      .parseClaimsJws(token)
-      .getBody()
+      .verifyWith(key)
+      .build()
+      .parseSignedClaims(token)
+      .getPayload()
       .getSubject();
   }
 
@@ -49,8 +52,10 @@ public class JwtUtil {
     try {
       Jwts
         .parser()
-        .setSigningKey(key)
-        .parseClaimsJws(token);
+        .verifyWith(key)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload();
       return true;
     } catch (SecurityException e) {
       System.out.println("Invalid JWT signature: " + e.getMessage());

@@ -15,14 +15,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import pin.loocks.api.config.JwtUtil;
-import pin.loocks.logic.services.PerfilService;
+import pin.loocks.logic.services.AuthService;
 
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
   @Autowired
   private JwtUtil jwtUtils;
   @Autowired
-  private PerfilService userDetailsService;
+  private AuthService userDetailsService;
 
   @Override
   protected void doFilterInternal(

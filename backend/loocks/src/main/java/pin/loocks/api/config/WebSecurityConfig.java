@@ -14,11 +14,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import pin.loocks.api.security.AuthEntryPointJwt;
 import pin.loocks.api.security.AuthTokenFilter;
-import pin.loocks.logic.services.PerfilService;
+import pin.loocks.logic.services.AuthService;
 @Configuration
 public class WebSecurityConfig {
     @Autowired
-    PerfilService userDetailsService;
+    AuthService userDetailsService;
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
@@ -53,7 +53,7 @@ public class WebSecurityConfig {
 				.authorizeHttpRequests(authorizeRequests ->
 					authorizeRequests
 						.requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Use 'requestMatchers' instead of 'antMatchers'
-						// .anyRequest().authenticated()
+						.anyRequest().authenticated()
 				);
 
 			http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

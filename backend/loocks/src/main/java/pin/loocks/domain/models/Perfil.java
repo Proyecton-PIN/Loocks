@@ -16,10 +16,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import pin.loocks.domain.dtos.RegisterRequestDTO;
 
 @Getter
 @Entity
+@NoArgsConstructor
 public class Perfil {
   @Id
   @GeneratedValue(strategy =  GenerationType.UUID)

@@ -13,22 +13,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
 import pin.loocks.api.config.JwtUtil;
-import pin.loocks.data.repositories.PerfilRepository;
 import pin.loocks.domain.dtos.LoginRequestDTO;
 import pin.loocks.domain.dtos.RegisterRequestDTO;
 import pin.loocks.domain.dtos.TokenResponseDTO;
 import pin.loocks.domain.models.Perfil;
+import pin.loocks.logic.services.AuthService;
+
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/auth")
-public class PerfilController {
+@RequestMapping("/api/auth")
+public class AuthController {
   @Autowired
-  private final AuthenticationManager authenticationManager;
+  private AuthenticationManager authenticationManager;
   @Autowired
-  private final JwtUtil jwtUtil;
+  private JwtUtil jwtUtil;
   @Autowired
-  PerfilRepository perfilRepository;
+  private AuthService perfilService;
 
   @PostMapping("/login")
   public ResponseEntity<TokenResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
@@ -40,6 +41,10 @@ public class PerfilController {
     );
     
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+    // Perfil perfil = perfilService.loginUser(loginRequest);
+    // if(perfil == null) return ResponseEntity.badRequest().build();
+
     String token = jwtUtil.generateToken(userDetails.getUsername());
 
     return ResponseEntity.ok(new TokenResponseDTO(token));
@@ -47,13 +52,9 @@ public class PerfilController {
 
   @PostMapping("/register")
   public ResponseEntity<String> registerUser(@RequestBody RegisterRequestDTO request) {
-    if (perfilRepository.existsByEmail(request.getEmail())) {
-      return ResponseEntity.badRequest().build();
-    }
-  
-    Perfil newPerfil = new Perfil(request);
-
-    perfilRepository.save(newPerfil);
+    Perfil perfil = perfilService.registerUser(request);
+    
+    if(perfil == null) return ResponseEntity.badRequest().build();
     return ResponseEntity.ok("User registered successfully!");
   }
 }
