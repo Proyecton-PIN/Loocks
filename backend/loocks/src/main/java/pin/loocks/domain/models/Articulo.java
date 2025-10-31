@@ -72,4 +72,22 @@ public class Articulo {
   @ManyToMany
   @JoinTable(name = "articulo_tag")
   private List<Tag> tags;
+
+  @Column(nullable = false)
+  private String userId;
+
+  @Column(nullable = false)
+    private String imageUrl;
+
+
+  //METODOS GETTERS Y SETTERS
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }
