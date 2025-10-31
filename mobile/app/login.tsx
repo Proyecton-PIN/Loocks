@@ -1,13 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
+import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-export default function login() {
+export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -16,7 +16,7 @@ export default function login() {
 
   const handleSubmit = () => {
     setError('');
-    
+
     if (!email || !password) {
       setError('Por favor, completa todos los campos');
       return;
@@ -33,24 +33,19 @@ export default function login() {
     }
 
     setIsLoading(true);
-    
-    // Preparar datos en formato JSON
-    const loginData = {
-      email: email,
-      password: password
-    };
 
-    // Simulación de envío
+    const loginData = { email, password };
+
     console.log('Datos de login enviados:', JSON.stringify(loginData, null, 2));
-    
+
     setTimeout(() => {
       fetch(`https://localhost:8080/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loginData)
+        body: JSON.stringify(loginData),
       })
         .then(() => {
-          alert('Login exitoso!');
+          Alert.alert('Éxito', 'Login exitoso!');
           setIsLoading(false);
           setEmail('');
           setPassword('');
@@ -63,80 +58,159 @@ export default function login() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex flex-col">
-      <div className="flex-1 flex flex-col justify-center px-6 py-8">
-        <div className="mb-12 text-center">
-          <h1 className="text-3xl font-bold text-white mb-2">Iniciar Sesión</h1>
-          <p className="text-gray-400">Ingresa tus credenciales</p>
-        </div>
+    <View style={styles.container}>
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Iniciar Sesión</Text>
+          <Text style={styles.subtitle}>Ingresa tus credenciales</Text>
+        </View>
 
-        <div className="space-y-5 mb-60">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">
-              Correo Electrónico
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Ionicons name="mail-outline" size={20} color="#9CA3AF" />
-              </div>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-                className="block w-full pl-12 pr-4 py-4 text-base border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
-                placeholder="tu@email.com"
+        {/* Campo de email */}
+        <View style={styles.field}>
+          <Text style={styles.label}>Correo Electrónico</Text>
+          <View style={styles.inputContainer}>
+            <Ionicons name="mail-outline" size={20} color="#9CA3AF" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="tu@email.com"
+              placeholderTextColor="#9CA3AF"
+              value={email}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              onChangeText={setEmail}
+              onSubmitEditing={handleSubmit}
+            />
+          </View>
+        </View>
+
+        {/* Campo de contraseña */}
+        <View style={styles.field}>
+          <Text style={styles.label}>Contraseña</Text>
+          <View style={styles.inputContainer}>
+            <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Tu contraseña"
+              placeholderTextColor="#9CA3AF"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+              onSubmitEditing={handleSubmit}
+            />
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeButton}>
+              <Ionicons
+                name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                size={20}
+                color="#9CA3AF"
               />
-            </div>
-          </div>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-2">
-              Contraseña
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
-              </div>
-              <input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-                className="block w-full pl-12 pr-14 py-4 text-base border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
-                placeholder="Tu contraseña"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center"
-              >
-                {showPassword ? (
-                  <Ionicons name="eye-off-outline" size={20} color="#9CA3AF" />
-                ) : (
-                  <Ionicons name="eye-outline" size={20} color="#9CA3AF" />
-                )}
-              </button>
-            </div>
-          </div>
+        {/* Error */}
+        {error ? (
+          <View style={styles.errorBox}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        ) : null}
 
-          {error && (
-            <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-xl text-sm">
-              {error}
-            </div>
+        {/* Botón */}
+        <TouchableOpacity
+          style={[styles.button, isLoading && styles.buttonDisabled]}
+          onPress={handleSubmit}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Iniciar Sesión</Text>
           )}
-
-          <button
-            onClick={handleSubmit}
-            disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold text-base active:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
-          >
-            {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-          </button>
-        </div>
-      </div>
-    </div>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  header: {
+    marginBottom: 32,
+    alignItems: 'center',
+  },
+  title: {
+    color: '#fff',
+    fontSize: 28,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  subtitle: {
+    color: '#9CA3AF',
+    fontSize: 14,
+  },
+  field: {
+    marginBottom: 20,
+  },
+  label: {
+    color: '#9CA3AF',
+    fontSize: 14,
+    marginBottom: 8,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderColor: '#444',
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    backgroundColor: '#111',
+  },
+  icon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
+    color: '#fff',
+    paddingVertical: 12,
+    fontSize: 16,
+  },
+  eyeButton: {
+    padding: 8,
+  },
+  errorBox: {
+    backgroundColor: '#FEE2E2',
+    borderColor: '#FCA5A5',
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 10,
+    marginBottom: 10,
+  },
+  errorText: {
+    color: '#B91C1C',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  button: {
+    backgroundColor: '#2563EB',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+});
