@@ -30,7 +30,10 @@ npx expo run:android
 // android/gradle.properties
 
 org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m
-org.gradle.java.home=path to java sdk
+org.gradle.java.home=pat\\to\\java\\sdk
+
+// android/local.properties
+sdk.dir=path\\to\\android\\sdk
 ```
 
 ## Cargar dependencias en Front
