@@ -50,13 +50,11 @@ export default function Login() {
 
     setIsLoading(true);
 
-    const loginData = { email, password };
-
     setTimeout(() => {
-      fetch(`https://localhost:8080/api/auth/login`, {
+      fetch(`http://localhost:8080/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(loginData),
+        body: JSON.stringify({email, password})
       })
         .then(() => {
           if (!isMounted.current) return;
