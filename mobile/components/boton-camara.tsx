@@ -1,5 +1,4 @@
 import { Camera, CameraView } from "expo-camera";
-import * as MediaLibrary from "expo-media-library";
 import { useRef, useState } from "react";
 import { Alert, Image, Modal, Text, TouchableOpacity, View, } from "react-native";
 
@@ -41,10 +40,18 @@ export default function BotonCamara() {
   const aceptarFoto = async () => {
     if (!foto) return;
     try {
-      await MediaLibrary.saveToLibraryAsync(foto);
-      Alert.alert("Foto guardada", "La foto se ha guardado en la galería.");
-      setMostrarCamara(false);
-      setFoto(null);
+      const response = await fetch(
+      `https://ykyemrhayfttppxvmaqu.supabase.co/storage/v1/object/user-images/users/${1}/${Date.now()}.${'png'}`,
+      {
+        method: 'PUT',
+        headers: {
+          apikey: '<TU_ANON_KEY>',
+          Authorization: `Bearer <TU_ANON_KEY>`,
+          'Content-Type': `image/${'png'}`,
+        },
+        body: await fetch(foto).then(r => r.blob()),
+      }
+    );
     } catch (error) {
       Alert.alert("Error", "No se pudo guardar la foto.");
     }
