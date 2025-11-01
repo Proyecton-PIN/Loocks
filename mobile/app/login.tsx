@@ -1,3 +1,4 @@
+import { API_URL } from "@env";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -51,7 +52,7 @@ export default function Login() {
     setIsLoading(true);
 
     setTimeout(() => {
-      fetch(`http://localhost:8080/api/auth/login`, {
+      fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({email, password})
