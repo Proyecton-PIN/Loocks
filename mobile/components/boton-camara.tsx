@@ -1,20 +1,28 @@
-import { Camera, CameraView } from "expo-camera";
-import { useRef, useState } from "react";
-import { Alert, Image, Modal, Text, TouchableOpacity, View } from "react-native";
+import { Camera, CameraView } from 'expo-camera';
+import { useRef, useState } from 'react';
+import {
+  Alert,
+  Image,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export default function BotonCamara() {
   const [mostrarCamara, setMostrarCamara] = useState(false);
   const [foto, setFoto] = useState<string | null>(null);
   const camaraRef = useRef<CameraView | null>(null);
 
-  const SUPABASE_URL = "https://ykyemrhayfttppxvmaqu.supabase.co";
-  const SUPABASE_KEY = "deda03150bbb7bbf3d0d2b2532250f3b";
-  const BUCKET = "user-images";
+  // --- Configuración Supabase ---
+  const SUPABASE_URL = 'https://ykyemrhayfttppxvmaqu.supabase.co';
+  const SUPABASE_KEY = 'deda03150bbb7bbf3d0d2b2532250f3b';
+  const BUCKET = 'user-images';
 
   const solicitarPermisos = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("Permiso denegado", "Se necesita acceso a la cámara.");
+    if (status !== 'granted') {
+      Alert.alert('Permiso denegado', 'Se necesita acceso a la cámara.');
       return;
     }
     setFoto(null);
@@ -35,51 +43,53 @@ export default function BotonCamara() {
     try {
       const blob = await fetch(foto).then((r) => r.blob());
 
-      const SUPABASE_URL = "https://ykyemrhayfttppxvmaqu.storage.supabase.co/storage/v1/s3";
-      const userId = "1";
+      const userId = '1';
       const fileName = `${Date.now()}.png`;
       const filePath = `users/${userId}/${fileName}`;
-      const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlreWVtcmhheWZ0dHBweHZtYXF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0NTY1NzAsImV4cCI6MjA3NjAzMjU3MH0.p4rJlMg8bH4jGyXwFLcIfn8i8got7U5e8-EqPewZk1U";
+      const SUPABASE_KEY =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlreWVtcmhheWZ0dHBweHZtYXF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0NTY1NzAsImV4cCI6MjA3NjAzMjU3MH0.p4rJlMg8bH4jGyXwFLcIfn8i8got7U5e8-EqPewZk1U';
 
       const uploadUrl = `https://ykyemrhayfttppxvmaqu.supabase.co/storage/v1/object/user-images/users/${userId}/${fileName};
 `;
 
-      console.log("📤 Subiendo a:", uploadUrl);
+      console.log('📤 Subiendo a:', uploadUrl);
 
       const response = await fetch(uploadUrl, {
-        method: "POST",
+        method: 'POST',
         headers: {
           apikey: SUPABASE_KEY,
           Authorization: `Bearer ${SUPABASE_KEY}`,
-          "Content-Type": "image/png",
+          'Content-Type': 'image/png',
         },
         body: blob,
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("❌ Error:", errorText);
-        throw new Error("Error al subir a Supabase");
+        console.error('Error:', response.status, errorText);
+        throw new Error('Error al subir a Supabase');
       }
 
-      // ✅ URL pública del archivo
-      const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${filePath}`;
-      console.log("✅ Imagen subida:", publicUrl);
-
-      Alert.alert("Éxito", "Imagen subida correctamente.");
-
-      // 🔗 (opcional) enviar URL al backend Spring Boot
-      // await fetch("https://tu-backend.com/api/articulos", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //     userId,
-      //     fotoDelanteUrl: publicUrl,
-      //   }),
-      // });
+      try {
+        await fetch('http://192.168.1.165:8080/api/articulos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: '1',
+            nombre: 'Prueba',
+            tipo: 'CAMISETA',
+            colorPrimario: 'RRGGBBAA',
+            fechaCompra: new Date().toISOString(),
+            imagenUrl: uploadUrl,
+          }),
+        });
+      } catch (dbErr) {
+        console.error('DB insert error:', dbErr);
+        Alert.alert('Error', 'Imagen subida pero fallo al crear el artículo.');
+      }
     } catch (err) {
       console.error(err);
-      Alert.alert("Error", "No se pudo subir la imagen.");
+      Alert.alert('Error', 'No se pudo subir la imagen.');
     }
   };
 
@@ -92,7 +102,7 @@ export default function BotonCamara() {
         <Text className="text-white">+ Añadir prenda</Text>
       </TouchableOpacity>
 
-      {foto && (
+      {foto && !mostrarCamara && (
         <View className="w-full items-center mt-2">
           <Image source={{ uri: foto }} className="w-56 h-72 rounded-lg mb-3" />
           <View className="flex-row space-x-4">
@@ -115,41 +125,43 @@ export default function BotonCamara() {
       <Modal visible={mostrarCamara} animationType="slide">
         <View style={{ flex: 1 }}>
           <CameraView ref={camaraRef} style={{ flex: 1 }} />
-
           <View
             style={{
-              position: "absolute",
+              position: 'absolute',
               bottom: 30,
               left: 0,
               right: 0,
-              alignItems: "center",
+              alignItems: 'center',
             }}
           >
             <TouchableOpacity
               onPress={tomarFoto}
-              style={{ backgroundColor: "white", padding: 14, borderRadius: 40 }}
+              style={{
+                backgroundColor: 'white',
+                padding: 14,
+                borderRadius: 40,
+              }}
             >
-              <Text style={{ color: "black", fontWeight: "bold" }}>
+              <Text style={{ color: 'black', fontWeight: 'bold' }}>
                 Tomar Foto
               </Text>
             </TouchableOpacity>
           </View>
-
           <TouchableOpacity
             onPress={() => {
               setMostrarCamara(false);
               setFoto(null);
             }}
             style={{
-              position: "absolute",
+              position: 'absolute',
               top: 40,
               left: 20,
-              backgroundColor: "red",
+              backgroundColor: 'red',
               padding: 8,
               borderRadius: 8,
             }}
           >
-            <Text style={{ color: "white", fontWeight: "bold" }}>Cerrar</Text>
+            <Text style={{ color: 'white', fontWeight: 'bold' }}>Cerrar</Text>
           </TouchableOpacity>
         </View>
       </Modal>

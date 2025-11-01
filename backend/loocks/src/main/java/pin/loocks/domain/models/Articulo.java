@@ -35,6 +35,7 @@ public class Articulo {
   @Column(nullable = false)
   private String nombre;
 
+   @Column(nullable = true)
   private String marca;
 
   @Temporal(TemporalType.DATE)
@@ -47,11 +48,6 @@ public class Articulo {
   
   @Enumerated(EnumType.ORDINAL)
   private Estacion estacion;
-
-  @Column(nullable = false)
-  private String fotoDelanteUrl;
-
-  private String fotoTraseraUrl;
 
   private LocalDate fechaUltimoUso;
 
