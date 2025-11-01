@@ -20,6 +20,8 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import pin.loocks.domain.enums.Estacion;
@@ -44,6 +46,9 @@ public class Articulo {
   @Column(length = 8, nullable = false)
   private String colorPrimario; // RRGGBBAA
 
+  @ElementCollection
+  @CollectionTable(name = "articulo_colores_secundarios")
+  @Column(name = "color")
   private List<String> coloresSecundarios; // RRGGBBAA
   
   @Enumerated(EnumType.ORDINAL)
@@ -74,6 +79,22 @@ public class Articulo {
 
   @Column(nullable = false)
     private String imageUrl;
+
+  // Additional getters and setters to allow JSON deserialization
+  public String getNombre() { return nombre; }
+  public void setNombre(String nombre) { this.nombre = nombre; }
+
+  public String getMarca() { return marca; }
+  public void setMarca(String marca) { this.marca = marca; }
+
+  public String getColorPrimario() { return colorPrimario; }
+  public void setColorPrimario(String colorPrimario) { this.colorPrimario = colorPrimario; }
+
+  public List<String> getColoresSecundarios() { return coloresSecundarios; }
+  public void setColoresSecundarios(List<String> coloresSecundarios) { this.coloresSecundarios = coloresSecundarios; }
+
+  public Armario getArmario() { return armario; }
+  public void setArmario(Armario armario) { this.armario = armario; }
 
 
   //METODOS GETTERS Y SETTERS

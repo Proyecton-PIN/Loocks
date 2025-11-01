@@ -30,16 +30,31 @@ public class ArticuloController {
     }
 
     @PostMapping
-    public ResponseEntity<Articulo> createArticulo(@RequestBody Articulo articulo) {
-        Articulo nuevo = articuloRepository.save(articulo);
+    public ResponseEntity<?> createArticulo(@RequestBody Articulo articulo) {
+        // Basic validation for required fields
+        if (articulo.getUserId() == null || articulo.getUserId().isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (articulo.getImageUrl() == null || articulo.getImageUrl().isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(nuevo.getId())
-                .toUri();
+        try {
+            Articulo nuevo = articuloRepository.save(articulo);
+            System.out.println("Articulo guardado con id=" + nuevo.getId());
 
-        return ResponseEntity.created(location).body(nuevo);
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(nuevo.getId())
+                    .toUri();
+
+            return ResponseEntity.created(location).body(nuevo);
+        } catch (Exception e) {
+            System.err.println("Error al guardar el articulo: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(java.util.Map.of("error", e.getMessage()));
+        }
     }
 
     @GetMapping("/{id}")

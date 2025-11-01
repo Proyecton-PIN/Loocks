@@ -1,13 +1,13 @@
 import { API_URL } from "@env";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 
 export default function Login() {
@@ -59,7 +59,7 @@ export default function Login() {
       })
         .then(() => {
           if (!isMounted.current) return;
-          Alert.alert("Éxito", "Login exitoso!");
+          router.replace("/armario");
           setIsLoading(false);
           setEmail("");
           setPassword("");
