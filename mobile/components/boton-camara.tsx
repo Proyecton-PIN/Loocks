@@ -15,7 +15,6 @@ export default function BotonCamara() {
   const [foto, setFoto] = useState<string | null>(null);
   const camaraRef = useRef<CameraView | null>(null);
 
-  // --- Configuración Supabase ---
   const SUPABASE_URL = 'https://ykyemrhayfttppxvmaqu.supabase.co';
   const SUPABASE_KEY = 'deda03150bbb7bbf3d0d2b2532250f3b';
   const BUCKET = 'user-images';
@@ -40,9 +39,11 @@ export default function BotonCamara() {
 
   const aceptarFoto = async () => {
     if (!foto) return;
-
+    await subirFoto(foto);
+  };
+  const subirFoto = async (fotoUri: string) => {
     try {
-      const blob = await fetch(foto).then((r) => r.blob());
+      const blob = await fetch(fotoUri).then((r) => r.blob());
 
       const userId = '1';
       const fileName = `${Date.now()}.png`;
@@ -50,8 +51,7 @@ export default function BotonCamara() {
       const SUPABASE_KEY =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlreWVtcmhheWZ0dHBweHZtYXF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0NTY1NzAsImV4cCI6MjA3NjAzMjU3MH0.p4rJlMg8bH4jGyXwFLcIfn8i8got7U5e8-EqPewZk1U';
 
-      const uploadUrl = `https://ykyemrhayfttppxvmaqu.supabase.co/storage/v1/object/user-images/users/${userId}/${fileName};
-`;
+      const uploadUrl = `https://ykyemrhayfttppxvmaqu.supabase.co/storage/v1/object/user-images/users/${userId}/${fileName};`;
 
       console.log('📤 Subiendo a:', uploadUrl);
 
@@ -94,6 +94,16 @@ export default function BotonCamara() {
     }
   };
 
+  const guardarYCerrar = () => {
+    const current = foto;
+    if (!current) return;
+    // close preview
+    setFoto(null);
+    setMostrarCamara(false);
+    // upload in background
+    void subirFoto(current);
+  };
+
   return (
     <View>
       <TouchableOpacity
@@ -103,49 +113,42 @@ export default function BotonCamara() {
         <Text className="text-white">+ Añadir prenda</Text>
       </TouchableOpacity>
 
-      {foto && !mostrarCamara && (
-        <View className="w-full items-center mt-2">
-          <Image source={{ uri: foto }} className="w-56 h-72 rounded-lg mb-3" />
-          <View className="flex-row space-x-4">
-            <TouchableOpacity
-              onPress={aceptarFoto}
-              className="bg-blue-500 px-4 py-2 rounded"
-            >
+      <Modal visible={!!foto && !mostrarCamara} animationType="slide">
+        <View className="flex-1 bg-black">
+          <Image
+            source={{ uri: foto ?? undefined }}
+            className="flex-1 w-full h-full"
+            resizeMode="contain"
+          />
+
+          <View className="absolute left-0 right-0 bottom-10 flex-row justify-around px-5">
+            <TouchableOpacity onPress={guardarYCerrar} className="bg-blue-600 px-4 py-3 rounded-md">
               <Text className="text-white font-bold">Guardar</Text>
             </TouchableOpacity>
+
             <TouchableOpacity
-              onPress={() => setFoto(null)}
-              className="bg-gray-700 px-4 py-2 rounded"
+              onPress={() => {
+                setFoto(null);
+                setMostrarCamara(true);
+              }}
+              className="bg-gray-700 px-4 py-3 rounded-md"
             >
               <Text className="text-white">Repetir</Text>
             </TouchableOpacity>
           </View>
+
+          <TouchableOpacity onPress={() => setFoto(null)} className="absolute top-10 left-5 bg-black/60 p-2 rounded-md">
+            <Text className="text-white font-bold">Cerrar</Text>
+          </TouchableOpacity>
         </View>
-      )}
+      </Modal>
 
       <Modal visible={mostrarCamara} animationType="slide">
-        <View style={{ flex: 1 }}>
+        <View className="flex-1">
           <CameraView ref={camaraRef} style={{ flex: 1 }} />
-          <View
-            style={{
-              position: 'absolute',
-              bottom: 30,
-              left: 0,
-              right: 0,
-              alignItems: 'center',
-            }}
-          >
-            <TouchableOpacity
-              onPress={tomarFoto}
-              style={{
-                backgroundColor: 'white',
-                padding: 14,
-                borderRadius: 40,
-              }}
-            >
-              <Text style={{ color: 'black', fontWeight: 'bold' }}>
-                Tomar Foto
-              </Text>
+          <View className="absolute left-0 right-0 bottom-8 items-center">
+            <TouchableOpacity onPress={tomarFoto} className="bg-white px-4 py-3 rounded-full">
+              <Text className="text-black font-bold">Tomar Foto</Text>
             </TouchableOpacity>
           </View>
           <TouchableOpacity
@@ -153,16 +156,9 @@ export default function BotonCamara() {
               setMostrarCamara(false);
               setFoto(null);
             }}
-            style={{
-              position: 'absolute',
-              top: 40,
-              left: 20,
-              backgroundColor: 'red',
-              padding: 8,
-              borderRadius: 8,
-            }}
+            className="absolute top-10 left-5 bg-red-500 p-2 rounded-md"
           >
-            <Text style={{ color: 'white', fontWeight: 'bold' }}>Cerrar</Text>
+            <Text className="text-white font-bold">Cerrar</Text>
           </TouchableOpacity>
         </View>
       </Modal>
