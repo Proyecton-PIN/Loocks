@@ -57,9 +57,25 @@ export default function Login() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       })
-        .then(() => {
+        .then(async (res) => {
           if (!isMounted.current) return;
-          router.replace('/armario');
+
+          if (!res.ok) {
+            let message = 'Error al iniciar sesión';
+            if (res.status === 401) message = 'Credenciales incorrectas';
+            else {
+              try {
+                const body = await res.json();
+                if (body?.message) message = body.message;
+              } catch (e) {
+              }
+            }
+            setError(message);
+            setIsLoading(false);
+            return;
+          }
+
+          router.replace('/(tabs)/armario');
           setIsLoading(false);
           setEmail('');
           setPassword('');
@@ -67,7 +83,7 @@ export default function Login() {
         .catch(() => {
           if (!isMounted.current) return;
           setIsLoading(false);
-          setError('Error al iniciar sesión');
+          setError('Error de red al iniciar sesión');
         });
     }, 1000);
   };
@@ -78,7 +94,7 @@ export default function Login() {
         {/* Header */}
         <View className="mb-12 items-center">
           <Text className="text-3xl font-bold text-white mb-2">
-            Iniciar Sesión
+            {ApiUrl}
           </Text>
           <Text className="text-gray-400">Ingresa tus credenciales</Text>
         </View>
