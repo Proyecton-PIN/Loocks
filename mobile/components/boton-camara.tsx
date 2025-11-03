@@ -1,5 +1,5 @@
-import { API_URL } from '@env';
 import { Camera, CameraView } from 'expo-camera';
+import Constants from 'expo-constants';
 import { useRef, useState } from 'react';
 import {
   Alert,
@@ -72,7 +72,7 @@ export default function BotonCamara() {
       }
 
       try {
-        await fetch(`${API_URL}/api/articulos`, {
+        await fetch(`${Constants.expoConfig?.extra?.apiUrl}/api/articulos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -122,7 +122,10 @@ export default function BotonCamara() {
           />
 
           <View className="absolute left-0 right-0 bottom-10 flex-row justify-around px-5">
-            <TouchableOpacity onPress={guardarYCerrar} className="bg-blue-600 px-4 py-3 rounded-md">
+            <TouchableOpacity
+              onPress={guardarYCerrar}
+              className="bg-blue-600 px-4 py-3 rounded-md"
+            >
               <Text className="text-white font-bold">Guardar</Text>
             </TouchableOpacity>
 
@@ -137,7 +140,10 @@ export default function BotonCamara() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity onPress={() => setFoto(null)} className="absolute top-10 left-5 bg-black/60 p-2 rounded-md">
+          <TouchableOpacity
+            onPress={() => setFoto(null)}
+            className="absolute top-10 left-5 bg-black/60 p-2 rounded-md"
+          >
             <Text className="text-white font-bold">Cerrar</Text>
           </TouchableOpacity>
         </View>
@@ -147,7 +153,10 @@ export default function BotonCamara() {
         <View className="flex-1">
           <CameraView ref={camaraRef} style={{ flex: 1 }} />
           <View className="absolute left-0 right-0 bottom-8 items-center">
-            <TouchableOpacity onPress={tomarFoto} className="bg-white px-4 py-3 rounded-full">
+            <TouchableOpacity
+              onPress={tomarFoto}
+              className="bg-white px-4 py-3 rounded-full"
+            >
               <Text className="text-black font-bold">Tomar Foto</Text>
             </TouchableOpacity>
           </View>

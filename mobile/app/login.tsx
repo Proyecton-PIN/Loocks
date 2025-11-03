@@ -1,20 +1,20 @@
-import { API_URL } from "@env";
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import { Ionicons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
+import { router } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Text,
   TextInput,
   TouchableOpacity,
-  View
-} from "react-native";
+  View,
+} from 'react-native';
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   // bandera de montaje
@@ -32,42 +32,42 @@ export default function Login() {
   };
 
   const handleSubmit = () => {
-    setError("");
+    setError('');
 
     if (!email || !password) {
-      setError("Por favor, completa todos los campos");
+      setError('Por favor, completa todos los campos');
       return;
     }
 
     if (!validateEmail(email)) {
-      setError("Por favor, ingresa un correo electrónico válido");
+      setError('Por favor, ingresa un correo electrónico válido');
       return;
     }
 
     if (password.length < 5) {
-      setError("La contraseña debe tener al menos 5 caracteres");
+      setError('La contraseña debe tener al menos 5 caracteres');
       return;
     }
 
     setIsLoading(true);
 
     setTimeout(() => {
-      fetch(`${API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({email, password})
+      fetch(`${Constants.expoConfig?.extra?.apiUrl}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       })
         .then(() => {
           if (!isMounted.current) return;
-          router.replace("/armario");
+          router.replace('/armario');
           setIsLoading(false);
-          setEmail("");
-          setPassword("");
+          setEmail('');
+          setPassword('');
         })
         .catch(() => {
           if (!isMounted.current) return;
           setIsLoading(false);
-          setError("Error al iniciar sesión");
+          setError('Error al iniciar sesión');
         });
     }, 1000);
   };
@@ -124,7 +124,7 @@ export default function Login() {
               className="p-2"
             >
               <Ionicons
-                name={showPassword ? "eye-off-outline" : "eye-outline"}
+                name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                 size={20}
                 color="#9CA3AF"
               />
@@ -145,8 +145,8 @@ export default function Login() {
           onPress={handleSubmit}
           className={`w-full py-4 rounded-xl mt-6 ${
             isLoading
-              ? "bg-blue-600 opacity-50"
-              : "bg-blue-600 active:bg-blue-700"
+              ? 'bg-blue-600 opacity-50'
+              : 'bg-blue-600 active:bg-blue-700'
           }`}
         >
           {isLoading ? (
