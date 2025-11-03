@@ -1,3 +1,4 @@
+import { ApiUrl } from '@/constants/api-constants';
 import { Camera, CameraView } from 'expo-camera';
 import Constants from 'expo-constants';
 import { useRef, useState } from 'react';
@@ -72,7 +73,7 @@ export default function BotonCamara() {
       }
 
       try {
-        await fetch(`${Constants.expoConfig?.extra?.apiUrl}/api/articulos`, {
+        await fetch(`${ApiUrl}/api/articulos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

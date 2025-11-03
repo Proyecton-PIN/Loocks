@@ -1,1 +1,3 @@
-export const ApiUrl = 'http://localhost:8080/api';
+import Constants from 'expo-constants';
+
+export const ApiUrl = Constants.expoConfig?.extra?.apiUrl ?? '';

@@ -1,5 +1,5 @@
+import { ApiUrl } from '@/constants/api-constants';
 import { Ionicons } from '@expo/vector-icons';
-import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -52,7 +52,7 @@ export default function Login() {
     setIsLoading(true);
 
     setTimeout(() => {
-      fetch(`${Constants.expoConfig?.extra?.apiUrl}/api/auth/login`, {
+      fetch(`${ApiUrl}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
