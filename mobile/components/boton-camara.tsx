@@ -1,3 +1,4 @@
+import { ApiUrl } from '@/constants/api-constants';
 import { Camera, CameraView } from 'expo-camera';
 import { useRef, useState } from 'react';
 import {
@@ -71,7 +72,7 @@ export default function BotonCamara() {
       }
 
       try {
-        await fetch('http://192.168.1.165:8080/api/articulos', {
+        await fetch(`${ApiUrl}/articulos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
