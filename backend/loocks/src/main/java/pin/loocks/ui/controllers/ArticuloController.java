@@ -1,9 +1,12 @@
 package pin.loocks.ui.controllers;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import pin.loocks.data.repositories.ArticuloRepository;
+import pin.loocks.domain.dtos.ClothingAnalysisDTO;
 import pin.loocks.domain.models.Articulo;
 import pin.loocks.logic.services.ArticuloService;
 
@@ -76,12 +80,26 @@ public class ArticuloController {
 
   
   @PostMapping("generateDetails")
-  public String postMethodName(
+  public ResponseEntity<ClothingAnalysisDTO> postMethodName(
     @AuthenticationPrincipal UserDetails userDetails,
     @RequestParam("file") MultipartFile img
-  ) {
-      
-    return this.articuloService.generateDetails(img);
+  ) throws IOException {
+    File tempFile = File.createTempFile("upload-", img.getOriginalFilename());
+    img.transferTo(tempFile);
+
+    try {
+      if (img.isEmpty()) {
+        return ResponseEntity.badRequest().build();
+      }
+        
+      ClothingAnalysisDTO result = this.articuloService.generateDetails(tempFile);
+      return ResponseEntity.ok(result);
+
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    } finally {
+      tempFile.delete();
+    }
   }
 }
 
