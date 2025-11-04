@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import pin.loocks.data.repositories.ArticuloRepository;
 import pin.loocks.domain.dtos.ClothingAnalysisDTO;
 import pin.loocks.domain.models.Articulo;
@@ -79,9 +81,10 @@ public class ArticuloController {
   }
 
   
-  @PostMapping("generateDetails")
+  @PostMapping(value = "generateDetails", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<ClothingAnalysisDTO> postMethodName(
     @AuthenticationPrincipal UserDetails userDetails,
+    @Parameter(description = "Image file", required = true)
     @RequestParam("file") MultipartFile img
   ) throws IOException {
     File tempFile = File.createTempFile("upload-", img.getOriginalFilename());

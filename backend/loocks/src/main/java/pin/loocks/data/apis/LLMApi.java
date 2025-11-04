@@ -11,6 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -20,13 +21,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import pin.loocks.domain.dtos.ClothingAnalysisDTO;
 import pin.loocks.domain.dtos.LLMResponseDTO;
 
+@Component
 public class LLMApi {
-  @Value("${llmapi.key}")
-  private static String apiKey;
-  private static final String baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
-  private static final RestTemplate restTemplate = new RestTemplate();
+  @Value("${llm.api.key}")
+  private String apiKey;
+  private final String baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+  private final RestTemplate restTemplate = new RestTemplate();
 
-  public static ClothingAnalysisDTO generateDetails(File img) throws Exception{
+  public ClothingAnalysisDTO generateDetails(File img) throws Exception{
     byte[] imgAsBytes = Files.readAllBytes(img.toPath());
     String base64Img = Base64.getEncoder().encodeToString(imgAsBytes);
 
@@ -37,18 +39,18 @@ public class LLMApi {
     String prompt = """
       Analyze this image and give me the next data in the same format about the clothing:
       {
-        colors: [
+        \"colors\": [
           {
-            color: \"#ffffff\", 
-            percentage: 55
+            \"color\": \"#ffffff\", 
+            \"percentage\": 55
           },
           {
-            color: \"#f70fe8\", 
-            percentage: 65
+            \"color\": \"#f70fe8\", 
+            \"percentage\": 65
           }
         ],
-        tags: [\"camiseta\", \"fiesta\"],
-        seassons: [\"primavera\", \"otoño\"]
+        \"tags\": [\"camiseta\", \"fiesta\"],
+        \"seassons\": [\"primavera\", \"otoño\"]
       }
       """;
 
@@ -70,6 +72,7 @@ public class LLMApi {
 
     HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
+    
     ResponseEntity<LLMResponseDTO> response = restTemplate.postForEntity(
       baseUrl, 
       requestEntity, 

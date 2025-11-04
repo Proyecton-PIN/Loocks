@@ -9,18 +9,18 @@ public class LLMResponseDTO {
   private List<Candidate> candidates;
 
   @Data
-  public class Candidate {
+  public static class Candidate {
     private Content content;
     private String role;
   }
 
   @Data
-  public class Content {
+  public static class Content {
     private List<Part> parts;
   }
 
   @Data
-  public class Part {
+  public static class Part {
     private String text;
   }
 }
