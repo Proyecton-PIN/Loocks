@@ -1,11 +1,13 @@
 package pin.loocks.logic.helpers;
 
-public class ImageHelper {
-  public static void removeBackground(){
+import org.springframework.web.multipart.MultipartFile;
 
+public class ImageHelper {
+  public static MultipartFile removeBackground(MultipartFile img){
+    return null;
   }
 
-  public static void zip(){
-    
+  public static MultipartFile zip(MultipartFile img){
+    return null;
   }
 }
