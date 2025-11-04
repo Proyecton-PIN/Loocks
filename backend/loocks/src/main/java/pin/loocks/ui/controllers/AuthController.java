@@ -1,4 +1,4 @@
-package pin.loocks.api.controllers;
+package pin.loocks.ui.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
-import pin.loocks.api.config.JwtUtil;
 import pin.loocks.domain.dtos.LoginRequestDTO;
 import pin.loocks.domain.dtos.RegisterRequestDTO;
 import pin.loocks.domain.dtos.TokenResponseDTO;
 import pin.loocks.domain.models.Perfil;
 import pin.loocks.logic.services.AuthService;
+import pin.loocks.ui.config.JwtUtil;
 
 
 @AllArgsConstructor

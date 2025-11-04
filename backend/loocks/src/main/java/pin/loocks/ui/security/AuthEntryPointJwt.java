@@ -1,4 +1,4 @@
-package pin.loocks.api.security;
+package pin.loocks.ui.security;
 import java.io.IOException;
 
 import org.springframework.security.core.AuthenticationException;

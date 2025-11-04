@@ -1,4 +1,4 @@
-package pin.loocks.api.config;
+package pin.loocks.ui.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

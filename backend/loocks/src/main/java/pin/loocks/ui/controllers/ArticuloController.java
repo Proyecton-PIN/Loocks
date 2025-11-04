@@ -1,4 +1,4 @@
-package pin.loocks.api.controllers;
+package pin.loocks.ui.controllers;
 
 import java.net.URI;
 import java.util.List;
@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import pin.loocks.data.repositories.ArticuloRepository;
 import pin.loocks.domain.models.Articulo;
+import pin.loocks.logic.services.ArticuloService;
 
 @RestController
 @RequestMapping("/api/articulos")
@@ -25,6 +26,9 @@ public class ArticuloController {
 
     @Autowired
     private ArticuloRepository articuloRepository;
+
+    @Autowired
+    private ArticuloService articuloService;
 
     @PostMapping
     public ResponseEntity<?> createArticulo(@RequestBody Articulo articulo) {
@@ -69,9 +73,13 @@ public class ArticuloController {
         return ResponseEntity.ok(articuloRepository.findByUserId(userId));
     }
 
-    @GetMapping("verifyToken")
-    public String getMethodName(@AuthenticationPrincipal UserDetails userDetails) {
-        return userDetails.getUsername();
-    }
     
+    @PostMapping("generateDetails")
+    public String postMethodName(@AuthenticationPrincipal UserDetails userDetails, ) {
+        
+        return this.articuloService.generateDetails(null);;
+    }
 }
+
+
+

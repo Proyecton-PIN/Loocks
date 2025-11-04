@@ -1,4 +1,4 @@
-package pin.loocks.api.config;
+package pin.loocks.ui.config;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;

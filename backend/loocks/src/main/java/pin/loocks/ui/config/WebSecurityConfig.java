@@ -1,4 +1,4 @@
-package pin.loocks.api.config;
+package pin.loocks.ui.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,9 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import pin.loocks.api.security.AuthEntryPointJwt;
-import pin.loocks.api.security.AuthTokenFilter;
 import pin.loocks.logic.services.AuthService;
+import pin.loocks.ui.security.AuthEntryPointJwt;
+import pin.loocks.ui.security.AuthTokenFilter;
 @Configuration
 public class WebSecurityConfig {
     @Autowired

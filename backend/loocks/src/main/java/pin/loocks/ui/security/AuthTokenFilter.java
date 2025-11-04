@@ -1,4 +1,4 @@
-package pin.loocks.api.security;
+package pin.loocks.ui.security;
 
 import java.io.IOException;
 
@@ -14,8 +14,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import pin.loocks.api.config.JwtUtil;
 import pin.loocks.logic.services.AuthService;
+import pin.loocks.ui.config.JwtUtil;
 
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
