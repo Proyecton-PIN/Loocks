@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,12 +23,8 @@ import pin.loocks.domain.models.Articulo;
 @RequestMapping("/api/articulos")
 public class ArticuloController {
 
-    private final ArticuloRepository articuloRepository;
-
     @Autowired
-    public ArticuloController(ArticuloRepository articuloRepository) {
-        this.articuloRepository = articuloRepository;
-    }
+    private ArticuloRepository articuloRepository;
 
     @PostMapping
     public ResponseEntity<?> createArticulo(@RequestBody Articulo articulo) {
@@ -71,4 +68,10 @@ public class ArticuloController {
         }
         return ResponseEntity.ok(articuloRepository.findByUserId(userId));
     }
+
+    @GetMapping("verifyToken")
+    public String getMethodName(@AuthenticationPrincipal UserDetails userDetails) {
+        return userDetails.getUsername();
+    }
+    
 }

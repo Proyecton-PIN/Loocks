@@ -19,7 +19,7 @@ import jakarta.annotation.PostConstruct;
 public class JwtUtil {
   @Value("${jwt.secret}")
   private String jwtSecret;
-  private int jwtExpirationMs = 60000 * 60 * 24 * 30;
+  private long jwtExpirationMs = 60000L * 60 * 24 * 30;
   private SecretKey key;
 
   @PostConstruct

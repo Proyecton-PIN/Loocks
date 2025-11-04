@@ -5,8 +5,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -20,13 +22,15 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.Getter;
+import lombok.Setter;
 import pin.loocks.domain.enums.Estacion;
 
 @Entity
+@Getter
+@Setter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 public class Articulo {
@@ -80,31 +84,32 @@ public class Articulo {
   @Column(nullable = false)
     private String imageUrl;
 
-  // Additional getters and setters to allow JSON deserialization
-  public String getNombre() { return nombre; }
-  public void setNombre(String nombre) { this.nombre = nombre; }
+  // // Additional getters and setters to allow JSON deserialization
+  // public String getNombre() { return nombre; }
+  // public void setNombre(String nombre) { this.nombre = nombre; }
 
-  public String getMarca() { return marca; }
-  public void setMarca(String marca) { this.marca = marca; }
+  // public String getMarca() { return marca; }
+  // public void setMarca(String marca) { this.marca = marca; }
 
-  public String getColorPrimario() { return colorPrimario; }
-  public void setColorPrimario(String colorPrimario) { this.colorPrimario = colorPrimario; }
+  // public String getColorPrimario() { return colorPrimario; }
+  // public void setColorPrimario(String colorPrimario) { this.colorPrimario = colorPrimario; }
 
-  public List<String> getColoresSecundarios() { return coloresSecundarios; }
-  public void setColoresSecundarios(List<String> coloresSecundarios) { this.coloresSecundarios = coloresSecundarios; }
+  // public List<String> getColoresSecundarios() { return coloresSecundarios; }
+  // public void setColoresSecundarios(List<String> coloresSecundarios) { this.coloresSecundarios = coloresSecundarios; }
 
-  public Armario getArmario() { return armario; }
-  public void setArmario(Armario armario) { this.armario = armario; }
+  // public Armario getArmario() { return armario; }
+  // public void setArmario(Armario armario) { this.armario = armario; }
 
 
-  //METODOS GETTERS Y SETTERS
+  // //METODOS GETTERS Y SETTERS
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+  //   public Long getId() { return id; }
+  //   public void setId(Long id) { this.id = id; }
 
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+  //   public String getUserId() { return userId; }
+  //   public void setUserId(String userId) { this.userId = userId; }
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+  //   public String getImageUrl() { return imageUrl; }
+  //   public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+  
 }
