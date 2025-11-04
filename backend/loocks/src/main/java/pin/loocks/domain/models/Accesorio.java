@@ -12,5 +12,5 @@ import pin.loocks.domain.enums.TipoAccesorio;
 public class Accesorio extends Articulo{
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private TipoAccesorio tipo;
+  private TipoAccesorio tipoAccesorio;
 }

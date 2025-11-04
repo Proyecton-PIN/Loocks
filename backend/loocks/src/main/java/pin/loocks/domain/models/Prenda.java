@@ -12,5 +12,5 @@ import pin.loocks.domain.enums.TipoPrenda;
 public class Prenda extends Articulo{
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private TipoPrenda tipo;
+  private TipoPrenda tipoPrenda;
 }
