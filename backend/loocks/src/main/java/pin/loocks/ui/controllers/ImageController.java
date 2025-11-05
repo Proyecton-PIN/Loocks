@@ -30,6 +30,9 @@ import pin.loocks.logic.helpers.ImageHelper;
 public class ImageController {
   @Autowired
   private LLMApi llmApi;
+
+  @Autowired
+  private ImageHelper imageHelper;
   
   @PostMapping("removeBackground")
   public ResponseEntity<Resource> postMethodName(
@@ -44,8 +47,8 @@ public class ImageController {
       if (img.isEmpty()) {
         return ResponseEntity.badRequest().build();
       }
-        
-      File result = ImageHelper.removeBackground(tempFile);
+      
+      File result = imageHelper.removeBackground(tempFile);
       InputStreamResource resource = new InputStreamResource(new FileInputStream(result));
       
       return ResponseEntity.ok()
@@ -55,6 +58,7 @@ public class ImageController {
         .body(resource);
 
     } catch (Exception e) {
+      System.out.println(e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     } finally {
       tempFile.delete();

@@ -1,12 +1,64 @@
 package pin.loocks.logic.helpers;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.Transformation;
+import com.cloudinary.utils.ObjectUtils;
 
+import java.util.Map;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.file.Path;
 
 import net.coobird.thumbnailator.Thumbnails;
+
+@Component
 public class ImageHelper {
-  public static File removeBackground(File img){
-    return null;
+  @Value("${cloudinary.cloudURL}")
+  private String cloudinaryUrl;
+
+  public File removeBackground(File image){
+    try{
+    Cloudinary cloudinary = new Cloudinary(cloudinaryUrl);
+
+    String fileName = image.getName();
+
+    Map uploadImage = cloudinary.uploader().upload(image, ObjectUtils.emptyMap());
+    System.out.println("Resultado de la subida: " + uploadImage);
+
+    String publicId = (String) uploadImage.get("public_id");
+
+    String transformedUrl = cloudinary.url()
+            .transformation(new Transformation().effect("background_removal"))
+            .format("png")
+            .generate(publicId);
+    
+    System.out.println("URL de imagen transformada: " + transformedUrl);
+    
+    File downloadedFile = new File(image.getParent(), "fondo_quitado" + fileName);
+    
+    downloadFileFromURL(transformedUrl, downloadedFile);
+    
+    return downloadedFile;
+  }
+    
+    catch (IOException e) {
+      e.printStackTrace();
+      System.out.println(e);
+      return null;
+    }
+      catch (InterruptedException e) {
+      e.printStackTrace();
+      System.out.println(e);
+      return null;
+    }
+    
   }
 
 public static File zip(File image) {
@@ -35,5 +87,20 @@ public static File zip(File image) {
       e.printStackTrace();
       return null;
     }
-}
+  }
+
+  private static void downloadFileFromURL(String urlStr, File archivo) throws IOException, InterruptedException {
+    HttpClient client = HttpClient.newHttpClient();
+
+    HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create(urlStr))
+        .header("User-Agent", "Java HttpClient") // Agregar user-agent para evitar bloqueos por servidor
+        .build();
+
+    HttpResponse<Path> response = client.send(request, HttpResponse.BodyHandlers.ofFile(Path.of(archivo.getPath())));
+
+    if (response.statusCode() != 200) {
+        throw new IOException("Error al descargar archivo: código HTTP " + response.statusCode());
+    }
+  }
 }

@@ -14,8 +14,11 @@ public class ArticuloService {
   @Autowired
   private LLMApi llmApi;
   
+  @Autowired
+  private ImageHelper imageHelper;
+
   public ClothingAnalysisDTO generateDetails(File img) throws Exception{
-    File imageWithouBackground = ImageHelper.removeBackground(img);
+    File imageWithouBackground = imageHelper.removeBackground(img);
     File compressedImage = ImageHelper.zip(imageWithouBackground);
   
     ClothingAnalysisDTO analysis = llmApi.generateDetails(compressedImage);
