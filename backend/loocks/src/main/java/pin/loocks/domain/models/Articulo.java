@@ -38,10 +38,10 @@ public class Articulo {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false)
+  @Column(nullable = true)
   private String nombre;
 
-   @Column(nullable = true)
+  @Column(nullable = true)
   private String marca;
 
   @Temporal(TemporalType.DATE)
@@ -61,7 +61,7 @@ public class Articulo {
   private LocalDate fechaUltimoUso;
 
   @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
-  private Integer usos;
+  private Integer usos = 0;
 
   @ManyToMany
   @JoinTable(name = "articulo_outfit")

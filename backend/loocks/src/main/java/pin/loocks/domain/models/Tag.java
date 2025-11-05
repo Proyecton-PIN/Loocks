@@ -8,7 +8,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Entity
 public class Tag {
   @Id

@@ -2,7 +2,6 @@ package pin.loocks.ui.controllers;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import pin.loocks.data.repositories.ArmarioRepository;
 import pin.loocks.data.repositories.ArticuloRepository;
+import pin.loocks.data.repositories.TagsRepository;
+import pin.loocks.domain.dtos.ArticuloUploadRequestDTO;
 import pin.loocks.domain.dtos.ClothingAnalysisDTO;
 import pin.loocks.domain.models.Articulo;
+import pin.loocks.domain.models.CustomUserDetails;
 import pin.loocks.logic.services.ArticuloService;
 
 @RestController
@@ -35,29 +37,37 @@ public class ArticuloController {
   private ArticuloRepository articuloRepository;
 
   @Autowired
+  private ArmarioRepository armarioRepsitory;
+
+  @Autowired
+  private TagsRepository tagsRepsitory;
+
+  @Autowired
   private ArticuloService articuloService;
 
-  @PostMapping
-  public ResponseEntity<?> createArticulo(@RequestBody Articulo articulo) {
-    // Basic validation for required fields
-    if (articulo.getUserId() == null || articulo.getUserId().isBlank()) {
-      return ResponseEntity.badRequest().build();
-    }
-    if (articulo.getImageUrl() == null || articulo.getImageUrl().isBlank()) {
-      return ResponseEntity.badRequest().build();
-    }
+  @PostMapping("create")
+  public ResponseEntity<?> createArticulo(
+    @AuthenticationPrincipal CustomUserDetails userDetails,
+    @RequestBody ArticuloUploadRequestDTO dto
+  ) {
+    // // Basic validation for required fields
+    // if (articulo.getUserId() == null || articulo.getUserId().isBlank()) {
+    //   return ResponseEntity.badRequest().build();
+    // }
+    // if (articulo.getImageUrl() == null || articulo.getImageUrl().isBlank()) {
+    //   return ResponseEntity.badRequest().build();
+    // }
 
     try {
-      Articulo nuevo = articuloRepository.save(articulo);
+      Articulo articuloFromDTO = dto.toArticulo();
+      articuloFromDTO.setUserId(userDetails.getId());
+      articuloFromDTO.setArmario(armarioRepsitory.getReferenceById(dto.getArmarioId()));
+      if(dto.getTagsIds() != null) articuloFromDTO.setTags(tagsRepsitory.findAllById(dto.getTagsIds()));
+
+      Articulo nuevo = articuloRepository.save(articuloFromDTO);
       System.out.println("Articulo guardado con id=" + nuevo.getId());
 
-      URI location = ServletUriComponentsBuilder
-        .fromCurrentRequest()
-        .path("/{id}")
-        .buildAndExpand(nuevo.getId())
-        .toUri();
-
-      return ResponseEntity.created(location).body(nuevo);
+      return ResponseEntity.ok(nuevo.getId());
     } catch (Exception e) {
       System.err.println("Error al guardar el articulo: " + e.getMessage());
       e.printStackTrace();

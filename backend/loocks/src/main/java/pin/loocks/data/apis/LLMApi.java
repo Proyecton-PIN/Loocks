@@ -95,5 +95,5 @@ public class LLMApi {
 
     ObjectMapper objectMapper = new ObjectMapper();
     return objectMapper.readValue(cleanJson, ClothingAnalysisDTO.class);
-}
+  }
 }

@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +15,7 @@ import lombok.AllArgsConstructor;
 import pin.loocks.domain.dtos.LoginRequestDTO;
 import pin.loocks.domain.dtos.RegisterRequestDTO;
 import pin.loocks.domain.dtos.TokenResponseDTO;
+import pin.loocks.domain.models.CustomUserDetails;
 import pin.loocks.domain.models.Perfil;
 import pin.loocks.logic.services.AuthService;
 import pin.loocks.ui.config.JwtUtil;
@@ -42,12 +42,9 @@ public class AuthController {
       )
     );
     
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-    // Perfil perfil = perfilService.loginUser(loginRequest);
-    // if(perfil == null) return ResponseEntity.badRequest().build();
-
-    String token = jwtUtil.generateToken(userDetails.getUsername());
+    String token = jwtUtil.generateToken(userDetails.getEmail());
 
     return ResponseEntity.ok(new TokenResponseDTO(token));
   }
