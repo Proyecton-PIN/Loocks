@@ -9,19 +9,31 @@ public class ImageHelper {
     return null;
   }
 
-  public static File zip(File image){
+public static File zip(File image) {
     try {
-      File output = new File(image.getName());
+      String fileName = image.getName();
+      String extension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
       
-      Thumbnails.of(image)
-        .scale(1.0)
-        .outputQuality(0.7)
-        .toFile(output);
+      String outputFormat = extension.equals("png") ? "jpg" : extension;
+      double quality = extension.equals("png") ? 0.7 : 0.5;
 
+      File output = new File(image.getParent(), fileName.replace("." + extension, "_compressed." + outputFormat));
+
+      Thumbnails.of(image)
+          .scale(1.0)
+          .outputQuality(quality)
+          .outputFormat(outputFormat)
+          .toFile(output); 
+
+      if (output.length() >= image.length()) {
+          output.delete();
+          return image;
+      } 
       return output;
+        
     } catch (IOException e) {
-        e.printStackTrace();
-        return null;
+      e.printStackTrace();
+      return null;
     }
-  }
+}
 }
