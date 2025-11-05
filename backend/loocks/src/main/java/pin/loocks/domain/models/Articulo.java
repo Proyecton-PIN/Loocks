@@ -27,6 +27,7 @@ import jakarta.persistence.TemporalType;
 import lombok.Getter;
 import lombok.Setter;
 import pin.loocks.domain.enums.Estacion;
+import pin.loocks.domain.enums.TipoArticulo;
 
 @Entity
 @Getter
@@ -83,6 +84,10 @@ public class Articulo {
 
   @Column(nullable = false)
     private String imageUrl;
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private TipoArticulo tipo = TipoArticulo.ARTICULO;
 
   // // Additional getters and setters to allow JSON deserialization
   // public String getNombre() { return nombre; }

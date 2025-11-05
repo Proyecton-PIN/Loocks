@@ -22,11 +22,16 @@ import org.springframework.web.multipart.MultipartFile;
 import io.swagger.v3.oas.annotations.Parameter;
 import pin.loocks.data.repositories.ArmarioRepository;
 import pin.loocks.data.repositories.ArticuloRepository;
+import pin.loocks.data.repositories.PrendaRepository;
+import pin.loocks.data.repositories.AccesorioRepository;
 import pin.loocks.data.repositories.TagsRepository;
-import pin.loocks.domain.dtos.ArticuloUploadRequestDTO;
+import pin.loocks.domain.dtos.AccesorioUploadRequestDTO;
+import pin.loocks.domain.dtos.PrendaUploadRequestDTO;
 import pin.loocks.domain.dtos.ClothingAnalysisDTO;
+import pin.loocks.domain.models.Accesorio;
 import pin.loocks.domain.models.Articulo;
 import pin.loocks.domain.models.CustomUserDetails;
+import pin.loocks.domain.models.Prenda;
 import pin.loocks.logic.services.ArticuloService;
 
 @RestController
@@ -37,6 +42,12 @@ public class ArticuloController {
   private ArticuloRepository articuloRepository;
 
   @Autowired
+  private PrendaRepository prendaRepository;
+
+  @Autowired
+  private AccesorioRepository accesorioRepository;
+
+  @Autowired
   private ArmarioRepository armarioRepsitory;
 
   @Autowired
@@ -45,35 +56,51 @@ public class ArticuloController {
   @Autowired
   private ArticuloService articuloService;
 
-  @PostMapping("create")
-  public ResponseEntity<?> createArticulo(
+  @PostMapping("create/prenda")
+  public ResponseEntity<?> createPrenda(
     @AuthenticationPrincipal CustomUserDetails userDetails,
-    @RequestBody ArticuloUploadRequestDTO dto
+    @RequestBody PrendaUploadRequestDTO dto
   ) {
-    // // Basic validation for required fields
-    // if (articulo.getUserId() == null || articulo.getUserId().isBlank()) {
-    //   return ResponseEntity.badRequest().build();
-    // }
-    // if (articulo.getImageUrl() == null || articulo.getImageUrl().isBlank()) {
-    //   return ResponseEntity.badRequest().build();
-    // }
-
     try {
-      Articulo articuloFromDTO = dto.toArticulo();
-      articuloFromDTO.setUserId(userDetails.getId());
-      articuloFromDTO.setArmario(armarioRepsitory.getReferenceById(dto.getArmarioId()));
-      if(dto.getTagsIds() != null) articuloFromDTO.setTags(tagsRepsitory.findAllById(dto.getTagsIds()));
+      Prenda prendaFromDTO = dto.toPrenda();
+      prendaFromDTO.setUserId(userDetails.getId());
+      prendaFromDTO.setArmario(armarioRepsitory.getReferenceById(dto.getArmarioId()));
+      if(dto.getTagsIds() != null) prendaFromDTO.setTags(tagsRepsitory.findAllById(dto.getTagsIds()));
 
-      Articulo nuevo = articuloRepository.save(articuloFromDTO);
-      System.out.println("Articulo guardado con id=" + nuevo.getId());
+  Prenda nuevo = prendaRepository.save(prendaFromDTO);
+  System.out.println("Prenda guardada con id=" + nuevo.getId());
 
-      return ResponseEntity.ok(nuevo.getId());
+  return ResponseEntity.ok(nuevo.getId());
     } catch (Exception e) {
-      System.err.println("Error al guardar el articulo: " + e.getMessage());
+      System.err.println("Error al guardar la prenda: " + e.getMessage());
       e.printStackTrace();
       return ResponseEntity.status(500).body(java.util.Map.of("error", e.getMessage()));
     }
   }
+
+   @PostMapping("create/accesorio")
+  public ResponseEntity<?> createAccesorio(
+    @AuthenticationPrincipal CustomUserDetails userDetails,
+    @RequestBody AccesorioUploadRequestDTO dto
+  ) {
+    try {
+      Accesorio accesorioFromDTO = dto.toAccesorio();
+      accesorioFromDTO.setUserId(userDetails.getId());
+      accesorioFromDTO.setArmario(armarioRepsitory.getReferenceById(dto.getArmarioId()));
+      if(dto.getTagsIds() != null) accesorioFromDTO.setTags(tagsRepsitory.findAllById(dto.getTagsIds()));
+
+  Accesorio nuevo = accesorioRepository.save(accesorioFromDTO);
+  System.out.println("Accesorio guardado con id=" + nuevo.getId());
+
+  return ResponseEntity.ok(nuevo.getId());
+    } catch (Exception e) {
+      System.err.println("Error al guardar el accesorio: " + e.getMessage());
+      e.printStackTrace();
+      return ResponseEntity.status(500).body(java.util.Map.of("error", e.getMessage()));
+    }
+  }
+
+  
 
   @GetMapping("/{id}")
   public ResponseEntity<Articulo> getArticuloById(@PathVariable Long id) {
