@@ -1,7 +1,6 @@
-import { ApiUrl } from '@/constants/api-constants';
+import { useAuth } from '@/hooks/useAuth';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Text,
@@ -14,88 +13,24 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const error = useAuth((s) => s.error);
+  const login = useAuth((s) => s.login);
   const [isLoading, setIsLoading] = useState(false);
 
-  // bandera de montaje
-  const isMounted = useRef(true);
-
-  useEffect(() => {
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
   const handleSubmit = () => {
-    setError('');
-
-    if (!email || !password) {
-      setError('Por favor, completa todos los campos');
-      return;
-    }
-
-    if (!validateEmail(email)) {
-      setError('Por favor, ingresa un correo electrónico válido');
-      return;
-    }
-
-    if (password.length < 5) {
-      setError('La contraseña debe tener al menos 5 caracteres');
-      return;
-    }
-
     setIsLoading(true);
 
-    setTimeout(() => {
-      fetch(`${ApiUrl}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
-        .then(async (res) => {
-          if (!isMounted.current) return;
-
-          if (!res.ok) {
-            let message = 'Error al iniciar sesión';
-            if (res.status === 401) message = 'Credenciales incorrectas';
-            else {
-              try {
-                const body = await res.json();
-                if (body?.message) message = body.message;
-              } catch (e) {
-              }
-            }
-            setError(message);
-            setIsLoading(false);
-            return;
-          }
-
-          router.replace('/(tabs)/armario');
-          setIsLoading(false);
-          setEmail('');
-          setPassword('');
-        })
-        .catch(() => {
-          if (!isMounted.current) return;
-          setIsLoading(false);
-          setError('Error de red al iniciar sesión');
-        });
-    }, 1000);
+    login(email, password).then(() => {
+      setIsLoading(false);
+      // setPassword('');
+    });
   };
 
   return (
-    <View className="flex-1 bg-black justify-center px-6">
+    <View className="flex-1 justify-center px-6">
       <View className="flex-1 justify-center">
         {/* Header */}
         <View className="mb-12 items-center">
-          <Text className="text-3xl font-bold text-white mb-2">
-            {ApiUrl}
-          </Text>
           <Text className="text-gray-400">Ingresa tus credenciales</Text>
         </View>
 
@@ -132,6 +67,7 @@ export default function Login() {
               placeholderTextColor="#9CA3AF"
               secureTextEntry={!showPassword}
               value={password}
+              autoCapitalize="none"
               onChangeText={setPassword}
               onSubmitEditing={handleSubmit}
             />
@@ -149,11 +85,11 @@ export default function Login() {
         </View>
 
         {/* Error */}
-        {error ? (
+        {error && (
           <View className="bg-red-100 border border-red-300 rounded-xl p-3 mb-4">
             <Text className="text-red-700 text-center text-sm">{error}</Text>
           </View>
-        ) : null}
+        )}
 
         {/* Botón */}
         <TouchableOpacity

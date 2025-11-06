@@ -1,52 +1,60 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
 
 export default function TabLayout() {
   return (
     <Tabs
-      screenOptions={({ route }) => ({
+      screenOptions={() => ({
+        sceneStyle: {
+          backgroundColor: '#000',
+        },
         headerShown: false,
+        tabBarActiveBackgroundColor: '#111',
         tabBarStyle: {
-          position: 'absolute',
-          bottom: 15,
-          width: '95%',                    
-          marginRight: '2%',
           paddingTop: 10,
-          marginLeft: '2%',      
-          elevation: 5,                  
-          backgroundColor: '#111',        
-          borderRadius: 25,               
-          height: 70,                     
-          paddingBottom: Platform.OS === 'ios' ? 5 : 0,
-          shadowColor: 'white',       
-          shadowOpacity: 0.25,
-          shadowOffset: { width: 0, height: 5 },
-          shadowRadius: 10,
+          backgroundColor: '#111',
+          height: 70,
           alignItems: 'center',
           justifyContent: 'center',
+          borderWidth: 0,
+          borderColor: 'transparent',
         },
         tabBarActiveTintColor: '#CFF018',
         tabBarInactiveTintColor: '#5539F7',
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName = '';
-
-          if (route.name === 'principal') iconName = focused ? 'home' : 'home-outline';
-          else if (route.name === 'armario') iconName = focused ? 'cube' : 'cube-outline';
-          else if (route.name === 'calendario') iconName = focused ? 'calendar' : 'calendar-outline';
-
-          return <Ionicons name={iconName as any} size={26} color={color} />;
-        },
         tabBarLabelStyle: {
           fontSize: 10,
           fontWeight: '600',
-          marginBottom: 0,             // labels pegados al icono
+          marginBottom: 0, // labels pegados al icono
         },
       })}
     >
-      <Tabs.Screen name="principal" options={{ title: 'Principal' }} />
-      <Tabs.Screen name="armario" options={{ title: 'Armario' }} />
-      <Tabs.Screen name="calendario" options={{ title: 'Calendario' }} />
+      <Tabs.Screen
+        name="calendario"
+        options={{
+          title: 'Calendario',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="principal"
+        options={{
+          title: 'Principal',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="armario"
+        options={{
+          title: 'Armario',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="cube-outline" size={size} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

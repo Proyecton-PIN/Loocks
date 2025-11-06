@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Stack } from 'expo-router';
 import { useState } from 'react';
 import type { ListRenderItem } from 'react-native';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
@@ -41,8 +40,6 @@ export default function Armario() {
 
   const ListHeader = () => (
     <View>
-      <Stack.Screen options={{ headerShown: false }} />
-
       {/* Estadísticas */}
       <View className="flex-row justify-between mb-6">
         <View className="bg-neutral-900 justify-between p-3 rounded-xl w-[31%]">
@@ -78,8 +75,8 @@ export default function Armario() {
           </TouchableOpacity>
         ))}
       </View>
-          {/* Botón Añadir según pestaña */}
-          
+      {/* Botón Añadir según pestaña */}
+
       {activeTab === 'prendas' && <BotonCamara />}
 
       {activeTab === 'outfits' && (
@@ -153,7 +150,7 @@ export default function Armario() {
   };
 
   return (
-    <View className="flex-1 bg-black px-4">
+    <View className="flex-1 px-4">
       {renderContent()}
 
       {/* Botón inferior */}
