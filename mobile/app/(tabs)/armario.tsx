@@ -1,4 +1,5 @@
 import http from '@/lib/data/http';
+import { SecureStore } from '@/lib/logic/services/secure-store-service';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import type { ListRenderItem } from 'react-native';
@@ -35,8 +36,6 @@ export default function Armario() {
   const [loading, setLoading] = useState<boolean>(false);
   const [selected, setSelected] = useState<Prenda | null>(null);
 
-  const userId = '1';
-
   useEffect(() => {
     void fetchPrendas();
   }, []);
@@ -44,6 +43,8 @@ export default function Armario() {
   async function fetchPrendas() {
     try {
       setLoading(true);
+      const storedUserId = await SecureStore.get('userId');
+      const userId = storedUserId ?? '1';
       const data = await http.get<Prenda[]>(`articulos/${userId}`);
       setPrendas(data ?? []);
     } catch (err) {

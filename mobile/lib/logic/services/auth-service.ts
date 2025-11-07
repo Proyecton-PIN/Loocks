@@ -8,12 +8,15 @@ export async function login(
   password: string,
 ): Promise<string | undefined> {
   try {
-    const resp = await http.post<{ token: string }>('auth/login', {
+    const resp = await http.post<{ token: string; userId: string }>('auth/login', {
       body: JSON.stringify({ email, password }),
     });
 
+
     SecureStore.save('token', resp.token);
     http.init(resp.token);
+    SecureStore.save('userId', resp.userId);
+
   } catch (e) {
     if (e instanceof NetworkError) {
       return e.message;

@@ -1,6 +1,6 @@
 import { ApiUrl } from '@/constants/api-constants';
+import { SecureStore } from '@/lib/logic/services/secure-store-service';
 import { Camera, CameraView } from 'expo-camera';
-import Constants from 'expo-constants';
 import { useRef, useState } from 'react';
 import {
   Alert,
@@ -46,7 +46,8 @@ export default function BotonCamara() {
     try {
       const blob = await fetch(fotoUri).then((r) => r.blob());
 
-      const userId = '1';
+  const storedUserId = await SecureStore.get('userId');
+  const userId = storedUserId ?? '1';
       const fileName = `${Date.now()}.png`;
       const filePath = `users/${userId}/${fileName}`;
       const SUPABASE_KEY =
@@ -77,7 +78,7 @@ export default function BotonCamara() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            userId: '1',
+            userId,
             nombre: 'Prueba',
             tipo: 'CAMISETA',
             colorPrimario: 'RRGGBBAA',

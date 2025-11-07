@@ -116,31 +116,6 @@ public class ArticuloController {
     }
     return ResponseEntity.ok(articuloRepository.findByUserId(userId));
   }
-
-  
-  @PostMapping(value = "generateDetails", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<ClothingAnalysisDTO> postMethodName(
-    @AuthenticationPrincipal UserDetails userDetails,
-    @Parameter(description = "Image file", required = true)
-    @RequestParam("file") MultipartFile img
-  ) throws IOException {
-    File tempFile = File.createTempFile("upload-", img.getOriginalFilename());
-    img.transferTo(tempFile);
-
-    try {
-      if (img.isEmpty()) {
-        return ResponseEntity.badRequest().build();
-      }
-        
-      ClothingAnalysisDTO result = this.articuloService.generateDetails(tempFile);
-      return ResponseEntity.ok(result);
-
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    } finally {
-      tempFile.delete();
-    }
-  }
 }
 
 
