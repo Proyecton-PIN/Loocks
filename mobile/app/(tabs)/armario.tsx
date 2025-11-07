@@ -1,10 +1,26 @@
+import http from '@/lib/data/http';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ListRenderItem } from 'react-native';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import BotonCamara from '../../components/boton-camara';
 
-type Prenda = { id: string; img?: any };
+type Prenda = {
+  id: string;
+  nombre?: string;
+  tipo?: string;
+  imagenUrl?: string;
+  colorPrimario?: string;
+  fechaCompra?: string;
+};
 type Outfit = { id: string; name: string };
 type Mood = { id: string; name: string };
 
@@ -13,15 +29,49 @@ export default function Armario() {
     'prendas',
   );
 
-  const prendas: Prenda[] = [];
-  const outfits: Outfit[] = [];
-  const moods: Mood[] = [];
+  const [prendas, setPrendas] = useState<Prenda[]>([]);
+  const [outfits] = useState<Outfit[]>([]);
+  const [moods] = useState<Mood[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selected, setSelected] = useState<Prenda | null>(null);
 
-  const renderPrenda: ListRenderItem<Prenda> = () => (
-    <View className="w-[48%] h-44 bg-neutral-800 rounded-xl mb-3 items-center justify-center">
-      <Ionicons name="shirt-outline" size={40} color="#555" />
-      <Text className="text-gray-500 mt-2 text-sm">Prenda</Text>
-    </View>
+  const userId = '1';
+
+  useEffect(() => {
+    void fetchPrendas();
+  }, []);
+
+  async function fetchPrendas() {
+    try {
+      setLoading(true);
+      const data = await http.get<Prenda[]>(`articulos/${userId}`);
+      setPrendas(data ?? []);
+    } catch (err) {
+      console.error('Error cargando prendas:', err);
+      setPrendas([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const renderPrenda: ListRenderItem<Prenda> = ({ item }) => (
+    <TouchableOpacity
+      onPress={() => setSelected(item)}
+      className="w-[48%] h-44 bg-neutral-800 rounded-xl mb-3 overflow-hidden"
+    >
+      {item.imagenUrl ? (
+        <Image
+          source={{ uri: item.imagenUrl }}
+          className="w-full h-full"
+          resizeMode="cover"
+        />
+      ) : (
+        <View className="flex-1 items-center justify-center">
+          <Ionicons name="shirt-outline" size={40} color="#555" />
+          <Text className="text-gray-500 mt-2 text-sm">Prenda</Text>
+        </View>
+      )}
+    </TouchableOpacity>
   );
 
   const renderOutfit: ListRenderItem<Outfit> = () => (
@@ -106,9 +156,13 @@ export default function Armario() {
             columnWrapperStyle={{ justifyContent: 'space-between' }}
             contentContainerStyle={{ paddingBottom: 120 }}
             ListEmptyComponent={
-              <Text className="text-gray-500 text-center mt-10">
-                No hay prendas todavía
-              </Text>
+              loading ? (
+                <ActivityIndicator size="large" color="#999" style={{ marginTop: 30 }} />
+              ) : (
+                <Text className="text-gray-500 text-center mt-10">
+                  No hay prendas todavía
+                </Text>
+              )
             }
           />
         );
@@ -152,6 +206,42 @@ export default function Armario() {
   return (
     <View className="flex-1 px-4">
       {renderContent()}
+      {/* Modal detalle de prenda */}
+      <Modal visible={!!selected} animationType="slide" transparent={false}>
+        <View className="flex-1 bg-black px-4 py-6">
+          {selected?.imagenUrl ? (
+            <Image
+              source={{ uri: selected.imagenUrl }}
+              className="w-full h-2/3 rounded-xl mb-4"
+              resizeMode="contain"
+            />
+          ) : (
+            <View className="w-full h-2/3 bg-neutral-900 rounded-xl mb-4 items-center justify-center">
+              <Ionicons name="shirt-outline" size={48} color="#555" />
+            </View>
+          )}
+
+          <View className="px-2">
+            <Text className="text-white text-2xl font-bold mb-2">{selected?.nombre ?? 'Prenda'}</Text>
+            {selected?.tipo && <Text className="text-gray-400 mb-1">Tipo: {selected.tipo}</Text>}
+            {selected?.colorPrimario && (
+              <Text className="text-gray-400 mb-1">Color: {selected.colorPrimario}</Text>
+            )}
+            {selected?.fechaCompra && (
+              <Text className="text-gray-400 mb-1">Comprada: {new Date(selected.fechaCompra).toLocaleDateString()}</Text>
+            )}
+          </View>
+
+          <View className="flex-row justify-around mt-6">
+            <TouchableOpacity
+              onPress={() => setSelected(null)}
+              className="bg-gray-700 px-4 py-3 rounded-md"
+            >
+              <Text className="text-white">Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* Botón inferior */}
       <View className="absolute bottom-6 left-0 right-0 items-center"></View>
