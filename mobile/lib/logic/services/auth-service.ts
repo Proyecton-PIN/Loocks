@@ -33,9 +33,8 @@ export async function checkAuth(): Promise<boolean> {
   try {
     authenticated = await http.get<boolean>('auth/check');
   } catch (e) {
-    if (e! instanceof NetworkError) {
-      authenticated = false;
-    }
+    if (e instanceof NetworkError) return true;
+    authenticated = false;
   }
 
   if (!authenticated) {
