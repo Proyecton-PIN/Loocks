@@ -1,6 +1,7 @@
 import http from '@/lib/data/http';
 import { HttpError } from '@/lib/domain/errors/http-error';
 import { NetworkError } from '@/lib/domain/errors/network-error';
+import { router } from 'expo-router';
 import { SecureStore } from './secure-store-service';
 
 export async function login(
@@ -16,6 +17,8 @@ export async function login(
     SecureStore.save('token', resp.token);
     http.init(resp.token);
     SecureStore.save('userId', resp.userId);
+
+    router.replace('/(tabs)/principal');
 
   } catch (e) {
     if (e instanceof NetworkError) {
@@ -36,9 +39,7 @@ export async function checkAuth(): Promise<boolean> {
   try {
     authenticated = await http.get<boolean>('auth/check');
   } catch (e) {
-    if (e! instanceof NetworkError) {
       authenticated = false;
-    }
   }
 
   if (!authenticated) {
