@@ -110,10 +110,7 @@ public class ArticuloController {
   }
 
   @GetMapping
-  public ResponseEntity<List<Articulo>> getArticulosByUser(@RequestParam(required = false) String userId) {
-    if (userId == null) {
-      return ResponseEntity.ok(articuloRepository.findAll());
-    }
+  public ResponseEntity<List<Articulo>> getArticulosByUser(@RequestParam(required = true) String userId) {
     return ResponseEntity.ok(articuloRepository.findByUserId(userId));
   }
 }
