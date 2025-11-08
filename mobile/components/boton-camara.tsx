@@ -83,7 +83,7 @@ export default function BotonCamara() {
             tipo: 'CAMISETA',
             colorPrimario: 'RRGGBBAA',
             fechaCompra: new Date().toISOString(),
-            imagenUrl: uploadUrl,
+            imageUrl: uploadUrl,
           }),
         });
       } catch (dbErr) {

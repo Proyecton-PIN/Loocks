@@ -18,7 +18,7 @@ type Prenda = {
   id: string;
   nombre?: string;
   tipo?: string;
-  imagenUrl?: string;
+  imageUrl?: string;
   colorPrimario?: string;
   fechaCompra?: string;
 };
@@ -60,9 +60,9 @@ export default function Armario() {
       onPress={() => setSelected(item)}
       className="w-[48%] h-44 bg-neutral-800 rounded-xl mb-3 overflow-hidden"
     >
-      {item.imagenUrl ? (
+      {item.imageUrl ? (
         <Image
-          source={{ uri: item.imagenUrl }}
+          source={{ uri: item.imageUrl }}
           className="w-full h-full"
           resizeMode="cover"
         />
@@ -150,7 +150,7 @@ export default function Armario() {
           <FlatList
             key="prendas"
             data={prendas}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => String(item.id)}
             renderItem={renderPrenda}
             numColumns={2}
             ListHeaderComponent={ListHeader}
@@ -210,9 +210,9 @@ export default function Armario() {
       {/* Modal detalle de prenda */}
       <Modal visible={!!selected} animationType="slide" transparent={false}>
         <View className="flex-1 bg-black px-4 py-6">
-          {selected?.imagenUrl ? (
+            {selected?.imageUrl ? (
             <Image
-              source={{ uri: selected.imagenUrl }}
+              source={{ uri: selected.imageUrl }}
               className="w-full h-2/3 rounded-xl mb-4"
               resizeMode="contain"
             />
