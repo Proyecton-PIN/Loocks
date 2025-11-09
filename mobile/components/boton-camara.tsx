@@ -46,8 +46,7 @@ export default function BotonCamara() {
     try {
       const blob = await fetch(fotoUri).then((r) => r.blob());
 
-  const storedUserId = await SecureStore.get('userId');
-  const userId = storedUserId ?? '1';
+  const userId = await SecureStore.get('userId');
       const fileName = `${Date.now()}.png`;
       const filePath = `users/${userId}/${fileName}`;
       const SUPABASE_KEY =

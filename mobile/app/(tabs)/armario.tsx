@@ -16,7 +16,7 @@ import {
 import BotonCamara from '../../components/boton-camara';
 
 type Prenda = {
-  id: string;
+  id: number;
   nombre?: string;
   tipo?: string;
   imageUrl?: string;
@@ -45,10 +45,10 @@ export default function Armario() {
   async function fetchPrendas() {
     try {
       setLoading(true);
-      const storedUserId = await SecureStore.get('userId');
-      const userId = storedUserId ?? '1';
-      const data = await http.get<Prenda[]>(`articulos/${userId}`);
+  const UserId = await SecureStore.get('userId');
+      const data = await http.get<Prenda[]>(`articulos?userId=${encodeURIComponent(String(UserId))}`);
       setPrendas(data ?? []);
+      console.log('Prendas cargadas:', data);
     } catch (err) {
       console.error('Error cargando prendas:', err);
       setPrendas([]);
@@ -96,8 +96,8 @@ export default function Armario() {
       {/* Estadísticas */}
       <View className="flex-row justify-between mb-6">
         <View className="bg-neutral-900 justify-between p-3 rounded-xl w-[31%]">
-          <Text className="text-gray-400 text-xm">Prendas</Text>
-          <Text className="text-white my-4 text-4xl font-bold">127</Text>
+          <Text className="text-gray-400 text-xm">Articulos</Text>
+          <Text className="text-white my-4 text-4xl font-bold">{prendas.length}</Text>
           <Text className="text-gray-500 text-xm">+12 este mes</Text>
         </View>
         <View className="bg-neutral-900  justify-between p-3 rounded-xl w-[31%]">
@@ -112,7 +112,6 @@ export default function Armario() {
         </View>
       </View>
 
-      {/* Tabs funcionales */}
       <View className="flex-row justify-around border-b border-neutral-700 mb-4">
         {(['prendas', 'outfits', 'moods'] as const).map((tab) => (
           <TouchableOpacity
@@ -128,7 +127,6 @@ export default function Armario() {
           </TouchableOpacity>
         ))}
       </View>
-      {/* Botón Añadir según pestaña */}
 
         {activeTab === 'prendas' && <BotonCamara />}
 
