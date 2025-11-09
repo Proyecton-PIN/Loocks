@@ -43,10 +43,8 @@ export default function Armario() {
   async function fetchPrendas() {
     try {
       setLoading(true);
-  const storedUserId = await SecureStore.get('userId');
-  const userId = storedUserId ?? '1';
-  // Backend expects a query param: /api/articulos?userId=...
-  const data = await http.get<Prenda[]>(`articulos?userId=${encodeURIComponent(String(userId))}`);
+  const UserId = await SecureStore.get('userId');
+      const data = await http.get<Prenda[]>(`articulos?userId=${encodeURIComponent(String(UserId))}`);
       setPrendas(data ?? []);
       console.log('Prendas cargadas:', data);
     } catch (err) {

@@ -172,21 +172,17 @@ public class ImageController {
 
     try {
       if (img.isEmpty()) return ResponseEntity.badRequest().body(Map.of("error", "empty file"));
-
-      // 1) compress
       File compressed = ImageHelper.zip(tempFile);
 
-      // 2) remove background
       File noBg = imageHelper.removeBackground(compressed);
 
       if (noBg == null) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "background removal failed"));
 
-      // ensure PNG
+ 
       String outName = System.currentTimeMillis() + ".png";
       File pngFile = new File(noBg.getParent(), outName);
       Thumbnails.of(noBg).scale(1.0).outputFormat("png").toFile(pngFile);
 
-      // 3) upload to Supabase
       String userId = userDetails != null ? userDetails.getId() : "1";
       String filePath = String.format("users/%s/%s", userId, outName);
       String uploadUrl = SUPABASE_BASE + "/" + filePath;
@@ -206,19 +202,15 @@ public class ImageController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "upload failed", "status", resp.statusCode(), "body", resp.body()));
       }
 
-      // 4) analyze
       ClothingAnalysisDTO details = llmApi.generateDetails(pngFile);
 
-      // 5) decide and save
       boolean isAccessory = determineAccessory(details);
 
-      // ensure perfil & armario
       Perfil perfil = perfilRepository.findById(userId).orElse(null);
       Armario armario = null;
       if (perfil != null && perfil.getArmarios() != null && !perfil.getArmarios().isEmpty()) {
         armario = perfil.getArmarios().get(0);
       } else {
-        // create default armario linked to perfil if available
         armario = new Armario();
         try {
           java.lang.reflect.Field fName = Armario.class.getDeclaredField("nombre");
