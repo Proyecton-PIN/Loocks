@@ -1,18 +1,14 @@
-import Constants from "expo-constants";
+import { ApiUrl } from '@/constants/api-constants';
+import { Ionicons } from '@expo/vector-icons';
 import { Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert, FlatList, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 type Articulo = {
   id: number;
   imageUrl?: string;
   nombre?: string;
 };
-
-function getApiUrl() {
-  const maybe = (Constants as any).manifest?.extra?.API_URL || (process.env?.API_URL as string);
-  return maybe || "http://192.168.43.239:8080";
-}
 
 export default function CrearOutfit() {
   const [articulos, setArticulos] = useState<Articulo[]>([]);
@@ -21,17 +17,41 @@ export default function CrearOutfit() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchArticulos();
+    void fetchArticulos();
   }, []);
 
   async function fetchArticulos() {
+    setLoading(true);
     try {
-      const res = await fetch(`${getApiUrl()}/api/articulos`);
-      const data = await res.json();
-      setArticulos(data || []);
+      const res = await fetch(`${ApiUrl}/api/articulos`);
+      if (!res.ok) {
+        const txt = await res.text().catch(() => null);
+        console.error('Error fetching articulos:', res.status, txt);
+        setArticulos([]);
+        return;
+      }
+
+      const text = await res.text();
+      if (!text) {
+        setArticulos([]);
+        return;
+      }
+
+      let parsed: any = null;
+      try {
+        parsed = JSON.parse(text);
+      } catch (e) {
+        console.error('Invalid JSON from /api/articulos:', e, text);
+        setArticulos([]);
+        return;
+      }
+
+      setArticulos(Array.isArray(parsed) ? parsed : []);
     } catch (e) {
       console.error(e);
       Alert.alert("Error", "No se pudieron cargar las prendas.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -58,7 +78,7 @@ export default function CrearOutfit() {
         articuloIds: selected,
       };
 
-      const res = await fetch(`${getApiUrl()}/api/outfits`, {
+      const res = await fetch(`${ApiUrl}/api/outfits`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -69,7 +89,7 @@ export default function CrearOutfit() {
         setSelected([]);
         setMood("");
       } else {
-        const txt = await res.text();
+        const txt = await res.text().catch(() => null);
         console.error(res.status, txt);
         Alert.alert("Error", "No se pudo crear el outfit.");
       }
@@ -84,37 +104,26 @@ export default function CrearOutfit() {
   const renderItem = ({ item }: { item: Articulo }) => {
     const isSel = selected.includes(item.id);
     return (
-      <TouchableOpacity onPress={() => toggleSelect(item.id)} style={{ width: "48%", marginBottom: 10 }}>
-        <View
-          style={{
-            borderWidth: isSel ? 3 : 1,
-            borderColor: isSel ? "#00f" : "#666",
-            borderRadius: 8,
-            overflow: "hidden",
-          }}
-        >
-          {item.imageUrl ? (
-            <Image
-              source={{ uri: item.imageUrl }}
-              style={{ width: "100%", height: 140, resizeMode: "cover" }}
-            />
-          ) : (
-            <View
-              style={{
-                width: "100%",
-                height: 140,
-                backgroundColor: "#222",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text style={{ color: "white" }}>Sin imagen</Text>
-            </View>
-          )}
-          <View style={{ padding: 8 }}>
-            <Text style={{ color: "white" }}>{item.nombre ?? `Prenda #${item.id}`}</Text>
+      <TouchableOpacity
+        onPress={() => toggleSelect(item.id)}
+        className="w-[48%] h-44 bg-neutral-800 rounded-xl mb-3 overflow-hidden"
+        style={{
+          borderWidth: isSel ? 3 : 0,
+          borderColor: isSel ? "#CFF018" : "transparent",
+        }}
+      >
+        {item.imageUrl ? (
+          <Image
+            source={{ uri: item.imageUrl }}
+            className="w-full h-full"
+            resizeMode="cover"
+          />
+        ) : (
+          <View className="flex-1 items-center justify-center">
+            <Ionicons name="shirt-outline" size={40} color="#555" />
+            <Text className="text-gray-500 mt-2 text-sm">{item.nombre ?? `Prenda #${item.id}`}</Text>
           </View>
-        </View>
+        )}
       </TouchableOpacity>
     );
   };
@@ -146,6 +155,14 @@ export default function CrearOutfit() {
           keyExtractor={(i: any) => String(i.id)}
           renderItem={renderItem}
           columnWrapperStyle={{ justifyContent: "space-between" }}
+          contentContainerStyle={{ paddingBottom: 120 }}
+          ListEmptyComponent={
+            loading ? (
+              <ActivityIndicator size="large" color="#999" style={{ marginTop: 30 }} />
+            ) : (
+              <Text className="text-gray-500 text-center mt-10">No hay prendas disponibles</Text>
+            )
+          }
         />
 
         <TouchableOpacity
