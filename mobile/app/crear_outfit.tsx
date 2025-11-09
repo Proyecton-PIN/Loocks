@@ -1,4 +1,5 @@
-import { ApiUrl } from '@/constants/api-constants';
+import http from '@/lib/data/http';
+import { SecureStore } from '@/lib/logic/services/secure-store-service';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -21,35 +22,15 @@ export default function CrearOutfit() {
   }, []);
 
   async function fetchArticulos() {
-    setLoading(true);
     try {
-      const res = await fetch(`${ApiUrl}/api/articulos`);
-      if (!res.ok) {
-        const txt = await res.text().catch(() => null);
-        console.error('Error fetching articulos:', res.status, txt);
-        setArticulos([]);
-        return;
-      }
-
-      const text = await res.text();
-      if (!text) {
-        setArticulos([]);
-        return;
-      }
-
-      let parsed: any = null;
-      try {
-        parsed = JSON.parse(text);
-      } catch (e) {
-        console.error('Invalid JSON from /api/articulos:', e, text);
-        setArticulos([]);
-        return;
-      }
-
-      setArticulos(Array.isArray(parsed) ? parsed : []);
+      setLoading(true);
+      const UserId = await SecureStore.get('userId');
+      const data = await http.get<Articulo[]>(`articulos?userId=${encodeURIComponent(String(UserId))}`);
+      setArticulos(data ?? []);
     } catch (e) {
       console.error(e);
       Alert.alert("Error", "No se pudieron cargar las prendas.");
+      setArticulos([]);
     } finally {
       setLoading(false);
     }
@@ -67,8 +48,7 @@ export default function CrearOutfit() {
 
     setLoading(true);
     try {
-      // ⚠️ Sustituye este valor por el perfilId real del usuario logueado
-      const perfilId = "REEMPLAZAR_POR_PERFIL_ID";
+      const perfilId = await SecureStore.get('userId');
 
       const body = {
         mood: mood || "General",
@@ -78,21 +58,13 @@ export default function CrearOutfit() {
         articuloIds: selected,
       };
 
-      const res = await fetch(`${ApiUrl}/api/outfits`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await http.post('outfits', {
         body: JSON.stringify(body),
       });
 
-      if (res.ok) {
-        Alert.alert("Éxito", "Outfit creado correctamente.");
-        setSelected([]);
-        setMood("");
-      } else {
-        const txt = await res.text().catch(() => null);
-        console.error(res.status, txt);
-        Alert.alert("Error", "No se pudo crear el outfit.");
-      }
+      Alert.alert("Éxito", "Outfit creado correctamente.");
+      setSelected([]);
+      setMood("");
     } catch (e) {
       console.error(e);
       Alert.alert("Error", "Ocurrió un problema al crear el outfit.");
