@@ -1,6 +1,7 @@
 import http from '@/lib/data/http';
 import { SecureStore } from '@/lib/logic/services/secure-store-service';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import type { ListRenderItem } from 'react-native';
 import {
@@ -26,6 +27,7 @@ type Outfit = { id: string; name: string };
 type Mood = { id: string; name: string };
 
 export default function Armario() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'prendas' | 'outfits' | 'moods'>(
     'prendas',
   );
@@ -128,14 +130,18 @@ export default function Armario() {
       </View>
       {/* Botón Añadir según pestaña */}
 
-      {activeTab === 'prendas' && <BotonCamara />}
+        {activeTab === 'prendas' && <BotonCamara />}
 
-      {activeTab === 'outfits' && (
-        <TouchableOpacity className="border border-dashed border-neutral-600 rounded-xl py-4 mb-6 items-center">
-          <Text className="text-white">+ Añadir outfit</Text>
-        </TouchableOpacity>
-      )}
-      {activeTab === 'moods' && (
+        {activeTab === 'outfits' && (
+          <TouchableOpacity 
+            onPress={() => router.push('/crear_outfit')}
+            className="border border-dashed border-neutral-600 rounded-xl py-4 mb-6 items-center"
+          >
+            <Text className="text-white">+ Añadir outfit</Text>
+          </TouchableOpacity>
+        )}
+        
+        {activeTab === 'moods' && (
         <TouchableOpacity className="border border-dashed border-neutral-600 rounded-xl py-4 mb-6 items-center">
           <Text className="text-white">+ Añadir mood</Text>
         </TouchableOpacity>
