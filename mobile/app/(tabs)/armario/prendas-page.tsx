@@ -1,6 +1,7 @@
+import EditDetailsModal from '@/components/armario/edit-details-modal';
+import CustomCamera from '@/components/camera/custom-camera';
 import PrendaCard from '@/components/prenda/prenda-card';
 import PrendaDetailsModal from '@/components/prenda/prenda-details-modal';
-import BotonCamara from '@/components/shared/boton-camara';
 import { useArticulos } from '@/hooks/useArticulos';
 import { Prenda } from '@/lib/domain/models/prenda';
 import React, { useState } from 'react';
@@ -13,15 +14,24 @@ export default function PrendasPage() {
 
   const isLoading = useArticulos((s) => s.isLoading);
   const prendas = useArticulos((s) => s.prendas);
+  const generateDetails = useArticulos((s) => s.generateDetails);
+  const newItem = useArticulos((s) => s.newItem);
+  const clearNewItem = useArticulos((s) => s.clearNewItem);
+  const addArticulo = useArticulos((s) => s.addArticulo);
+
+  if (isLoading)
+    return (
+      <ActivityIndicator size="large" color="#999" style={{ marginTop: 30 }} />
+    );
 
   return (
     <View>
-      <BotonCamara />
+      <CustomCamera onTakeImage={generateDetails} />
       <FlatList
         key="prendas"
         data={prendas}
         renderItem={(item) => (
-          <PrendaCard data={item.item} onPress={() => {}} />
+          <PrendaCard data={item.item} onPress={setSelectedPrenda} />
         )}
         numColumns={2}
         columnWrapperStyle={{ justifyContent: 'space-between' }}
@@ -40,6 +50,13 @@ export default function PrendasPage() {
           )
         }
       />
+
+      <EditDetailsModal
+        data={newItem}
+        onClose={clearNewItem}
+        onSave={addArticulo}
+      />
+
       <PrendaDetailsModal
         data={selectedPrenda}
         onClose={() => setSelectedPrenda(undefined)}

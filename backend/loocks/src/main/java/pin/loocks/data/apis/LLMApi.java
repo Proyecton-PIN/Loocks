@@ -2,9 +2,11 @@ package pin.loocks.data.apis;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -20,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import pin.loocks.domain.dtos.ClothingAnalysisDTO;
 import pin.loocks.domain.dtos.LLMResponseDTO;
+import pin.loocks.domain.enums.TipoPrenda;
 
 @Component
 public class LLMApi {
@@ -36,9 +39,10 @@ public class LLMApi {
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.set("x-goog-api-key", apiKey);
     
-    String prompt = """
+    String basePrompt = """
       Analyze this image and give me the next data in the same format about the clothing:
       {
+        \"primaryColor\": \"#adf000\",
         \"colors\": [
           {
             \"color\": \"#ffffff\", 
@@ -50,9 +54,33 @@ public class LLMApi {
           }
         ],
         \"tags\": [\"camiseta\", \"fiesta\"],
-        \"seassons\": [\"primavera\", \"otoño\"]
+        \"seassons\": [\"primavera\", \"otoño\"],
+        \"isPrenda\": true,
+        \"type\": "CAMISETA"
       }
+
+      
+      isPrenda means that if the analyzed thing is an item of clothing (true) or an accesory (false).
+      type must be filled according to the next values:
+      if is an item of clothing:
+        %s
+      
+      if is an accesory: 
+        %s
+
+      If there isn't any clothes or accesory you must return the next:
+      {}
       """;
+
+    String prendas = Arrays.stream(TipoPrenda.values())
+      .map(Enum::name)
+      .collect(Collectors.joining(", "));
+
+    String articulos = Arrays.stream(TipoPrenda.values())
+      .map(Enum::name)
+      .collect(Collectors.joining(", "));
+
+    String prompt = String.format(basePrompt, prendas, articulos);
 
     MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
     body.add("contents", List.of(

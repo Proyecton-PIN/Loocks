@@ -22,9 +22,9 @@ class Http {
         ...extra,
         method,
         headers: {
+          'Content-Type': 'application/json',
           ...extra?.headers,
           Authorization: `Bearer ${this.token}`,
-          'Content-Type': 'application/json',
         },
       });
 

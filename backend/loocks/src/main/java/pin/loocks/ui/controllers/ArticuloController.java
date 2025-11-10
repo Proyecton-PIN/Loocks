@@ -58,10 +58,10 @@ public class ArticuloController {
       prendaFromDTO.setArmario(armarioRepsitory.getReferenceById(dto.getArmarioId()));
       if(dto.getTagsIds() != null) prendaFromDTO.setTags(tagsRepsitory.findAllById(dto.getTagsIds()));
 
-  Prenda nuevo = prendaRepository.save(prendaFromDTO);
-  System.out.println("Prenda guardada con id=" + nuevo.getId());
+      Prenda nuevo = prendaRepository.save(prendaFromDTO);
+      System.out.println("Prenda guardada con id=" + nuevo.getId());
 
-  return ResponseEntity.ok(nuevo.getId());
+      return ResponseEntity.ok(nuevo.getId());
     } catch (Exception e) {
       System.err.println("Error al guardar la prenda: " + e.getMessage());
       e.printStackTrace();
@@ -80,10 +80,10 @@ public class ArticuloController {
       accesorioFromDTO.setArmario(armarioRepsitory.getReferenceById(dto.getArmarioId()));
       if(dto.getTagsIds() != null) accesorioFromDTO.setTags(tagsRepsitory.findAllById(dto.getTagsIds()));
 
-  Accesorio nuevo = accesorioRepository.save(accesorioFromDTO);
-  System.out.println("Accesorio guardado con id=" + nuevo.getId());
+      Accesorio nuevo = accesorioRepository.save(accesorioFromDTO);
+      System.out.println("Accesorio guardado con id=" + nuevo.getId());
 
-  return ResponseEntity.ok(nuevo.getId());
+      return ResponseEntity.ok(nuevo.getId());
     } catch (Exception e) {
       System.err.println("Error al guardar el accesorio: " + e.getMessage());
       e.printStackTrace();

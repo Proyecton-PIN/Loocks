@@ -41,7 +41,7 @@ public class AccesorioUploadRequestDTO {
     result.setEstacion(estacion);
     result.setImageUrl(imageUrl);
     result.setTipoAccesorio(tipoAccesorio);
-  result.setTipo(TipoArticulo.ACCESORIO);
+    result.setTipo(TipoArticulo.ACCESORIO);
 
     return result;
   }
