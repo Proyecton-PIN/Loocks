@@ -1,24 +1,18 @@
 import PrendaCard from '@/components/prenda/prenda-card';
 import PrendaDetailsModal from '@/components/prenda/prenda-details-modal';
 import BotonCamara from '@/components/shared/boton-camara';
+import { useArticulos } from '@/hooks/useArticulos';
 import { Prenda } from '@/lib/domain/models/prenda';
-import { fetchArticulos } from '@/lib/logic/services/articulos-service';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 
 export default function PrendasPage() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [prendas, setPrendas] = useState<Prenda[]>([]);
   const [selectedPrenda, setSelectedPrenda] = useState<Prenda | undefined>(
     undefined,
   );
 
-  useEffect(() => {
-    fetchArticulos().then((data) => {
-      setPrendas(data);
-      setIsLoading(false);
-    });
-  }, []);
+  const isLoading = useArticulos((s) => s.isLoading);
+  const prendas = useArticulos((s) => s.prendas);
 
   return (
     <View>

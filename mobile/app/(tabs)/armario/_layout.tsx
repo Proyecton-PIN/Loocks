@@ -1,12 +1,18 @@
+import { useArticulos } from '@/hooks/useArticulos';
 import { Prenda } from '@/lib/domain/models/prenda';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import clsx from 'clsx';
 import { Stack, Tabs } from 'expo-router';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 export default function Armario() {
-  const [prendas, setPrendas] = useState<Prenda[]>([]);
+  const prendas = useArticulos((s) => s.prendas);
+  const fetchPrendas = useArticulos((s) => s.fetchPrendas);
+
+  useEffect(() => {
+    fetchPrendas();
+  }, []);
 
   return (
     <View className="flex-1 px-4">
