@@ -8,7 +8,7 @@ export default function RootIndex() {
 
   useEffect(() => {
     checkAuth().then((logged) => {
-      if (logged) router.replace('/(tabs)/principal');
+      if (logged) router.replace('/(tabs)/armario');
     });
   }, []);
 

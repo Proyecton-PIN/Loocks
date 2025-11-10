@@ -42,11 +42,12 @@ export default function BotonCamara() {
     if (!foto) return;
     await subirFoto(foto);
   };
+
   const subirFoto = async (fotoUri: string) => {
     try {
       const blob = await fetch(fotoUri).then((r) => r.blob());
 
-  const userId = await SecureStore.get('userId');
+      const userId = await SecureStore.get('userId');
       const fileName = `${Date.now()}.png`;
       const filePath = `users/${userId}/${fileName}`;
       const SUPABASE_KEY =
