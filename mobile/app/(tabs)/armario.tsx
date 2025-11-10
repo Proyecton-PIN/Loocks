@@ -1,5 +1,4 @@
 import http from '@/lib/data/http';
-import { SecureStore } from '@/lib/logic/services/secure-store-service';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -39,14 +38,13 @@ export default function Armario() {
   const [selected, setSelected] = useState<Prenda | null>(null);
 
   useEffect(() => {
-    void fetchPrendas();
+    fetchPrendas();
   }, []);
 
   async function fetchPrendas() {
     try {
       setLoading(true);
-  const UserId = await SecureStore.get('userId');
-      const data = await http.get<Prenda[]>(`articulos?userId=${encodeURIComponent(String(UserId))}`);
+      const data = await http.get<Prenda[]>('articulos');
       setPrendas(data ?? []);
       console.log('Prendas cargadas:', data);
     } catch (err) {
@@ -97,7 +95,9 @@ export default function Armario() {
       <View className="flex-row justify-between mb-6">
         <View className="bg-neutral-900 justify-between p-3 rounded-xl w-[31%]">
           <Text className="text-gray-400 text-xm">Articulos</Text>
-          <Text className="text-white my-4 text-4xl font-bold">{prendas.length}</Text>
+          <Text className="text-white my-4 text-4xl font-bold">
+            {prendas.length}
+          </Text>
           <Text className="text-gray-500 text-xm">+12 este mes</Text>
         </View>
         <View className="bg-neutral-900  justify-between p-3 rounded-xl w-[31%]">
@@ -128,18 +128,18 @@ export default function Armario() {
         ))}
       </View>
 
-        {activeTab === 'prendas' && <BotonCamara />}
+      {activeTab === 'prendas' && <BotonCamara />}
 
-        {activeTab === 'outfits' && (
-          <TouchableOpacity 
-            onPress={() => router.push('/crear_outfit')}
-            className="border border-dashed border-neutral-600 rounded-xl py-4 mb-6 items-center"
-          >
-            <Text className="text-white">+ Añadir outfit</Text>
-          </TouchableOpacity>
-        )}
-        
-        {activeTab === 'moods' && (
+      {activeTab === 'outfits' && (
+        <TouchableOpacity
+          onPress={() => router.push('/crear_outfit')}
+          className="border border-dashed border-neutral-600 rounded-xl py-4 mb-6 items-center"
+        >
+          <Text className="text-white">+ Añadir outfit</Text>
+        </TouchableOpacity>
+      )}
+
+      {activeTab === 'moods' && (
         <TouchableOpacity className="border border-dashed border-neutral-600 rounded-xl py-4 mb-6 items-center">
           <Text className="text-white">+ Añadir mood</Text>
         </TouchableOpacity>
@@ -162,7 +162,11 @@ export default function Armario() {
             contentContainerStyle={{ paddingBottom: 120 }}
             ListEmptyComponent={
               loading ? (
-                <ActivityIndicator size="large" color="#999" style={{ marginTop: 30 }} />
+                <ActivityIndicator
+                  size="large"
+                  color="#999"
+                  style={{ marginTop: 30 }}
+                />
               ) : (
                 <Text className="text-gray-500 text-center mt-10">
                   No hay prendas todavía
@@ -214,7 +218,7 @@ export default function Armario() {
       {/* Modal detalle de prenda */}
       <Modal visible={!!selected} animationType="slide" transparent={false}>
         <View className="flex-1 bg-black px-4 py-6">
-            {selected?.imageUrl ? (
+          {selected?.imageUrl ? (
             <Image
               source={{ uri: selected.imageUrl }}
               className="w-full h-2/3 rounded-xl mb-4"
@@ -227,13 +231,21 @@ export default function Armario() {
           )}
 
           <View className="px-2">
-            <Text className="text-white text-2xl font-bold mb-2">{selected?.nombre ?? 'Prenda'}</Text>
-            {selected?.tipo && <Text className="text-gray-400 mb-1">Tipo: {selected.tipo}</Text>}
+            <Text className="text-white text-2xl font-bold mb-2">
+              {selected?.nombre ?? 'Prenda'}
+            </Text>
+            {selected?.tipo && (
+              <Text className="text-gray-400 mb-1">Tipo: {selected.tipo}</Text>
+            )}
             {selected?.colorPrimario && (
-              <Text className="text-gray-400 mb-1">Color: {selected.colorPrimario}</Text>
+              <Text className="text-gray-400 mb-1">
+                Color: {selected.colorPrimario}
+              </Text>
             )}
             {selected?.fechaCompra && (
-              <Text className="text-gray-400 mb-1">Comprada: {new Date(selected.fechaCompra).toLocaleDateString()}</Text>
+              <Text className="text-gray-400 mb-1">
+                Comprada: {new Date(selected.fechaCompra).toLocaleDateString()}
+              </Text>
             )}
           </View>
 

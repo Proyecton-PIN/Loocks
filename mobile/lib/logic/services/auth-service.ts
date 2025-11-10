@@ -39,7 +39,7 @@ export async function checkAuth(): Promise<boolean> {
   try {
     authenticated = await http.get<boolean>('auth/check');
   } catch (e) {
-      authenticated = false;
+    authenticated = false;
   }
 
   if (!authenticated) {
