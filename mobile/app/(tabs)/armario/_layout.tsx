@@ -52,13 +52,7 @@ export default function Armario() {
           }}
         />
 
-        <Tabs.Screen
-          name="mood-page"
-          options={{
-            title: 'moods',
-            tabBarIcon: () => <View />,
-          }}
-        />
+        {/* mood-page removed from top menu */}
       </Tabs>
     </View>
   );

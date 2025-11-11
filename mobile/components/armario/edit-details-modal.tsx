@@ -1,6 +1,5 @@
 import { NewItemDataDTO } from '@/lib/domain/dtos/new-item-data-dto';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
 import { Image, Modal, Pressable, Text, TextInput, View } from 'react-native';
 
 interface Props {
@@ -21,6 +20,7 @@ export default function EditDetailsModal({ data, onSave, onClose }: Props) {
           <Image
             source={{ uri: data.details.imageUrl }}
             className="w-full h-2/3 rounded-xl mb-4"
+            style={{ backgroundColor: 'transparent' }}
             resizeMode="contain"
           />
         ) : (

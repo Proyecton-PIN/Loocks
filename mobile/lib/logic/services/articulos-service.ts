@@ -14,23 +14,32 @@ export async function fetchArticulos(): Promise<Prenda[]> {
 
 export async function generateDetails(
   uri: string,
-): Promise<ClothingAnalysisDTO | undefined> {
+): Promise<{ image?: string; details?: ClothingAnalysisDTO } | undefined> {
+  // Send the photo to the backend processPreview endpoint which returns
+  // a processed image and analysis details.
   const formData = new FormData();
-  formData.append('file', {
-    uri: uri,
-    type: 'image/png', // o el tipo que corresponda
-    name: 'photo.png', // nombre del archivo
-  } as any);
+  formData.append(
+    'file',
+    {
+      uri: uri,
+      type: 'image/png',
+      name: 'photo.png',
+    } as any,
+  );
 
   try {
-    return await http.post<ClothingAnalysisDTO>('image/generateDetails', {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      body: formData,
-    });
+    // Expected response: { image: string (url or data-uri), details: ClothingAnalysisDTO }
+    const resp = await http.postForm<{ image?: string; details?: ClothingAnalysisDTO }>(
+      'processPreview',
+      formData,
+    );
+
+    if (!resp) return undefined;
+
+    // Return the whole response so the caller can use both processed image and details
+    return resp;
   } catch (e) {
-    console.log(e);
+    console.log('generateDetails error', e);
     return undefined;
   }
 }
@@ -84,6 +93,22 @@ export async function uploadAccesorio(
     return resp;
   } catch (e) {
     console.error(e);
+  }
+}
+
+export async function saveProcessed(body: any): Promise<Prenda | undefined> {
+  try {
+    const resp = await http.post<Prenda>('saveProcessed', {
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return resp;
+  } catch (e) {
+    console.error('saveProcessed error', e);
+    return undefined;
   }
 }
 

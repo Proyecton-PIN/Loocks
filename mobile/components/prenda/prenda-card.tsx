@@ -1,7 +1,6 @@
 import { Prenda } from '@/lib/domain/models/prenda';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { Image, Pressable } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 
 interface Props {
   data: Prenda;
@@ -12,17 +11,21 @@ export default function PrendaCard({ data, onPress }: Props) {
   return (
     <Pressable
       onPress={() => onPress(data)}
-      className="w-[48%] h-44 bg-neutral-800 rounded-xl mb-3 
-        overflow-hidden items-center justify-center"
+      className="w-[48%] h-44 rounded-xl mb-3 overflow-hidden items-center justify-center"
     >
       {data.imageUrl ? (
+        // For PNGs with transparency, show the image centered with contain so the
+        // transparent areas remain visible and the picture doesn't get stretched.
         <Image
           source={{ uri: data.imageUrl }}
           className="w-full h-full"
-          resizeMode="cover"
+          style={{ backgroundColor: 'transparent' }}
+          resizeMode="contain"
         />
       ) : (
-        <Ionicons name="shirt-outline" size={40} color="#555" />
+        <View className="w-full h-full bg-neutral-800 items-center justify-center">
+          <Ionicons name="shirt-outline" size={40} color="#555" />
+        </View>
       )}
     </Pressable>
   );

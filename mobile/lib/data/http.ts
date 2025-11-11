@@ -50,6 +50,34 @@ class Http {
   public async post<T>(url: string, extra?: RequestInit): Promise<T> {
     return this.query<T>('POST', url, extra);
   }
+
+  // POST with multipart/form-data FormData body.
+  // Fetch automatically sets the correct Content-Type including boundary when body is FormData.
+  public async postForm<T>(url: string, form: FormData): Promise<T> {
+    try {
+      const resp = await fetch(this.baseUrl + url, {
+        method: 'POST',
+        body: form,
+        headers: {
+          // Do NOT set Content-Type for FormData — let fetch handle the boundary.
+          Authorization: `Bearer ${this.token}`,
+        },
+      });
+
+      if (!resp.ok) throw new HttpError(resp.status, resp.statusText);
+
+      return resp.json() as T;
+    } catch (error) {
+      if (
+        error instanceof TypeError &&
+        error.message === 'Network request failed'
+      ) {
+        throw new NetworkError();
+      }
+
+      throw error;
+    }
+  }
 }
 
 const http: Http = new Http();

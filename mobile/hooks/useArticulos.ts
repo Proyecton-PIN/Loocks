@@ -1,10 +1,9 @@
 import { NewItemDataDTO } from '@/lib/domain/dtos/new-item-data-dto';
 import { Prenda } from '@/lib/domain/models/prenda';
 import {
-  fetchArticulos,
-  generateDetails,
-  uploadAccesorio,
-  uploadPrenda,
+    fetchArticulos,
+    generateDetails,
+    saveProcessed
 } from '@/lib/logic/services/articulos-service';
 import { create } from 'zustand';
 
@@ -58,34 +57,18 @@ export const useArticulos = create<State>((set, get) => ({
   },
 
   async addArticulo(data: NewItemDataDTO) {
-    let query: Promise<Prenda | undefined>;
-
-    const baseDetails = {
+    // For processed images we send the final data to the saveProcessed endpoint
+    // The backend expects a JSON body. Build a body with details and image reference.
+    const body = {
       ...data.details,
-      armarioId: 1, // TODO: 1 por defecto
+      armarioId: 1, // TODO: replace with real value
       tagsIds: [],
+      isPrenda: data.isPrenda,
+      image: data.details.imageUrl,
     };
 
-    if (data.isPrenda) {
-      query = uploadPrenda(
-        {
-          ...baseDetails,
-          tipoPrenda: data.details.type,
-        },
-        data.details.imageUrl,
-      );
-    } else {
-      query = uploadAccesorio(
-        {
-          ...baseDetails,
-          tipoAccesorio: data.details.type,
-        },
-        data.details.imageUrl,
-      );
-    }
+    const newPrenda = await saveProcessed(body);
 
-    const newPrenda = await query;
-    
     set({ newItem: undefined });
     if (!newPrenda) return;
 
