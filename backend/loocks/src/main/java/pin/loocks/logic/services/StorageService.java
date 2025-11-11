@@ -16,11 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class StorageService {
   
-    @Value("${supabase.url}")
-    private String supabaseUrl;
+  // Support both env-style names (SUPABASE_URL / SUPABASE_KEY) and legacy properties (supabase.url / supabase.key).
+  // The nested ${...:${...:}} pattern tries the first name, then the second, and finally falls back to empty string
+  // to avoid PlaceholderResolutionException when running in environments that don't provide these values.
+  @Value("${SUPABASE_URL:${supabase.url:}}")
+  private String supabaseUrl;
 
-    @Value("${supabase.key}")
-    private String supabaseKey;
+  @Value("${SUPABASE_KEY:${supabase.key:}}")
+  private String supabaseKey;
 
 
     private final RestTemplate restTemplate = new RestTemplate();;

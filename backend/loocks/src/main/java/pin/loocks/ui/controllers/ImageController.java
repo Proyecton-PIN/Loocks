@@ -46,10 +46,13 @@ import java.util.Optional;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.coobird.thumbnailator.Thumbnails;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.FileOutputStream;
+import java.util.Base64;
 
 
 @RestController
-@RequestMapping(value = "/api/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+@RequestMapping("/api/image")
 public class ImageController {
   @Autowired
   private LLMApi llmApi;
@@ -158,6 +161,135 @@ public class ImageController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     } finally {
       tempFile.delete();
+    }
+  }
+
+  @PostMapping(value = "processPreview", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<?> processPreview(
+    @AuthenticationPrincipal UserDetails userDetails,
+    @Parameter(description = "Image file", required = true)
+    @RequestParam("file") MultipartFile img
+  ) throws IOException {
+    File tempFile = File.createTempFile("upload-", img.getOriginalFilename());
+    img.transferTo(tempFile);
+
+    try {
+      if (img.isEmpty()) return ResponseEntity.badRequest().body(Map.of("error", "empty file"));
+
+      // compress
+      File compressed = ImageHelper.zip(tempFile);
+
+      // remove background
+      File noBg = imageHelper.removeBackground(compressed);
+      if (noBg == null) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "background removal failed"));
+
+      // ensure PNG
+      String outName = System.currentTimeMillis() + ".png";
+      File pngFile = new File(noBg.getParent(), outName);
+      Thumbnails.of(noBg).scale(1.0).outputFormat("png").toFile(pngFile);
+
+      // read bytes to base64
+      byte[] bytes = Files.readAllBytes(pngFile.toPath());
+      String base64 = Base64.getEncoder().encodeToString(bytes);
+      String dataUrl = "data:image/png;base64," + base64;
+
+      // analyze
+      ClothingAnalysisDTO details = llmApi.generateDetails(pngFile);
+
+      return ResponseEntity.ok(Map.of("imageBase64", dataUrl, "details", details));
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+    } finally {
+      tempFile.delete();
+    }
+  }
+
+  @PostMapping(value = "saveProcessed", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> saveProcessed(
+    @AuthenticationPrincipal CustomUserDetails userDetails,
+    @org.springframework.web.bind.annotation.RequestBody Map<String, Object> body
+  ) {
+    try {
+      if (body == null || body.get("imageBase64") == null || body.get("details") == null) return ResponseEntity.badRequest().body(Map.of("error", "missing image or details"));
+
+      String base64 = body.get("imageBase64").toString();
+      if (base64.startsWith("data:")) {
+        base64 = base64.substring(base64.indexOf(",") + 1);
+      }
+
+      byte[] bytes = Base64.getDecoder().decode(base64);
+      File tmp = File.createTempFile("processed-", ".png");
+      try (FileOutputStream fos = new FileOutputStream(tmp)) { fos.write(bytes); }
+
+      // upload to supabase
+      String userId = userDetails != null ? userDetails.getId() : "1";
+      String fileName = System.currentTimeMillis() + ".png";
+      String filePath = String.format("users/%s/%s", userId, fileName);
+      String uploadUrl = SUPABASE_BASE + "/" + filePath;
+
+      HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create(uploadUrl))
+        .header("Authorization", "Bearer " + SUPABASE_KEY)
+        .header("Content-Type", "image/png")
+        .PUT(HttpRequest.BodyPublishers.ofByteArray(bytes))
+        .build();
+
+      HttpResponse<String> resp = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+      if (resp.statusCode() >= 400) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "upload failed", "status", resp.statusCode()));
+      }
+
+      ObjectMapper mapper = new ObjectMapper();
+      ClothingAnalysisDTO details = mapper.convertValue(body.get("details"), ClothingAnalysisDTO.class);
+
+      boolean isAccessory = determineAccessory(details);
+
+      Perfil perfil = perfilRepository.findById(userId).orElse(null);
+      Armario armario = null;
+      if (body.get("armarioId") != null) {
+        try { armario = armarioRepository.findById(Long.valueOf(body.get("armarioId").toString())).orElse(null); } catch (Exception e) {}
+      }
+      if (armario == null) {
+        if (perfil != null && perfil.getArmarios() != null && !perfil.getArmarios().isEmpty()) {
+          armario = perfil.getArmarios().get(0);
+        } else {
+          Optional<Armario> any = armarioRepository.findAll().stream().findFirst();
+          if (any.isPresent()) armario = any.get();
+          else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error","no armario available"));
+        }
+      }
+
+      if (isAccessory) {
+        Accesorio a = new Accesorio();
+        a.setUserId(userId);
+        a.setImageUrl(uploadUrl);
+        a.setArmario(armario);
+        if (details.getColors() != null && !details.getColors().isEmpty()) a.setColorPrimario(details.getColors().get(0).getColor());
+        if (details.getSeassons() != null && !details.getSeassons().isEmpty()) {
+          try { a.setEstacion(Estacion.valueOf(details.getSeassons().get(0).toUpperCase())); } catch (Exception e) {}
+        }
+        a.setTipoAccesorio(mapToTipoAccesorio(details.getTags()));
+        Accesorio saved = accesorioRepository.save(a);
+        return ResponseEntity.ok(Map.of("imageUrl", uploadUrl, "details", details, "id", saved.getId(), "type", "accesorio"));
+      } else {
+        Prenda p = new Prenda();
+        p.setUserId(userId);
+        p.setImageUrl(uploadUrl);
+        p.setArmario(armario);
+        if (details.getColors() != null && !details.getColors().isEmpty()) p.setColorPrimario(details.getColors().get(0).getColor());
+        if (details.getSeassons() != null && !details.getSeassons().isEmpty()) {
+          try { p.setEstacion(Estacion.valueOf(details.getSeassons().get(0).toUpperCase())); } catch (Exception e) {}
+        }
+        p.setTipoPrenda(mapToTipoPrenda(details.getTags()));
+        Prenda saved = prendaRepository.save(p);
+        return ResponseEntity.ok(Map.of("imageUrl", uploadUrl, "details", details, "id", saved.getId(), "type", "prenda"));
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
     }
   }
  
