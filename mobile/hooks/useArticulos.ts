@@ -57,17 +57,38 @@ export const useArticulos = create<State>((set, get) => ({
     set({ newItem: undefined });
   },
 
-  async addArticulo(details: NewItemDataDTO) {
-    let query: Promise<boolean>;
+  async addArticulo(data: NewItemDataDTO) {
+    let query: Promise<Prenda | undefined>;
 
-    if (details.isPrenda) {
-      query = uploadPrenda(details.details, details.details.imageUrl);
+    const baseDetails = {
+      ...data.details,
+      armarioId: 1, // TODO: 1 por defecto
+      tagsIds: [],
+    };
+
+    if (data.isPrenda) {
+      query = uploadPrenda(
+        {
+          ...baseDetails,
+          tipoPrenda: data.details.type,
+        },
+        data.details.imageUrl,
+      );
     } else {
-      query = uploadAccesorio(details.details, details.details.imageUrl);
+      query = uploadAccesorio(
+        {
+          ...baseDetails,
+          tipoAccesorio: data.details.type,
+        },
+        data.details.imageUrl,
+      );
     }
 
-    const uploaded = await query;
+    const newPrenda = await query;
+    
+    set({ newItem: undefined });
+    if (!newPrenda) return;
 
-    //TODO: Aquí suben los articulos o las prendas, modificar uploadPrenda/uploadAccesorio y el resultado tratarlo aquí
+    set((s) => ({ prendas: [newPrenda, ...s.prendas] }));
   },
 }));

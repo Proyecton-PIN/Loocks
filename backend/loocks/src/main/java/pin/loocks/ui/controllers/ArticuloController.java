@@ -3,14 +3,16 @@ package pin.loocks.ui.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import pin.loocks.data.repositories.AccesorioRepository;
 import pin.loocks.data.repositories.ArmarioRepository;
@@ -23,7 +25,7 @@ import pin.loocks.domain.models.Accesorio;
 import pin.loocks.domain.models.Articulo;
 import pin.loocks.domain.models.CustomUserDetails;
 import pin.loocks.domain.models.Prenda;
-import pin.loocks.logic.services.ArticuloService;
+import pin.loocks.logic.services.StorageService;
 
 @RestController
 @RequestMapping("/api/articulos")
@@ -45,49 +47,64 @@ public class ArticuloController {
   private TagsRepository tagsRepsitory;
 
   @Autowired
-  private ArticuloService articuloService;
+  private StorageService storageService;
 
-  @PostMapping("create/prenda")
-  public ResponseEntity<?> createPrenda(
+  @PostMapping(value = "create/prenda", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<Prenda> createPrenda(
     @AuthenticationPrincipal CustomUserDetails userDetails,
-    @RequestBody PrendaUploadRequestDTO dto
+    @RequestParam("data") PrendaUploadRequestDTO dto,
+    @RequestParam("file") MultipartFile img
   ) {
     try {
+      String imageUrl = this.storageService.uploadFile(
+        img, 
+        "user-images/users", 
+        String.format("%s/%s", userDetails.getId(), img.getName()));
+
       Prenda prendaFromDTO = dto.toPrenda();
       prendaFromDTO.setUserId(userDetails.getId());
       prendaFromDTO.setArmario(armarioRepsitory.getReferenceById(dto.getArmarioId()));
+      prendaFromDTO.setImageUrl(imageUrl);
       if(dto.getTagsIds() != null) prendaFromDTO.setTags(tagsRepsitory.findAllById(dto.getTagsIds()));
 
       Prenda nuevo = prendaRepository.save(prendaFromDTO);
       System.out.println("Prenda guardada con id=" + nuevo.getId());
 
-      return ResponseEntity.ok(nuevo.getId());
+      return ResponseEntity.ok(nuevo);
     } catch (Exception e) {
       System.err.println("Error al guardar la prenda: " + e.getMessage());
       e.printStackTrace();
-      return ResponseEntity.status(500).body(java.util.Map.of("error", e.getMessage()));
+      return ResponseEntity.status(500).build();
     }
   }
 
-   @PostMapping("create/accesorio")
-  public ResponseEntity<?> createAccesorio(
+  @PostMapping(value = "create/accesorio", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<Accesorio> createAccesorio(
     @AuthenticationPrincipal CustomUserDetails userDetails,
-    @RequestBody AccesorioUploadRequestDTO dto
+    @RequestParam("data") AccesorioUploadRequestDTO dto,
+    @RequestParam("file") MultipartFile img
   ) {
     try {
+      String imageUrl = this.storageService.uploadFile(
+        img, 
+        "user-images/users", 
+        String.format("%s/%s", userDetails.getId(), img.getName()));
+
       Accesorio accesorioFromDTO = dto.toAccesorio();
       accesorioFromDTO.setUserId(userDetails.getId());
       accesorioFromDTO.setArmario(armarioRepsitory.getReferenceById(dto.getArmarioId()));
+      accesorioFromDTO.setImageUrl(imageUrl);
+
       if(dto.getTagsIds() != null) accesorioFromDTO.setTags(tagsRepsitory.findAllById(dto.getTagsIds()));
 
       Accesorio nuevo = accesorioRepository.save(accesorioFromDTO);
       System.out.println("Accesorio guardado con id=" + nuevo.getId());
 
-      return ResponseEntity.ok(nuevo.getId());
+      return ResponseEntity.ok(nuevo);
     } catch (Exception e) {
       System.err.println("Error al guardar el accesorio: " + e.getMessage());
       e.printStackTrace();
-      return ResponseEntity.status(500).body(java.util.Map.of("error", e.getMessage()));
+      return ResponseEntity.status(500).build();
     }
   }
 

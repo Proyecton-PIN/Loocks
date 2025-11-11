@@ -35,22 +35,10 @@ export async function generateDetails(
   }
 }
 
-export async function uploadPrenda(data: any, uri: string): Promise<boolean> {
-  return uploadArticulo(data, uri, 'prenda');
-}
-
-export async function uploadAccesorio(
+export async function uploadPrenda(
   data: any,
   uri: string,
-): Promise<boolean> {
-  return uploadArticulo(data, uri, 'articulo');
-}
-
-async function uploadArticulo(
-  data: any,
-  uri: string,
-  endpoint: 'prenda' | 'articulo',
-): Promise<boolean> {
+): Promise<Prenda | undefined> {
   const formData = new FormData();
   formData.append('file', {
     uri: uri,
@@ -61,16 +49,41 @@ async function uploadArticulo(
   formData.append('data', data);
 
   try {
-    await http.post(`articulos/create/${endpoint}`, {
+    const resp = await http.post<Prenda>('articulos/create/prenda', {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
       body: formData,
     });
-    return true;
+    return resp;
   } catch (e) {
     console.error(e);
   }
-
-  return false;
 }
+
+export async function uploadAccesorio(
+  data: any,
+  uri: string,
+): Promise<Prenda | undefined> {
+  const formData = new FormData();
+  formData.append('file', {
+    uri: uri,
+    type: 'image/png', // o el tipo que corresponda
+    name: 'photo.png', // nombre del archivo
+  } as any);
+
+  formData.append('data', data);
+
+  try {
+    const resp = await http.post<Prenda>('articulos/create/articulo', {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      body: formData,
+    });
+    return resp;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
