@@ -16,10 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class StorageService {
   
-  @Value("${SUPABASE_URL:${supabase.url:}}")
+  @Value("${supabase.url}")
   private String supabaseUrl;
 
-  @Value("${SUPABASE_KEY:${supabase.key:}}")
+  @Value("${supabase.key}")
   private String supabaseKey;
 
 

@@ -176,11 +176,11 @@ public class ImageController {
     try {
       if (img.isEmpty()) return ResponseEntity.badRequest().body(Map.of("error", "empty file"));
 
-    // compress
-    File compressed = ImageHelper.zip(tempFile);
+      // compress
+      File compressed = ImageHelper.zip(tempFile);
 
-    // remove background from the compressed file
-    File noBg = imageHelper.removeBackground(compressed);
+      // remove background from the compressed file
+      File noBg = imageHelper.removeBackground(compressed);
       if (noBg == null) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "background removal failed"));
 
       // ensure PNG
