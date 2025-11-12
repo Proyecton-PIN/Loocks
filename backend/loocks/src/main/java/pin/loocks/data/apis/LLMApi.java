@@ -19,6 +19,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 
 import pin.loocks.domain.dtos.ClothingAnalysisDTO;
 import pin.loocks.domain.dtos.LLMResponseDTO;
@@ -40,36 +41,60 @@ public class LLMApi {
     headers.set("x-goog-api-key", apiKey);
     
     String basePrompt = """
-      Analyze this image and give me the next data in the same format about the clothing:
+      Analyze the provided image and return a single, valid JSON object (no markdown, no explanations) containing ALL characteristics an `Articulo` may have.
+
+      The JSON must use the exact keys below. If you do not know a value, set its value to the string "no identificado".
+
+      Required JSON keys (use these exact names):
       {
-        \"primaryColor\": \"#adf000\",
-        \"colors\": [
-          {
-            \"color\": \"#ffffff\", 
-            \"percentage\": 55
-          },
-          {
-            \"color\": \"#f70fe8\", 
-            \"percentage\": 65
-          }
-        ],
-        \"tags\": [\"camiseta\", \"fiesta\"],
-        \"seassons\": [\"primavera\", \"otoño\"],
-        \"isPrenda\": true,
-        \"type\": "CAMISETA"
+        "nombre": "...",
+        "marca": "...",
+        "primaryColor": "#RRGGBB",
+        "coloresSecundarios": ["#RRGGBB", ...],
+        "colors": [{"color":"#RRGGBB","percentage":NN}, ...],
+        "tags": ["tag1","tag2"],
+        "seassons": ["primavera","otoño"],
+          "tipoArticulo": "PRENDA",
+          "type": "CAMISETA",
+        "fechaCompra": "YYYY-MM-DD" | "no identificado",
+        "fechaUltimoUso": "YYYY-MM-DD" | "no identificado",
+        "usos": "0" | "no identificado",
+        "userId": "..." | "no identificado",
+        "imageUrl": "..." | "no identificado",
+        "tipo": "ARTICULO"  // one of ARTICULO, PRENDA, ACCESORIO
       }
 
-      
-      isPrenda means that if the analyzed thing is an item of clothing (true) or an accesory (false).
-      type must be filled according to the next values:
-      if is an item of clothing:
+      Definitions and rules:
+      - "tipoArticulo": must be one of: ARTICULO, PRENDA, ACCESORIO.
+      - "type": when tipoArticulo equals PRENDA, choose one of the following clothing types:
         %s
-      
-      if is an accesory: 
+      - When tipoArticulo equals ACCESORIO, choose one of the following accessory types:
         %s
+      - If uncertain you may set "tipoArticulo":"no identificado" and "type":"no identificado".
+      - Colors must be hex strings like "#RRGGBB". Percentages must be integers.
+      - Dates must follow YYYY-MM-DD or be the string "no identificado".
+      - "usos" must be an integer represented as a string (or "no identificado").
 
-      If there isn't any clothes or accesory you must return the next:
-      {}
+      IMPORTANT: Return ONLY the JSON object. Do NOT add any surrounding text, code fences, or explanation. Ensure the JSON is syntactically valid.
+
+      Example (your output should follow this structure):
+      {
+        "nombre": "Camiseta fiesta",
+        "marca": "no identificado",
+        "primaryColor": "#ffcc00",
+        "coloresSecundarios": ["#ffffff"],
+        "colors": [{"color":"#ffcc00","percentage":80},{"color":"#ffffff","percentage":20}],
+        "tags": ["camiseta","fiesta"],
+        "seassons": ["verano"],
+          "tipoArticulo": "PRENDA",
+        "type": "CAMISETA",
+        "fechaCompra": "no identificado",
+        "fechaUltimoUso": "no identificado",
+        "usos": "0",
+        "userId": "no identificado",
+        "imageUrl": "no identificado",
+        "tipo": "PRENDA"
+      }
       """;
 
     String prendas = Arrays.stream(TipoPrenda.values())
@@ -122,6 +147,7 @@ public class LLMApi {
       .trim();
 
     ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     return objectMapper.readValue(cleanJson, ClothingAnalysisDTO.class);
   }
 }
