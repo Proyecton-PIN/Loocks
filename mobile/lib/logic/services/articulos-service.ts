@@ -28,18 +28,22 @@ export async function generateDetails(
       name: 'photo.png',
     } as any,
   );
-
   try {
-    // Expected response: { image: string (url or data-uri), details: ClothingAnalysisDTO }
-    const resp = await http.postForm<{ image?: string; details?: ClothingAnalysisDTO }>(
+    // Use the http wrapper's postForm helper which handles baseUrl and
+    // Authorization header. Keep logging to help diagnose issues.
+    console.log('generateDetails: calling http.postForm processPreview fileUri=', uri);
+    const resp = await http.postForm<{ imageUrl?: string; imageBase64?: string; details?: ClothingAnalysisDTO; id?: number; type?: string }>(
       'processPreview',
       formData,
     );
 
-    if (!resp) return undefined;
+    if (!resp) {
+      console.warn('generateDetails: empty response from postForm');
+      return undefined;
+    }
 
-    // Return the whole response so the caller can use both processed image and details
-    return resp;
+    // Normalize returned fields: backend may return imageUrl or imageBase64
+    return resp as { image?: string; details?: ClothingAnalysisDTO };
   } catch (e) {
     console.log('generateDetails error', e);
     return undefined;
