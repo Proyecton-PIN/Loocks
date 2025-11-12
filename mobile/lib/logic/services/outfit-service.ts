@@ -1,7 +1,7 @@
 import { ApiUrl } from '@/constants/api-constants';
 import { SecureStore } from './secure-store-service';
 
-export async function createOutfit(dto: Record<string, any>): Promise<any | undefined> {
+export async function createOutfit(dto: Record<string, any>): Promise<any | { error: string; status: number } | undefined> {
   try {
     const token = (await SecureStore.get('token')) ?? '';
     const resp = await fetch(`${ApiUrl}/api/outfits`, {
@@ -21,7 +21,7 @@ export async function createOutfit(dto: Record<string, any>): Promise<any | unde
         /* ignore */
       }
       console.error('createOutfit failed', resp.status, resp.statusText, bodyText);
-      return undefined;
+      return { error: bodyText, status: resp.status };
     }
 
     const data = await resp.json();

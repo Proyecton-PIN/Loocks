@@ -114,16 +114,21 @@ export default function CrearOutfit() {
       }
 
       const dto = {
-        mood: mood || null,
+        mood: mood ?? null,
         articulosIds: selectedIds,
-        perfilId,
+        perfilId: String(perfilId),
         satisfaccion: satisfaccion ?? null,
-        isFavorito: isFavorito ?? false,
+        isFavorito: Boolean(isFavorito),
       } as any;
 
+      console.log('createOutfit dto', dto);
       const created = await createOutfitService(dto);
       if (!created) {
-        Alert.alert('Error', 'No se pudo crear el outfit.');
+        Alert.alert('Error', 'No se pudo crear el outfit. Revisa logs para más info.');
+      } else if ((created as any).error) {
+        const err = created as any;
+        console.error('createOutfit server error', err);
+        Alert.alert('Error del servidor', `Status ${err.status}: ${err.error}`);
       } else {
         Alert.alert('Éxito', 'Outfit creado correctamente.');
         setSlots([null, null, null]);
