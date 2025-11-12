@@ -1,9 +1,10 @@
 import { NewItemDataDTO } from '@/lib/domain/dtos/new-item-data-dto';
 import { Prenda } from '@/lib/domain/models/prenda';
 import {
-    fetchArticulos,
-    generateDetails,
-    saveProcessed
+  fetchArticulos,
+  generateDetails,
+  saveProcessed,
+  updateArticulo
 } from '@/lib/logic/services/articulos-service';
 import { create } from 'zustand';
 
@@ -16,6 +17,7 @@ interface State {
   generateDetails(uri?: string): Promise<void>;
   clearNewItem(): void;
   addArticulo(details: NewItemDataDTO): Promise<void>;
+  updateArticulo(id: number, dto: Partial<any>): Promise<void>;
 }
 
 export const useArticulos = create<State>((set, get) => ({
@@ -31,22 +33,25 @@ export const useArticulos = create<State>((set, get) => ({
     if (!uri) return;
     set({ isLoading: true });
 
-    const details = await generateDetails(uri);
-    if (!details) {
+    const resp = await generateDetails(uri);
+    if (!resp) {
       set({ newItem: undefined, isLoading: false });
       return;
     }
 
+    const info = (resp as any).details ?? resp;
+    const imageFromServer = (resp as any).image ?? uri;
+
     set({
       newItem: {
         details: {
-          coloresSecundarios: details.colors.map((e) => e.color) ?? [],
-          colorPrimario: details.primaryColor,
-          estacion: details.seassons,
-          imageUrl: uri,
-          type: details.type,
+          coloresSecundarios: (info.colors?.map((e: any) => e.color) as string[]) ?? [],
+          colorPrimario: info.primaryColor ?? info.primary_color ?? '',
+          estacion: info.seassons ?? info.seasons ?? '',
+          imageUrl: imageFromServer,
+          type: info.type ?? info.tipo ?? '',
         },
-        isPrenda: details.isPrenda,
+        isPrenda: info.isPrenda ?? info.is_prenda ?? false,
       },
       isLoading: false,
     });
@@ -54,6 +59,13 @@ export const useArticulos = create<State>((set, get) => ({
 
   clearNewItem() {
     set({ newItem: undefined });
+  },
+
+  async updateArticulo(id: number, dto: Partial<any>) {
+    const updated = await updateArticulo(id, dto);
+    if (!updated) return;
+
+    set((s) => ({ prendas: s.prendas.map((p) => (p.id === id ? updated : p)) }));
   },
 
   async addArticulo(data: NewItemDataDTO) {

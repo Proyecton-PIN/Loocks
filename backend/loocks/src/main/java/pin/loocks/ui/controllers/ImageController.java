@@ -177,7 +177,7 @@ public class ImageController {
       if (img.isEmpty()) return ResponseEntity.badRequest().body(Map.of("error", "empty file"));
 
       // compress
-      File compressed = ImageHelper.zip(tempFile);
+      //File compressed = ImageHelper.zip(tempFile);
 
       // remove background
       File noBg = imageHelper.removeBackground(compressed);

@@ -1,12 +1,16 @@
 package pin.loocks.ui.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,12 +24,14 @@ import pin.loocks.data.repositories.ArticuloRepository;
 import pin.loocks.data.repositories.PrendaRepository;
 import pin.loocks.data.repositories.TagsRepository;
 import pin.loocks.domain.dtos.AccesorioUploadRequestDTO;
+import pin.loocks.domain.dtos.ArticuloUpdateDTO;
 import pin.loocks.domain.dtos.PrendaUploadRequestDTO;
 import pin.loocks.domain.models.Accesorio;
 import pin.loocks.domain.models.Articulo;
 import pin.loocks.domain.models.CustomUserDetails;
 import pin.loocks.domain.models.Prenda;
 import pin.loocks.logic.services.StorageService;
+import pin.loocks.domain.models.Tag;
 
 @RestController
 @RequestMapping("/api/articulos")
@@ -120,6 +126,54 @@ public class ArticuloController {
   @GetMapping
   public ResponseEntity<List<Articulo>> getArticulosByUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
     return ResponseEntity.ok(articuloRepository.findByUserId(userDetails.getId()));
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<?> updateArticulo(
+    @PathVariable Long id,
+    @AuthenticationPrincipal CustomUserDetails userDetails,
+    @org.springframework.web.bind.annotation.RequestBody ArticuloUpdateDTO dto
+  ) {
+    return articuloRepository.findById(id).map(existing -> {
+      // ownership check
+      if (!Objects.equals(existing.getUserId(), userDetails.getId())) {
+        return ResponseEntity.status(403).build();
+      }
+
+      if (dto.getNombre() != null) existing.setNombre(dto.getNombre());
+      if (dto.getMarca() != null) existing.setMarca(dto.getMarca());
+      if (dto.getColorPrimario() != null) existing.setColorPrimario(dto.getColorPrimario());
+      if (dto.getColoresSecundarios() != null) existing.setColoresSecundarios(dto.getColoresSecundarios());
+      if (dto.getEstacion() != null) {
+        try {
+          existing.setEstacion(pin.loocks.domain.enums.Estacion.valueOf(dto.getEstacion()));
+        } catch (Exception e) {
+          // ignore invalid value
+        }
+      }
+      if (dto.getFechaUltimoUso() != null) {
+        try {
+          existing.setFechaUltimoUso(LocalDate.parse(dto.getFechaUltimoUso()));
+        } catch (Exception e) {
+          // ignore parse errors
+        }
+      }
+      if (dto.getUsos() != null) existing.setUsos(dto.getUsos());
+      if (dto.getImageUrl() != null) existing.setImageUrl(dto.getImageUrl());
+      if (dto.getTipo() != null) existing.setTipo(dto.getTipo());
+
+      if (dto.getArmarioId() != null) {
+        existing.setArmario(armarioRepsitory.getReferenceById(dto.getArmarioId()));
+      }
+
+      if (dto.getTagsIds() != null) {
+        List<Long> ids = dto.getTagsIds().stream().filter(Objects::nonNull).collect(Collectors.toList());
+        existing.setTags(tagsRepsitory.findAllById(ids));
+      }
+
+      Articulo saved = articuloRepository.save(existing);
+      return ResponseEntity.ok(saved);
+    }).orElseGet(() -> ResponseEntity.notFound().build());
   }
 }
 

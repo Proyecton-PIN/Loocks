@@ -1,6 +1,8 @@
+import { ApiUrl } from '@/constants/api-constants';
 import http from '@/lib/data/http';
 import { ClothingAnalysisDTO } from '@/lib/domain/dtos/clothing-analysis-dto';
 import { Prenda } from '@/lib/domain/models/prenda';
+import { SecureStore } from './secure-store-service';
 
 export async function fetchArticulos(): Promise<Prenda[]> {
   try {
@@ -108,6 +110,34 @@ export async function saveProcessed(body: any): Promise<Prenda | undefined> {
     return resp;
   } catch (e) {
     console.error('saveProcessed error', e);
+    return undefined;
+  }
+}
+
+export async function updateArticulo(
+  id: number,
+  body: Partial<Record<string, any>>,
+): Promise<any | undefined> {
+  try {
+    const token = (await SecureStore.get('token')) ?? '';
+    const resp = await fetch(`${ApiUrl}/api/articulos/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!resp.ok) {
+      console.error('updateArticulo failed', resp.status, resp.statusText);
+      return undefined;
+    }
+
+    const data = await resp.json();
+    return data;
+  } catch (e) {
+    console.error('updateArticulo error', e);
     return undefined;
   }
 }
