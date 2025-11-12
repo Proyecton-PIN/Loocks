@@ -10,6 +10,49 @@ function uniq<T>(arr: T[]) {
   return Array.from(new Set(arr));
 }
 
+function hexToSimpleName(hex?: string) {
+  if (!hex) return '';
+  let h = hex.trim().toLowerCase();
+  if (h.startsWith('0x')) h = '#' + h.slice(2);
+  if (!h.startsWith('#')) h = '#' + h;
+  if (h.length === 4) h = '#' + h[1] + h[1] + h[2] + h[2] + h[3] + h[3];
+
+  const named: Record<string, string> = {
+    '#000000': 'negro',
+    '#ffffff': 'blanco',
+    '#ff0000': 'rojo',
+    '#8b0000': 'rojo oscuro',
+    '#b22222': 'rojo ladrillo',
+    '#ff7f50': 'coral',
+    '#ffa500': 'naranja',
+    '#ffd700': 'dorado',
+    '#ffff00': 'amarillo',
+    '#808000': 'oliva',
+    '#008000': 'verde',
+    '#00ff00': 'verde claro',
+    '#006400': 'verde oscuro',
+    '#00ffff': 'cian',
+    '#40e0d0': 'turquesa',
+    '#0000ff': 'azul',
+    '#1e90ff': 'azul dodger',
+    '#00008b': 'azul oscuro',
+    '#4b0082': 'índigo',
+    '#800080': 'morado',
+    '#ff00ff': 'magenta',
+    '#ffc0cb': 'rosa',
+    '#f5deb3': 'beige',
+    '#deb887': 'marrón claro',
+    '#a52a2a': 'marrón',
+    '#808080': 'gris',
+    '#2f4f4f': 'gris oscuro',
+    '#add8e6': 'azul claro',
+    '#f0e68c': 'caqui',
+  };
+
+  if (named[h]) return named[h];
+  return h;
+}
+
 export default function PrendaFilter({ prendas, onChange }: Props) {
   const [open, setOpen] = useState(false);
   const [color, setColor] = useState('');
@@ -29,9 +72,17 @@ export default function PrendaFilter({ prendas, onChange }: Props) {
     const filtered = prendas.filter((p) => {
       // color match: primary or any secondary includes
       if (qColor) {
-        const pri = (p.colorPrimario ?? '').toString().toLowerCase();
-        const secs = (p.coloresSecundarios ?? []).map((c: any) => String(c).toLowerCase());
-        if (!pri.includes(qColor) && !secs.some((s: string) => s.includes(qColor))) return false;
+        const priRaw = (p.colorPrimario ?? '').toString();
+        const pri = priRaw.toLowerCase();
+        const priName = hexToSimpleName(priRaw).toLowerCase();
+
+        const secsRaw = (p.coloresSecundarios ?? []) as any[];
+        const secs = secsRaw.map((c: any) => (typeof c === 'string' ? c : c?.color ?? '')).map((s: string) => s.toLowerCase());
+        const secsNames = secsRaw.map((c: any) => (typeof c === 'string' ? hexToSimpleName(c) : hexToSimpleName(c?.color))).map((s: string) => s.toLowerCase());
+
+        const matchPri = pri.includes(qColor) || priName.includes(qColor);
+        const matchSecs = secs.some((s) => s.includes(qColor)) || secsNames.some((s) => s.includes(qColor));
+        if (!matchPri && !matchSecs) return false;
       }
 
       if (qTipo) {
