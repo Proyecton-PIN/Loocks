@@ -2,7 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { Camera, CameraView } from 'expo-camera';
 import { useRef, useState } from 'react';
 import { Alert, Modal, Pressable, Text, View } from 'react-native';
-import CustomCameraAcceptModal from './custom-camera-accept-modal';
+// After taking the photo we call onTakeImage(uri) immediately so the
+// app can call the backend processPreview endpoint and show the
+// processed image + editable details.
 
 interface Props {
   onTakeImage(uri?: string): void;
@@ -27,8 +29,18 @@ export default function CustomCamera({ onTakeImage }: Props) {
     if (!camaraRef.current) return;
 
     const fotoTomada = await camaraRef.current.takePictureAsync();
-    setFoto(fotoTomada.uri ?? undefined);
+    const uri = fotoTomada.uri ?? undefined;
+    setFoto(uri);
     setMostrarCamara(false);
+
+    // call the handler immediately so the app can process the image
+    // (e.g. upload to processPreview and show editable results)
+    try {
+      onTakeImage(uri);
+    } catch (e) {
+      // swallow errors here; the caller (store/service) handles failures
+      console.error('onTakeImage error', e);
+    }
   };
 
   const guardarYCerrar = () => {
@@ -47,16 +59,9 @@ export default function CustomCamera({ onTakeImage }: Props) {
         <Text className="text-white">+ Añadir prenda</Text>
       </Pressable>
 
-      <CustomCameraAcceptModal
-        visible={!!foto && !mostrarCamara}
-        uri={foto ?? undefined}
-        onClose={() => setFoto(undefined)}
-        onSave={guardarYCerrar}
-        onRepeat={() => {
-          setFoto(undefined);
-          setMostrarCamara(true);
-        }}
-      />
+      {/* We no longer show a local accept modal; after taking the photo we
+          call `onTakeImage` immediately which will open the edit modal
+          (EditDetailsModal) once the backend returns data. */}
 
       <Modal visible={mostrarCamara} animationType="slide">
         <View className="flex-1">
