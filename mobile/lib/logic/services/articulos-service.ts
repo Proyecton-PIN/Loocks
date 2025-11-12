@@ -142,3 +142,31 @@ export async function updateArticulo(
   }
 }
 
+export async function deleteArticulo(id: number): Promise<boolean> {
+  try {
+    const token = (await SecureStore.get('token')) ?? '';
+    const resp = await fetch(`${ApiUrl}/api/articulos/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!resp.ok) {
+      let bodyText = '';
+      try {
+        bodyText = await resp.text();
+      } catch (e) {
+        /* ignore */
+      }
+      console.error('deleteArticulo failed', resp.status, resp.statusText, bodyText);
+      return false;
+    }
+
+    return true;
+  } catch (e) {
+    console.error('deleteArticulo error', e);
+    return false;
+  }
+}
+

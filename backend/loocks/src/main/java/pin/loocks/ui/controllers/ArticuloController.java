@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -126,6 +127,41 @@ public class ArticuloController {
   @GetMapping
   public ResponseEntity<List<Articulo>> getArticulosByUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
     return ResponseEntity.ok(articuloRepository.findByUserId(userDetails.getId()));
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<?> deleteArticulo(
+    @PathVariable Long id,
+    @AuthenticationPrincipal CustomUserDetails userDetails
+  ) {
+    return articuloRepository.findById(id).map(existing -> {
+      // ownership check
+      if (!Objects.equals(existing.getUserId(), userDetails.getId())) {
+        return ResponseEntity.status(403).build();
+      }
+
+      // try to delete image from storage if present
+      String imageUrl = existing.getImageUrl();
+      if (imageUrl != null && imageUrl.contains("/storage/v1/object/")) {
+        try {
+          String marker = "/storage/v1/object/";
+          int idx = imageUrl.indexOf(marker);
+          String remainder = imageUrl.substring(idx + marker.length()); // bucket/path
+          int slash = remainder.indexOf('/');
+          if (slash > 0) {
+            String bucket = remainder.substring(0, slash);
+            String path = remainder.substring(slash + 1);
+            storageService.deleteFile(bucket, path);
+          }
+        } catch (Exception e) {
+          // log and continue with deletion
+          System.err.println("Error deleting image from storage: " + e.getMessage());
+        }
+      }
+
+      articuloRepository.delete(existing);
+      return ResponseEntity.noContent().build();
+    }).orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   @PutMapping("/{id}")

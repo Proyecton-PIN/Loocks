@@ -1,10 +1,11 @@
 import { NewItemDataDTO } from '@/lib/domain/dtos/new-item-data-dto';
 import { Prenda } from '@/lib/domain/models/prenda';
 import {
+  deleteArticulo as deleteArticuloService,
   fetchArticulos,
   generateDetails,
   saveProcessed,
-  updateArticulo
+  updateArticulo,
 } from '@/lib/logic/services/articulos-service';
 import { create } from 'zustand';
 
@@ -18,6 +19,7 @@ interface State {
   clearNewItem(): void;
   addArticulo(details: NewItemDataDTO): Promise<void>;
   updateArticulo(id: number, dto: Partial<any>): Promise<void>;
+  deleteArticulo(id: number): Promise<boolean>;
 }
 
 export const useArticulos = create<State>((set, get) => ({
@@ -66,6 +68,21 @@ export const useArticulos = create<State>((set, get) => ({
     if (!updated) return;
 
     set((s) => ({ prendas: s.prendas.map((p) => (p.id === id ? updated : p)) }));
+  },
+
+  async deleteArticulo(id: number) {
+    const ok = await deleteArticuloService(id);
+    if (!ok) return false;
+
+    // Refresh prendas from server to ensure the UI reflects the current state
+    try {
+      await get().fetchPrendas();
+    } catch (e) {
+      // Fallback to local removal if fetch fails
+      set((s) => ({ prendas: s.prendas.filter((p) => p.id !== id) }));
+    }
+
+    return true;
   },
 
   async addArticulo(data: NewItemDataDTO) {

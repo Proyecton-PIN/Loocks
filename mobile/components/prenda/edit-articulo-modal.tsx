@@ -45,8 +45,40 @@ export default function EditArticuloModal({ data, visible = false, onClose, onSa
     const dto: Partial<any> = {};
     if (nombre) dto.nombre = nombre;
     if (marca) dto.marca = marca;
-    if (fechaCompra) dto.fechaCompra = fechaCompra;
-    if (fechaUltimoUso) dto.fechaUltimoUso = fechaUltimoUso;
+    // Normalize fechaCompra: accept dd/mm/yyyy or yyyy-mm-dd, send ISO date (yyyy-mm-dd) or null if empty
+    function normalizeDateInput(input?: string | null) {
+      if (!input) return null;
+      const v = input.trim();
+      if (!v) return null;
+      // dd/mm/yyyy
+      const dm = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (dm) {
+        const d = parseInt(dm[1], 10);
+        const m = parseInt(dm[2], 10);
+        const y = parseInt(dm[3], 10);
+        // zero-pad
+        const mm = m.toString().padStart(2, '0');
+        const dd = d.toString().padStart(2, '0');
+        return `${y}-${mm}-${dd}`;
+      }
+      // yyyy-mm-dd or full ISO
+      const iso = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (iso) return iso[0];
+      // try Date.parse fallback
+      const parsed = Date.parse(v);
+      if (!Number.isNaN(parsed)) {
+        const d = new Date(parsed);
+        const y = d.getFullYear();
+        const mm = (d.getMonth() + 1).toString().padStart(2, '0');
+        const dd = d.getDate().toString().padStart(2, '0');
+        return `${y}-${mm}-${dd}`;
+      }
+      // cannot parse, return original string to let backend validate
+      return v;
+    }
+
+    if (fechaCompra !== undefined) dto.fechaCompra = normalizeDateInput(fechaCompra);
+  if (fechaUltimoUso !== undefined) dto.fechaUltimoUso = normalizeDateInput(fechaUltimoUso);
     if (colorPrimario) dto.colorPrimario = colorPrimario;
     if (coloresSecundarios)
       dto.coloresSecundarios = coloresSecundarios.split(',').map((s) => s.trim());
@@ -98,6 +130,7 @@ export default function EditArticuloModal({ data, visible = false, onClose, onSa
               value={fechaCompra}
               onChangeText={setFechaCompra}
               className="bg-gray-800 p-2 rounded text-white"
+              placeholder="YYYY-MM-DD o DD/MM/YYYY"
               placeholderTextColor="#cfcfcf"
             />
 
@@ -106,6 +139,7 @@ export default function EditArticuloModal({ data, visible = false, onClose, onSa
               value={fechaUltimoUso}
               onChangeText={setFechaUltimoUso}
               className="bg-gray-800 p-2 rounded text-white"
+              placeholder="YYYY-MM-DD o DD/MM/YYYY"
               placeholderTextColor="#cfcfcf"
             />
 
