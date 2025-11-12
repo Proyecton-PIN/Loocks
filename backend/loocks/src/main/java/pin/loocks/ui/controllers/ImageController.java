@@ -261,12 +261,17 @@ public class ImageController {
         }
       }
 
+      final String DEFAULT_COLOR = "#000000";
       if (isAccessory) {
         Accesorio a = new Accesorio();
         a.setUserId(userId);
         a.setImageUrl(uploadUrl);
         a.setArmario(armario);
-        if (details.getColors() != null && !details.getColors().isEmpty()) a.setColorPrimario(details.getColors().get(0).getColor());
+        if (details.getColors() != null && !details.getColors().isEmpty()) {
+          a.setColorPrimario(details.getColors().get(0).getColor());
+        } else {
+          a.setColorPrimario(DEFAULT_COLOR);
+        }
         if (details.getSeassons() != null && !details.getSeassons().isEmpty()) {
           try { a.setEstacion(Estacion.valueOf(details.getSeassons().get(0).toUpperCase())); } catch (Exception e) {}
         }
@@ -278,7 +283,11 @@ public class ImageController {
         p.setUserId(userId);
         p.setImageUrl(uploadUrl);
         p.setArmario(armario);
-        if (details.getColors() != null && !details.getColors().isEmpty()) p.setColorPrimario(details.getColors().get(0).getColor());
+        if (details.getColors() != null && !details.getColors().isEmpty()) {
+          p.setColorPrimario(details.getColors().get(0).getColor());
+        } else {
+          p.setColorPrimario(DEFAULT_COLOR);
+        }
         if (details.getSeassons() != null && !details.getSeassons().isEmpty()) {
           try { p.setEstacion(Estacion.valueOf(details.getSeassons().get(0).toUpperCase())); } catch (Exception e) {}
         }
@@ -367,12 +376,17 @@ public class ImageController {
         armario = armarioRepository.save(armario);
       }
 
+      final String DEFAULT_COLOR = "#000000";
       if (isAccessory) {
         Accesorio a = new Accesorio();
         a.setUserId(userId);
         a.setImageUrl(uploadUrl);
         a.setArmario(armario);
-        if (details.getColors() != null && !details.getColors().isEmpty()) a.setColorPrimario(details.getColors().get(0).getColor());
+        if (details.getColors() != null && !details.getColors().isEmpty()) {
+          a.setColorPrimario(details.getColors().get(0).getColor());
+        } else {
+          a.setColorPrimario(DEFAULT_COLOR);
+        }
         if (details.getSeassons() != null && !details.getSeassons().isEmpty()) {
           try { a.setEstacion(Estacion.valueOf(details.getSeassons().get(0).toUpperCase())); } catch (Exception e) {}
         }
@@ -387,7 +401,11 @@ public class ImageController {
         p.setUserId(userId);
         p.setImageUrl(uploadUrl);
         p.setArmario(armario);
-        if (details.getColors() != null && !details.getColors().isEmpty()) p.setColorPrimario(details.getColors().get(0).getColor());
+        if (details.getColors() != null && !details.getColors().isEmpty()) {
+          p.setColorPrimario(details.getColors().get(0).getColor());
+        } else {
+          p.setColorPrimario(DEFAULT_COLOR);
+        }
         if (details.getSeassons() != null && !details.getSeassons().isEmpty()) {
           try { p.setEstacion(Estacion.valueOf(details.getSeassons().get(0).toUpperCase())); } catch (Exception e) {}
         }

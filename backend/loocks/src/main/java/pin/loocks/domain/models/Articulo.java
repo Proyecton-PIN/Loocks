@@ -48,7 +48,7 @@ public class Articulo {
   @Temporal(TemporalType.DATE)
   private Date fechaCompra;
 
-  @Column(length = 8, nullable = false)
+  @Column(length = 8, nullable = true)
   private String colorPrimario; // RRGGBBAA
 
   @ElementCollection
