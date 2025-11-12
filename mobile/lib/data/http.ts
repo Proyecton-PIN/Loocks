@@ -59,7 +59,6 @@ class Http {
         method: 'POST',
         body: form,
         headers: {
-          'Content-Type': 'multipart/form-data',
           // Do NOT set Content-Type for FormData — let fetch handle the boundary.
           Authorization: `Bearer ${this.token}`,
         },
