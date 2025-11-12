@@ -1,5 +1,14 @@
-import { View } from 'react-native';
+import React from 'react';
+import { ScrollView, View } from 'react-native';
+import CrearOutfit from '../crear_outfit';
 
 export default function Principal() {
-  return <View className="flex-1 items-center justify-center"></View>;
+  return (
+    <ScrollView style={{ flex: 1, backgroundColor: 'black' }}>
+      <View style={{ padding: 12 }}>
+        {/* Render the CrearOutfit UI directly in the main screen */}
+        <CrearOutfit />
+      </View>
+    </ScrollView>
+  );
 }
