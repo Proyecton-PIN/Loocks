@@ -140,26 +140,34 @@ export default function CrearOutfit() {
   }
 
   const screenWidth = Dimensions.get('window').width;
-  const cardWidth = Math.min(screenWidth - 80, 280);
-  const cardHeight = Math.round(cardWidth * 0.78);
+  const screenHeight = Dimensions.get('window').height;
+  const cardWidth = Math.min(screenWidth - 80, 260);
+
+  // Reserve vertical space for inputs and buttons so the three slots fit
+  // without scrolling on typical devices. Tweak constants as needed.
+  const TOP_RESERVED = 120; // mood label + input + small spacing
+  const BOTTOM_RESERVED = 180; // satisfaction input + favorite + button area
+  const availableForSlots = Math.max(0, screenHeight - TOP_RESERVED - BOTTOM_RESERVED - 32); // account padding
+  const cardHeight = Math.min(cardWidth, Math.floor(availableForSlots / 3));
 
   return (
     <View style={{ flex: 1, backgroundColor: 'black', padding: 16 }}>
       <Stack.Screen options={{ title: 'Crear Outfit' }} />
 
-      <View style={{ flex: 1 }}>
-        <Text style={{ color: 'white', marginBottom: 4, fontSize: 13 }}>Categoría (mood)</Text>
-        <TextInput
-          value={mood}
-          onChangeText={setMood}
-          placeholder="Ej: Casual, Elegante..."
-          placeholderTextColor="#888"
-          style={{ backgroundColor: '#111', color: 'white', padding: 8, borderRadius: 8, marginBottom: 8, fontSize: 13 }}
-        />
+      <View style={{ flex: 1, justifyContent: 'space-between' }}>
+        <View>
+          <Text style={{ color: 'white', marginBottom: 6, fontSize: 13 }}>Categoría (mood)</Text>
+          <TextInput
+            value={mood}
+            onChangeText={setMood}
+            placeholder="Ej: Casual, Elegante..."
+            placeholderTextColor="#888"
+            style={{ backgroundColor: '#111', color: 'white', padding: 8, borderRadius: 8, marginBottom: 8, fontSize: 13 }}
+          />
 
-        <Text style={{ color: 'white', fontSize: 14, marginBottom: 6 }}>Slides: desliza para seleccionar la prenda visible</Text>
+          <Text style={{ color: 'white', fontSize: 13, marginBottom: 6 }}>Slides: desliza para seleccionar la prenda visible</Text>
 
-        {[0, 1, 2].map((slotIndex) => {
+          {[0, 1, 2].map((slotIndex) => {
           const looped = getLoopedData(articulos);
 
           const onViewableItemsChanged = ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -215,7 +223,7 @@ export default function CrearOutfit() {
           };
 
           return (
-            <View key={slotIndex} style={{ marginBottom: 8 }}>
+            <View key={slotIndex} style={{ marginBottom: 6 }}>
               <FlatList
                 data={looped}
                 horizontal
@@ -257,7 +265,7 @@ export default function CrearOutfit() {
                   );
                 }}
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 2, paddingHorizontal: 16, alignItems: 'center' }}
+                contentContainerStyle={{ paddingBottom: 2, paddingHorizontal: 8, alignItems: 'center' }}
                 ListEmptyComponent={loading ? <ActivityIndicator size="large" color="#999" style={{ marginTop: 30 }} /> : <Text style={{ color: '#777' }}>No hay prendas</Text>}
                 ref={(el) => { flatlistRefs.current[slotIndex] = el; }}
                 onViewableItemsChanged={onViewableItemsChanged}
@@ -266,8 +274,9 @@ export default function CrearOutfit() {
             </View>
           );
         })}
+        </View>
 
-        <View style={{ marginTop: 6 }}>
+        <View style={{ paddingTop: 6 }}>
           <Text style={{ color: 'white', marginBottom: 4, fontSize: 13 }}>Satisfacción (opcional)</Text>
           <TextInput
             value={satisfaccion ?? ''}
@@ -279,7 +288,7 @@ export default function CrearOutfit() {
 
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
             <TouchableOpacity onPress={() => setIsFavorito((s) => !s)} style={{ marginRight: 8 }}>
-              <View style={{ width: 22, height: 22, borderRadius: 4, backgroundColor: isFavorito ? '#ffcc00' : '#333', alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ width: 20, height: 20, borderRadius: 4, backgroundColor: isFavorito ? '#ffcc00' : '#333', alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{ fontSize: 12 }}>{isFavorito ? '★' : ''}</Text>
               </View>
             </TouchableOpacity>
