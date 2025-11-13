@@ -23,4 +23,13 @@ public class LLMResponseDTO {
   public static class Part {
     private String text;
   }
+
+  public String getText() {
+    return getCandidates()
+      .get(0)
+      .getContent()
+      .getParts()
+      .get(0)
+      .getText();
+  }
 }

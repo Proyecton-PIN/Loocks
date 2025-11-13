@@ -18,9 +18,11 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pin.loocks.domain.dtos.RegisterRequestDTO;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 public class Perfil {

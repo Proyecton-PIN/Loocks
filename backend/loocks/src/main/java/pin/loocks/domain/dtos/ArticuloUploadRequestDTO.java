@@ -4,36 +4,31 @@ import java.sql.Date;
 import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import pin.loocks.domain.enums.Estacion;
-import pin.loocks.domain.models.Articulo;
+import pin.loocks.domain.enums.TipoArticulo;
+import pin.loocks.domain.models.PorcentajeColor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ArticuloUploadRequestDTO {
   private String nombre;
   private String marca;
   private Date fechaCompra;
+  private List<String> tags;
+
   @NotNull
-  private String colorPrimario;
-  @NotNull
-  private List<String> coloresSecundarios;
+  private List<PorcentajeColor> colors;
+
   @NotNull
   private Estacion estacion;
-  @NotNull
-  private List<Long> tagsIds;
-  @NotNull
-  private String imageUrl;
-  @NotNull
-  private Long armarioId;
 
-  public Articulo toArticulo(){
-    Articulo result = new Articulo();
-    result.setNombre(nombre);
-    result.setMarca(marca);
-    result.setFechaCompra(fechaCompra);
-    result.setEstacion(estacion);
-    result.setImageUrl(imageUrl);
+  @NotNull
+  private String base64Img;
 
-    return result;
-  }
+  @NotNull
+  private TipoArticulo tipo = TipoArticulo.TODOS;
 }

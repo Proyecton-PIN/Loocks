@@ -1,20 +1,22 @@
 package pin.loocks.logic.helpers;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import com.cloudinary.Cloudinary;
-import com.cloudinary.Transformation;
-import com.cloudinary.utils.ObjectUtils;
 
-import java.util.Map;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Base64;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import com.cloudinary.Cloudinary;
+import com.cloudinary.Transformation;
+import com.cloudinary.utils.ObjectUtils;
 
 import net.coobird.thumbnailator.Thumbnails;
 
@@ -61,7 +63,7 @@ public class ImageHelper {
     
   }
 
-public static File zip(File image) {
+  public static File zip(File image) {
     try {
       String fileName = image.getName();
       String extension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
@@ -102,5 +104,18 @@ public static File zip(File image) {
     if (response.statusCode() != 200) {
         throw new IOException("Error al descargar archivo: código HTTP " + response.statusCode());
     }
+  }
+
+  public static String convertToBase64(File img) {
+    try {
+      byte[] imgAsBytes = Files.readAllBytes(img.toPath());
+      return Base64.getEncoder().encodeToString(imgAsBytes);
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  public static byte[] bage64ToBytes(String base64Image) {
+    return Base64.getDecoder().decode(base64Image);
   }
 }

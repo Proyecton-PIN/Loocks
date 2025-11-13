@@ -11,17 +11,14 @@ import org.springframework.stereotype.Service;
 import pin.loocks.data.repositories.PerfilRepository;
 import pin.loocks.domain.dtos.LoginRequestDTO;
 import pin.loocks.domain.dtos.RegisterRequestDTO;
+import pin.loocks.domain.models.Armario;
 import pin.loocks.domain.models.CustomUserDetails;
 import pin.loocks.domain.models.Perfil;
 
 @Service
 public class AuthService implements UserDetailsService {
   @Autowired
-  private final PerfilRepository perfilRepository;
-
-  AuthService(PerfilRepository repo){
-    this.perfilRepository = repo;
-  }
+  private PerfilRepository perfilRepository;
 
   public Perfil registerUser(RegisterRequestDTO request) {
     if (perfilRepository.existsByEmail(request.getEmail())) {
@@ -32,6 +29,7 @@ public class AuthService implements UserDetailsService {
     request.encodePassword(encoder);
 
     Perfil newPerfil = new Perfil(request);
+    newPerfil.setArmario(new Armario());
 
     perfilRepository.save(newPerfil);
     return newPerfil;

@@ -20,6 +20,10 @@ public class CustomUserDetails implements UserDetails {
     return perfil.getEmail();
   }
 
+  public Armario getArmario() {
+    return perfil.getArmario();
+  }
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return Collections.emptyList();
