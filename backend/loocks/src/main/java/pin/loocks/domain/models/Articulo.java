@@ -3,20 +3,15 @@ package pin.loocks.domain.models;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
-
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -28,6 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 import pin.loocks.domain.enums.Estacion;
 import pin.loocks.domain.enums.TipoArticulo;
+import pin.loocks.logic.converters.ColorPorcentajeListConverter;
 
 @Entity
 @Getter
@@ -46,13 +42,9 @@ public class Articulo {
   @Temporal(TemporalType.DATE)
   private Date fechaCompra;
 
-  @Column(length = 8, nullable = false)
-  private String colorPrimario; // RRGGBBAA
-
-  @ElementCollection
-  @CollectionTable(name = "articulo_colores_secundarios")
-  @Column(name = "color")
-  private List<String> coloresSecundarios; // RRGGBBAA
+  @Column(columnDefinition = "jsonb") 
+  @Convert(converter = ColorPorcentajeListConverter.class)
+  private List<PorcentajeColor> colores;
   
   @Enumerated(EnumType.ORDINAL)
   private Estacion estacion;

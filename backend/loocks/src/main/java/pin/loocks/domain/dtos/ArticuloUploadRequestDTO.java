@@ -31,8 +31,6 @@ public class ArticuloUploadRequestDTO {
     result.setNombre(nombre);
     result.setMarca(marca);
     result.setFechaCompra(fechaCompra);
-    result.setColorPrimario(colorPrimario);
-    result.setColoresSecundarios(coloresSecundarios);
     result.setEstacion(estacion);
     result.setImageUrl(imageUrl);
 
