@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Armario {
@@ -27,7 +28,6 @@ public class Armario {
   @OneToMany(mappedBy = "armario", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Prestamo> prestamos;
 
-  @ManyToOne
-  @JoinColumn(name = "perfil_id", nullable = false)
+  @OneToOne
   private Perfil perfil;
 }

@@ -3,20 +3,15 @@ package pin.loocks.domain.models;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
-
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -28,12 +23,11 @@ import lombok.Getter;
 import lombok.Setter;
 import pin.loocks.domain.enums.Estacion;
 import pin.loocks.domain.enums.TipoArticulo;
+import pin.loocks.logic.converters.ColorPorcentajeListConverter;
 
 @Entity
 @Getter
 @Setter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type")
 public class Articulo {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,13 +42,9 @@ public class Articulo {
   @Temporal(TemporalType.DATE)
   private Date fechaCompra;
 
-  @Column(length = 8, nullable = true)
-  private String colorPrimario; // RRGGBBAA
-
-  @ElementCollection
-  @CollectionTable(name = "articulo_colores_secundarios")
-  @Column(name = "color")
-  private List<String> coloresSecundarios; // RRGGBBAA
+  @Column(columnDefinition = "jsonb") 
+  @Convert(converter = ColorPorcentajeListConverter.class)
+  private List<PorcentajeColor> colores;
   
   @Enumerated(EnumType.ORDINAL)
   private Estacion estacion;
@@ -87,34 +77,6 @@ public class Articulo {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private TipoArticulo tipo = TipoArticulo.ARTICULO;
+  private TipoArticulo tipo = TipoArticulo.TODOS;
 
-  // // Additional getters and setters to allow JSON deserialization
-  // public String getNombre() { return nombre; }
-  // public void setNombre(String nombre) { this.nombre = nombre; }
-
-  // public String getMarca() { return marca; }
-  // public void setMarca(String marca) { this.marca = marca; }
-
-  // public String getColorPrimario() { return colorPrimario; }
-  // public void setColorPrimario(String colorPrimario) { this.colorPrimario = colorPrimario; }
-
-  // public List<String> getColoresSecundarios() { return coloresSecundarios; }
-  // public void setColoresSecundarios(List<String> coloresSecundarios) { this.coloresSecundarios = coloresSecundarios; }
-
-  // public Armario getArmario() { return armario; }
-  // public void setArmario(Armario armario) { this.armario = armario; }
-
-
-  // //METODOS GETTERS Y SETTERS
-
-  //   public Long getId() { return id; }
-  //   public void setId(Long id) { this.id = id; }
-
-  //   public String getUserId() { return userId; }
-  //   public void setUserId(String userId) { this.userId = userId; }
-
-  //   public String getImageUrl() { return imageUrl; }
-  //   public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-  
 }
