@@ -32,8 +32,6 @@ import pin.loocks.domain.enums.TipoArticulo;
 @Entity
 @Getter
 @Setter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type")
 public class Articulo {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -87,34 +85,6 @@ public class Articulo {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private TipoArticulo tipo = TipoArticulo.ARTICULO;
+  private TipoArticulo tipo = TipoArticulo.TODOS;
 
-  // // Additional getters and setters to allow JSON deserialization
-  // public String getNombre() { return nombre; }
-  // public void setNombre(String nombre) { this.nombre = nombre; }
-
-  // public String getMarca() { return marca; }
-  // public void setMarca(String marca) { this.marca = marca; }
-
-  // public String getColorPrimario() { return colorPrimario; }
-  // public void setColorPrimario(String colorPrimario) { this.colorPrimario = colorPrimario; }
-
-  // public List<String> getColoresSecundarios() { return coloresSecundarios; }
-  // public void setColoresSecundarios(List<String> coloresSecundarios) { this.coloresSecundarios = coloresSecundarios; }
-
-  // public Armario getArmario() { return armario; }
-  // public void setArmario(Armario armario) { this.armario = armario; }
-
-
-  // //METODOS GETTERS Y SETTERS
-
-  //   public Long getId() { return id; }
-  //   public void setId(Long id) { this.id = id; }
-
-  //   public String getUserId() { return userId; }
-  //   public void setUserId(String userId) { this.userId = userId; }
-
-  //   public String getImageUrl() { return imageUrl; }
-  //   public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-  
 }

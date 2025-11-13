@@ -3,29 +3,15 @@ package pin.loocks.ui.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
-import pin.loocks.data.repositories.AccesorioRepository;
-import pin.loocks.data.repositories.ArmarioRepository;
 import pin.loocks.data.repositories.ArticuloRepository;
-import pin.loocks.data.repositories.PrendaRepository;
-import pin.loocks.data.repositories.TagsRepository;
-import pin.loocks.domain.dtos.AccesorioUploadRequestDTO;
-import pin.loocks.domain.dtos.PrendaUploadRequestDTO;
-import pin.loocks.domain.models.Accesorio;
 import pin.loocks.domain.models.Articulo;
 import pin.loocks.domain.models.CustomUserDetails;
-import pin.loocks.domain.models.Prenda;
-import pin.loocks.logic.services.StorageService;
 
 @RestController
 @RequestMapping("/api/articulos")
@@ -34,81 +20,64 @@ public class ArticuloController {
   @Autowired
   private ArticuloRepository articuloRepository;
 
-  @Autowired
-  private PrendaRepository prendaRepository;
+  // @PostMapping(value = "create/prenda", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  // public ResponseEntity<Prenda> createPrenda(
+  //   @AuthenticationPrincipal CustomUserDetails userDetails,
+  //   @RequestParam("data") PrendaUploadRequestDTO dto,
+  //   @RequestParam("file") MultipartFile img
+  // ) {
+  //   try {
+  //     String imageUrl = this.storageService.uploadFile(
+  //       img, 
+  //       "user-images/users", 
+  //       String.format("%s/%s", userDetails.getId(), img.getName()));
 
-  @Autowired
-  private AccesorioRepository accesorioRepository;
+  //     Prenda prendaFromDTO = dto.toPrenda();
+  //     prendaFromDTO.setUserId(userDetails.getId());
+  //     prendaFromDTO.setArmario(armarioRepsitory.getReferenceById(dto.getArmarioId()));
+  //     prendaFromDTO.setImageUrl(imageUrl);
+  //     if(dto.getTagsIds() != null) prendaFromDTO.setTags(tagsRepsitory.findAllById(dto.getTagsIds()));
 
-  @Autowired
-  private ArmarioRepository armarioRepsitory;
+  //     Prenda nuevo = prendaRepository.save(prendaFromDTO);
+  //     System.out.println("Prenda guardada con id=" + nuevo.getId());
 
-  @Autowired
-  private TagsRepository tagsRepsitory;
+  //     return ResponseEntity.ok(nuevo);
+  //   } catch (Exception e) {
+  //     System.err.println("Error al guardar la prenda: " + e.getMessage());
+  //     e.printStackTrace();
+  //     return ResponseEntity.status(500).build();
+  //   }
+  // }
 
-  @Autowired
-  private StorageService storageService;
+  // @PostMapping(value = "create/accesorio", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  // public ResponseEntity<Accesorio> createAccesorio(
+  //   @AuthenticationPrincipal CustomUserDetails userDetails,
+  //   @RequestParam("data") AccesorioUploadRequestDTO dto,
+  //   @RequestParam("file") MultipartFile img
+  // ) {
+  //   try {
+  //     String imageUrl = this.storageService.uploadFile(
+  //       img, 
+  //       "user-images/users", 
+  //       String.format("%s/%s", userDetails.getId(), img.getName()));
 
-  @PostMapping(value = "create/prenda", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<Prenda> createPrenda(
-    @AuthenticationPrincipal CustomUserDetails userDetails,
-    @RequestParam("data") PrendaUploadRequestDTO dto,
-    @RequestParam("file") MultipartFile img
-  ) {
-    try {
-      String imageUrl = this.storageService.uploadFile(
-        img, 
-        "user-images/users", 
-        String.format("%s/%s", userDetails.getId(), img.getName()));
+  //     Accesorio accesorioFromDTO = dto.toAccesorio();
+  //     accesorioFromDTO.setUserId(userDetails.getId());
+  //     accesorioFromDTO.setArmario(armarioRepsitory.getReferenceById(dto.getArmarioId()));
+  //     accesorioFromDTO.setImageUrl(imageUrl);
 
-      Prenda prendaFromDTO = dto.toPrenda();
-      prendaFromDTO.setUserId(userDetails.getId());
-      prendaFromDTO.setArmario(armarioRepsitory.getReferenceById(dto.getArmarioId()));
-      prendaFromDTO.setImageUrl(imageUrl);
-      if(dto.getTagsIds() != null) prendaFromDTO.setTags(tagsRepsitory.findAllById(dto.getTagsIds()));
+  //     if(dto.getTagsIds() != null) accesorioFromDTO.setTags(tagsRepsitory.findAllById(dto.getTagsIds()));
 
-      Prenda nuevo = prendaRepository.save(prendaFromDTO);
-      System.out.println("Prenda guardada con id=" + nuevo.getId());
+  //     Accesorio nuevo = accesorioRepository.save(accesorioFromDTO);
+  //     System.out.println("Accesorio guardado con id=" + nuevo.getId());
 
-      return ResponseEntity.ok(nuevo);
-    } catch (Exception e) {
-      System.err.println("Error al guardar la prenda: " + e.getMessage());
-      e.printStackTrace();
-      return ResponseEntity.status(500).build();
-    }
-  }
-
-  @PostMapping(value = "create/accesorio", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<Accesorio> createAccesorio(
-    @AuthenticationPrincipal CustomUserDetails userDetails,
-    @RequestParam("data") AccesorioUploadRequestDTO dto,
-    @RequestParam("file") MultipartFile img
-  ) {
-    try {
-      String imageUrl = this.storageService.uploadFile(
-        img, 
-        "user-images/users", 
-        String.format("%s/%s", userDetails.getId(), img.getName()));
-
-      Accesorio accesorioFromDTO = dto.toAccesorio();
-      accesorioFromDTO.setUserId(userDetails.getId());
-      accesorioFromDTO.setArmario(armarioRepsitory.getReferenceById(dto.getArmarioId()));
-      accesorioFromDTO.setImageUrl(imageUrl);
-
-      if(dto.getTagsIds() != null) accesorioFromDTO.setTags(tagsRepsitory.findAllById(dto.getTagsIds()));
-
-      Accesorio nuevo = accesorioRepository.save(accesorioFromDTO);
-      System.out.println("Accesorio guardado con id=" + nuevo.getId());
-
-      return ResponseEntity.ok(nuevo);
-    } catch (Exception e) {
-      System.err.println("Error al guardar el accesorio: " + e.getMessage());
-      e.printStackTrace();
-      return ResponseEntity.status(500).build();
-    }
-  }
-
-  
+  //     return ResponseEntity.ok(nuevo);
+  //   } catch (Exception e) {
+  //     System.err.println("Error al guardar el accesorio: " + e.getMessage());
+  //     e.printStackTrace();
+  //     return ResponseEntity.status(500).build();
+  //   }
+  // }
 
   @GetMapping("/{id}")
   public ResponseEntity<Articulo> getArticuloById(@PathVariable Long id) {

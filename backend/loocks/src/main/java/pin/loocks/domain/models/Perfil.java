@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Getter;
@@ -48,8 +49,9 @@ public class Perfil {
   @Temporal(TemporalType.DATE)
   private Date fechaNacimiento;
 
-  @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Armario> armarios;
+  @OneToOne(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "perfil_id", nullable = false)
+  private Armario armario;
 
   @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Outfit> outfits;
