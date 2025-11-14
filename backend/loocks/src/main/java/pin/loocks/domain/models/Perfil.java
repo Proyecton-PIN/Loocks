@@ -52,7 +52,6 @@ public class Perfil {
   private Date fechaNacimiento;
 
   @OneToOne(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "perfil_id", nullable = false)
   private Armario armario;
 
   @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)

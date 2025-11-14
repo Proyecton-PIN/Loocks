@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import pin.loocks.data.repositories.PerfilRepository;
+import jakarta.transaction.Transactional;
 import pin.loocks.domain.dtos.LoginRequestDTO;
 import pin.loocks.domain.dtos.RegisterRequestDTO;
 import pin.loocks.domain.models.Armario;
@@ -29,10 +30,15 @@ public class AuthService implements UserDetailsService {
     request.encodePassword(encoder);
 
     Perfil newPerfil = new Perfil(request);
-    newPerfil.setArmario(new Armario());
 
-    perfilRepository.save(newPerfil);
-    return newPerfil;
+  Armario armario = new Armario();
+  String defaultNombre = "Armario de " + (request.getNombreUsuario() != null ? request.getNombreUsuario() : request.getNombre());
+  armario.setNombre(defaultNombre);
+  armario.setPerfil(newPerfil);
+  newPerfil.setArmario(armario);
+
+  perfilRepository.save(newPerfil);
+  return newPerfil;
   }
 
   public Perfil loginUser(LoginRequestDTO request) {
