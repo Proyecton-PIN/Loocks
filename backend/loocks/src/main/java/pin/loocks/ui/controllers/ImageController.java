@@ -1,13 +1,9 @@
 package pin.loocks.ui.controllers;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,20 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Parameter;
-import pin.loocks.data.apis.LLMApi;
 import pin.loocks.domain.dtos.ClothingAnalysisDTO;
-import pin.loocks.logic.helpers.ImageHelper;
-import pin.loocks.data.repositories.PrendaRepository;
-import pin.loocks.data.repositories.AccesorioRepository;
+import pin.loocks.data.repositories.ArticuloRepository;
 import pin.loocks.data.repositories.PerfilRepository;
 import pin.loocks.data.repositories.ArmarioRepository;
-import pin.loocks.domain.models.Prenda;
-import pin.loocks.domain.models.Accesorio;
+import pin.loocks.domain.models.Articulo;
 import pin.loocks.domain.models.Perfil;
+import pin.loocks.logic.helpers.ImageHelper;
+import pin.loocks.data.apis.LLMApi;
 import pin.loocks.domain.models.Armario;
-import pin.loocks.domain.enums.TipoPrenda;
-import pin.loocks.domain.enums.TipoAccesorio;
-import pin.loocks.domain.enums.Estacion;
+import pin.loocks.domain.enums.TipoArticulo;
+ 
 import pin.loocks.domain.models.CustomUserDetails;
 
 import java.net.http.HttpClient;
@@ -47,6 +40,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.coobird.thumbnailator.Thumbnails;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import java.io.FileOutputStream;
 import java.util.Base64;
 
@@ -55,16 +49,13 @@ import java.util.Base64;
 @RequestMapping("/api/image")
 public class ImageController {
   @Autowired
-  private LLMApi llmApi;
+  private ArticuloRepository articuloRepository;
 
   @Autowired
   private ImageHelper imageHelper;
 
   @Autowired
-  private PrendaRepository prendaRepository;
-
-  @Autowired
-  private AccesorioRepository accesorioRepository;
+  private LLMApi llmApi;
 
   @Autowired
   private PerfilRepository perfilRepository;
@@ -72,97 +63,12 @@ public class ImageController {
   @Autowired
   private ArmarioRepository armarioRepository;
 
-  // Supabase settings (in-code for now as provided)
-  private static final String SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlreWVtcmhheWZ0dHBweHZtYXF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0NTY1NzAsImV4cCI6MjA3NjAzMjU3MH0.p4rJlMg8bH4jGyXwFLcIfn8i8got7U5e8-EqPewZk1U";
+  @Autowired
+  private JdbcTemplate jdbcTemplate;
+
+   private static final String SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlreWVtcmhheWZ0dHBweHZtYXF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0NTY1NzAsImV4cCI6MjA3NjAzMjU3MH0.p4rJlMg8bH4jGyXwFLcIfn8i8got7U5e8-EqPewZk1U";
   private static final String SUPABASE_BASE = "https://ykyemrhayfttppxvmaqu.supabase.co/storage/v1/object/user-images";
   
-  @PostMapping("removeBackground")
-  public ResponseEntity<Resource> postMethodName(
-    @AuthenticationPrincipal UserDetails userDetails, 
-    @Parameter(description = "Image file", required = true)
-    @RequestParam("file") MultipartFile img
-  ) throws IOException {
-    File tempFile = File.createTempFile("upload-", img.getOriginalFilename());
-    img.transferTo(tempFile);
-
-    try {
-      if (img.isEmpty()) {
-        return ResponseEntity.badRequest().build();
-      }
-      
-      File result = imageHelper.removeBackground(tempFile);
-      InputStreamResource resource = new InputStreamResource(new FileInputStream(result));
-      
-      return ResponseEntity.ok()
-        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"compressed-" + img.getOriginalFilename() + "\"")
-        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-        .contentLength(result.length())
-        .body(resource);
-
-    } catch (Exception e) {
-      System.out.println(e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    } finally {
-      tempFile.delete();
-    }
-  }
-
-  
-  @PostMapping(value = "zipImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<Resource> zipImage(
-    @AuthenticationPrincipal UserDetails userDetails, 
-    @Parameter(description = "Image file", required = true)
-    @RequestParam("file") MultipartFile img
-  ) throws IOException {
-    File tempFile = File.createTempFile("upload-", img.getOriginalFilename());
-    img.transferTo(tempFile);
-
-    try {
-      if (img.isEmpty()) {
-        return ResponseEntity.badRequest().build();
-      }
-        
-      File result = ImageHelper.zip(tempFile);
-      InputStreamResource resource = new InputStreamResource(new FileInputStream(result));
-        
-
-      return ResponseEntity.ok()
-        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"compressed-" + img.getOriginalFilename() + "\"")
-        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-        .contentLength(result.length())
-        .body(resource);
-
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    } finally {
-      tempFile.delete();
-    }
-  }
-
-  @PostMapping(value = "generateDetails", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<ClothingAnalysisDTO> generateDetails(
-    @AuthenticationPrincipal UserDetails userDetails,
-    @Parameter(description = "Image file", required = true)
-    @RequestParam("file") MultipartFile img
-  ) throws IOException {
-    File tempFile = File.createTempFile("upload-", img.getOriginalFilename());
-    img.transferTo(tempFile);
-
-    try {
-      if (img.isEmpty()) {
-        return ResponseEntity.badRequest().build();
-      }
-        
-      ClothingAnalysisDTO result = llmApi.generateDetails(tempFile);
-      return ResponseEntity.ok(result);
-
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    } finally {
-      tempFile.delete();
-    }
-  }
 
   @PostMapping(value = "processPreview", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<?> processPreview(
@@ -170,31 +76,37 @@ public class ImageController {
     @Parameter(description = "Image file", required = true)
     @RequestParam("file") MultipartFile img
   ) throws IOException {
-    File tempFile = File.createTempFile("upload-", img.getOriginalFilename());
-    img.transferTo(tempFile);
-
+    File compressed = null;
     try {
       if (img.isEmpty()) return ResponseEntity.badRequest().body(Map.of("error", "empty file"));
 
-      // compress
-      File compressed = ImageHelper.zip(tempFile);
+      String original = img.getOriginalFilename();
+      String suffix = (original != null && original.contains(".")) ? original.substring(original.lastIndexOf('.')) : ".tmp";
+      File tmpUpload = File.createTempFile("upload-", suffix);
+      img.transferTo(tmpUpload);
+      try {
+        compressed = pin.loocks.logic.helpers.ImageHelper.zip(tmpUpload);
+      } finally {
+        try { tmpUpload.delete(); } catch (Exception ignore) {}
+      }
 
-      // remove background
       File noBg = imageHelper.removeBackground(compressed);
       if (noBg == null) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "background removal failed"));
 
-      // ensure PNG
       String outName = System.currentTimeMillis() + ".png";
       File pngFile = new File(noBg.getParent(), outName);
       Thumbnails.of(noBg).scale(1.0).outputFormat("png").toFile(pngFile);
 
-      // read bytes to base64
       byte[] bytes = Files.readAllBytes(pngFile.toPath());
       String base64 = Base64.getEncoder().encodeToString(bytes);
       String dataUrl = "data:image/png;base64," + base64;
 
-      // analyze
-      ClothingAnalysisDTO details = llmApi.generateDetails(pngFile);
+      ClothingAnalysisDTO details;
+      try {
+        details = llmApi.generateDetails(pngFile);
+      } catch (Exception ex) {
+        details = new ClothingAnalysisDTO();
+      }
 
       return ResponseEntity.ok(Map.of("imageBase64", dataUrl, "details", details));
 
@@ -202,7 +114,7 @@ public class ImageController {
       e.printStackTrace();
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
     } finally {
-      tempFile.delete();
+      try { if (compressed != null) compressed.delete(); } catch (Exception ignore) {}
     }
   }
 
@@ -223,7 +135,6 @@ public class ImageController {
       File tmp = File.createTempFile("processed-", ".png");
       try (FileOutputStream fos = new FileOutputStream(tmp)) { fos.write(bytes); }
 
-      // upload to supabase
       String userId = userDetails != null ? userDetails.getId() : "1";
       String fileName = System.currentTimeMillis() + ".png";
       String filePath = String.format("users/%s/%s", userId, fileName);
@@ -244,7 +155,37 @@ public class ImageController {
       ObjectMapper mapper = new ObjectMapper();
       ClothingAnalysisDTO details = mapper.convertValue(body.get("details"), ClothingAnalysisDTO.class);
 
-      boolean isAccessory = determineAccessory(details);
+      // Robustly handle the "colors" field: it may come as null, a List<Map>, or already as List<PorcentajeColor>
+      java.util.List<pin.loocks.domain.models.PorcentajeColor> safeColors = null;
+      try {
+        Object detailsRaw = body.get("details");
+        if (detailsRaw instanceof java.util.Map dmap) {
+          Object rawColors = dmap.get("colors");
+          if (rawColors instanceof java.util.List) {
+            safeColors = new java.util.ArrayList<>();
+            for (Object item : (java.util.List<?>) rawColors) {
+              if (item == null) continue;
+              if (item instanceof pin.loocks.domain.models.PorcentajeColor pc) {
+                safeColors.add(pc);
+              } else {
+                // try to convert map to PorcentajeColor
+                try {
+                  pin.loocks.domain.models.PorcentajeColor pc = mapper.convertValue(item, pin.loocks.domain.models.PorcentajeColor.class);
+                  safeColors.add(pc);
+                } catch (Exception ignore) {}
+              }
+            }
+            if (safeColors.isEmpty()) safeColors = null;
+          }
+        }
+      } catch (Exception ignore) { safeColors = null; }
+
+      // If mapper already provided a typed list, prefer it when safeColors is null
+      if (safeColors == null && details.getColors() != null && !details.getColors().isEmpty()) {
+        safeColors = details.getColors();
+      }
+
+      TipoArticulo tipo = mapToTipoArticulo(details.getTags());
 
       Perfil perfil = perfilRepository.findById(userId).orElse(null);
       Armario armario = null;
@@ -252,8 +193,8 @@ public class ImageController {
         try { armario = armarioRepository.findById(Long.valueOf(body.get("armarioId").toString())).orElse(null); } catch (Exception e) {}
       }
       if (armario == null) {
-        if (perfil != null && perfil.getArmarios() != null && !perfil.getArmarios().isEmpty()) {
-          armario = perfil.getArmarios().get(0);
+        if (perfil != null && perfil.getArmario() != null) {
+          armario = perfil.getArmario();
         } else {
           Optional<Armario> any = armarioRepository.findAll().stream().findFirst();
           if (any.isPresent()) armario = any.get();
@@ -261,31 +202,35 @@ public class ImageController {
         }
       }
 
-      if (isAccessory) {
-        Accesorio a = new Accesorio();
-        a.setUserId(userId);
-        a.setImageUrl(uploadUrl);
-        a.setArmario(armario);
-        if (details.getColors() != null && !details.getColors().isEmpty()) a.setColorPrimario(details.getColors().get(0).getColor());
-        if (details.getSeassons() != null && !details.getSeassons().isEmpty()) {
-          try { a.setEstacion(Estacion.valueOf(details.getSeassons().get(0).toUpperCase())); } catch (Exception e) {}
-        }
-        a.setTipoAccesorio(mapToTipoAccesorio(details.getTags()));
-        Accesorio saved = accesorioRepository.save(a);
-        return ResponseEntity.ok(Map.of("imageUrl", uploadUrl, "details", details, "id", saved.getId(), "type", "accesorio"));
-      } else {
-        Prenda p = new Prenda();
-        p.setUserId(userId);
-        p.setImageUrl(uploadUrl);
-        p.setArmario(armario);
-        if (details.getColors() != null && !details.getColors().isEmpty()) p.setColorPrimario(details.getColors().get(0).getColor());
-        if (details.getSeassons() != null && !details.getSeassons().isEmpty()) {
-          try { p.setEstacion(Estacion.valueOf(details.getSeassons().get(0).toUpperCase())); } catch (Exception e) {}
-        }
-        p.setTipoPrenda(mapToTipoPrenda(details.getTags()));
-        Prenda saved = prendaRepository.save(p);
-        return ResponseEntity.ok(Map.of("imageUrl", uploadUrl, "details", details, "id", saved.getId(), "type", "prenda"));
+      Articulo a = new Articulo();
+      a.setUserId(userId);
+      a.setImageUrl(uploadUrl);
+      a.setArmario(armario);
+
+      if (safeColors != null && !safeColors.isEmpty()) {
+        a.setColores(safeColors);
       }
+      if (details.getEstacion() != null) {
+        a.setEstacion(details.getEstacion());
+      }
+
+      a.setTipo(tipo != null ? tipo : TipoArticulo.TODOS);
+
+      Articulo saved = articuloRepository.save(a);
+
+      // Hotfix: if safeColors were provided, write them to the jsonb column using JdbcTemplate
+      // This bypasses JPA binding issues with jsonb/PGobject in some runtime environments.
+      if (safeColors != null && !safeColors.isEmpty()) {
+        try {
+          String colorsJson = new ObjectMapper().writeValueAsString(safeColors);
+          // Use explicit cast to jsonb to ensure Postgres interprets the parameter correctly
+          jdbcTemplate.update("UPDATE articulo SET colores = cast(? as jsonb) WHERE id = ?", colorsJson, saved.getId());
+        } catch (Exception ex) {
+          // Log but don't fail the whole request
+          ex.printStackTrace();
+        }
+      }
+      return ResponseEntity.ok(Map.of("imageUrl", uploadUrl, "details", details, "id", saved.getId(), "type", "articulo", "tipo", saved.getTipo().name().toLowerCase()));
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -299,142 +244,37 @@ public class ImageController {
     @Parameter(description = "Image file", required = true)
     @RequestParam("file") MultipartFile img
   ) throws IOException {
-    File tempFile = File.createTempFile("upload-", img.getOriginalFilename());
-    img.transferTo(tempFile);
-
     try {
-      if (img.isEmpty()) return ResponseEntity.badRequest().body(Map.of("error", "empty file"));
-      File compressed = ImageHelper.zip(tempFile);
-
-      File noBg = imageHelper.removeBackground(compressed);
-
-      if (noBg == null) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "background removal failed"));
-
- 
-      String outName = System.currentTimeMillis() + ".png";
-      File pngFile = new File(noBg.getParent(), outName);
-      Thumbnails.of(noBg).scale(1.0).outputFormat("png").toFile(pngFile);
-
-      String userId = userDetails != null ? userDetails.getId() : "1";
-      String filePath = String.format("users/%s/%s", userId, outName);
-      String uploadUrl = SUPABASE_BASE + "/" + filePath;
-
-      byte[] bytes = Files.readAllBytes(pngFile.toPath());
-
-      HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create(uploadUrl))
-        .header("Authorization", "Bearer " + SUPABASE_KEY)
-        .header("Content-Type", "image/png")
-        .PUT(HttpRequest.BodyPublishers.ofByteArray(bytes))
-        .build();
-
-      HttpClient client = HttpClient.newHttpClient();
-      HttpResponse<String> resp = client.send(request, HttpResponse.BodyHandlers.ofString());
-      if (resp.statusCode() >= 400) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "upload failed", "status", resp.statusCode(), "body", resp.body()));
-      }
-
-      ClothingAnalysisDTO details = llmApi.generateDetails(pngFile);
-
-      boolean isAccessory = determineAccessory(details);
-
-      Perfil perfil = perfilRepository.findById(userId).orElse(null);
-      Armario armario = null;
-      if (perfil != null && perfil.getArmarios() != null && !perfil.getArmarios().isEmpty()) {
-        armario = perfil.getArmarios().get(0);
+      ResponseEntity<?> previewResp = processPreview(userDetails, img);
+      if (previewResp.getStatusCode().is2xxSuccessful()) {
+        Object body = previewResp.getBody();
+        if (body instanceof Map) {
+          @SuppressWarnings("unchecked")
+          Map<String, Object> map = (Map<String, Object>) body;
+          Object imageBase64 = map.get("imageBase64");
+          Object details = map.get("details");
+          Map<String, Object> saveBody = Map.of("imageBase64", imageBase64, "details", details);
+          return saveProcessed(userDetails, saveBody);
+        } else {
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "unexpected preview response"));
+        }
       } else {
-        armario = new Armario();
-        try {
-          java.lang.reflect.Field fName = Armario.class.getDeclaredField("nombre");
-          fName.setAccessible(true);
-          fName.set(armario, "Default");
-          if (perfil != null) {
-            java.lang.reflect.Field fPerfil = Armario.class.getDeclaredField("perfil");
-            fPerfil.setAccessible(true);
-            fPerfil.set(armario, perfil);
-          } else {
-            // no perfil found; try to use an existing armario from DB
-            Optional<Armario> any = armarioRepository.findAll().stream().findFirst();
-            if (any.isPresent()) {
-              armario = any.get();
-            } else {
-              return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "No perfil or armario available to attach the artifact"));
-            }
-          }
-        } catch (Exception e) {
-          // ignore reflection errors
-        }
-        armario = armarioRepository.save(armario);
+        return previewResp;
       }
-
-      if (isAccessory) {
-        Accesorio a = new Accesorio();
-        a.setUserId(userId);
-        a.setImageUrl(uploadUrl);
-        a.setArmario(armario);
-        if (details.getColors() != null && !details.getColors().isEmpty()) a.setColorPrimario(details.getColors().get(0).getColor());
-        if (details.getSeassons() != null && !details.getSeassons().isEmpty()) {
-          try { a.setEstacion(Estacion.valueOf(details.getSeassons().get(0).toUpperCase())); } catch (Exception e) {}
-        }
-        // map accessory type
-        TipoAccesorio ta = mapToTipoAccesorio(details.getTags());
-        a.setTipoAccesorio(ta);
-
-        Accesorio saved = accesorioRepository.save(a);
-        return ResponseEntity.ok(Map.of("imageUrl", uploadUrl, "details", details, "id", saved.getId(), "type", "accesorio"));
-      } else {
-        Prenda p = new Prenda();
-        p.setUserId(userId);
-        p.setImageUrl(uploadUrl);
-        p.setArmario(armario);
-        if (details.getColors() != null && !details.getColors().isEmpty()) p.setColorPrimario(details.getColors().get(0).getColor());
-        if (details.getSeassons() != null && !details.getSeassons().isEmpty()) {
-          try { p.setEstacion(Estacion.valueOf(details.getSeassons().get(0).toUpperCase())); } catch (Exception e) {}
-        }
-        TipoPrenda tp = mapToTipoPrenda(details.getTags());
-        p.setTipoPrenda(tp);
-
-        Prenda saved = prendaRepository.save(p);
-        return ResponseEntity.ok(Map.of("imageUrl", uploadUrl, "details", details, "id", saved.getId(), "type", "prenda"));
-      }
-
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
-    } finally {
-      tempFile.delete();
     }
   }
 
-  private boolean determineAccessory(ClothingAnalysisDTO details) {
-    if (details == null || details.getTags() == null) return false;
-    List<String> tags = details.getTags().stream().map(String::toLowerCase).collect(Collectors.toList());
-    for (TipoAccesorio a : TipoAccesorio.values()) {
-      String name = a.name().toLowerCase().replace('_', ' ');
-      if (tags.stream().anyMatch(t -> t.contains(name) || name.contains(t))) return true;
-    }
-    return false;
-  }
-
-  private TipoAccesorio mapToTipoAccesorio(List<String> tags) {
-    if (tags == null) return TipoAccesorio.ANILLO;
+  private TipoArticulo mapToTipoArticulo(List<String> tags) {
+    if (tags == null) return TipoArticulo.TODOS;
     List<String> lower = tags.stream().map(String::toLowerCase).collect(Collectors.toList());
-    for (TipoAccesorio a : TipoAccesorio.values()) {
-      String name = a.name().toLowerCase().replace('_', ' ');
-      for (String t : lower) if (t.contains(name) || name.contains(t)) return a;
+    for (TipoArticulo t : TipoArticulo.values()) {
+      String name = t.name().toLowerCase().replace('_', ' ');
+      for (String tag : lower) if (tag.contains(name) || name.contains(tag)) return t;
     }
-    return TipoAccesorio.ANILLO;
+    return TipoArticulo.TODOS;
   }
-
-  private TipoPrenda mapToTipoPrenda(List<String> tags) {
-    if (tags == null) return TipoPrenda.CAMISETA;
-    List<String> lower = tags.stream().map(String::toLowerCase).collect(Collectors.toList());
-    for (TipoPrenda p : TipoPrenda.values()) {
-      String name = p.name().toLowerCase().replace('_', ' ');
-      for (String t : lower) if (t.contains(name) || name.contains(t)) return p;
-    }
-    return TipoPrenda.CAMISETA;
-  }
- 
   
 }

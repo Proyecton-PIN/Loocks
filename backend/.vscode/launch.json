@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-LoocksApplication<loocks>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "pin.loocks.LoocksApplication",
+            "projectName": "loocks",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
