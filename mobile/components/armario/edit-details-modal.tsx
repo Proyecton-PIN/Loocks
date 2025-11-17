@@ -82,7 +82,7 @@ export default function EditDetailsModal({ data, onSave, onClose }: Props) {
 
   return (
     <Modal visible={!!data} animationType="slide" transparent={false}>
-      <View className="flex-1 bg-black px-4 py-6">
+      <View className="flex-1 bg-[#222222] px-4 py-6">
         <ScrollView>
           {imageUrl ? (
             <Image

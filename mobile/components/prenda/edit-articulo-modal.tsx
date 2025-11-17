@@ -93,8 +93,8 @@ export default function EditArticuloModal({ data, visible = false, onClose, onSa
   if (!visible || !data) return null;
 
   return (
-    <View className="absolute inset-0 bg-black">
-      <View className="flex-1 bg-black px-4 py-6">
+    <View className="absolute inset-0 bg-[#222222]">
+      <View className="flex-1 bg-[#222222] px-4 py-6">
         <ScrollView>
           {imageUrl ? (
             <Image

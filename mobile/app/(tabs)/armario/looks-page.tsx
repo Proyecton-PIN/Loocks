@@ -4,11 +4,11 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
-export default function OutfitPage() {
+export default function LooksPage() {
   const [outfits] = useState<Outfit[]>([]);
 
   return (
-    <View>
+    <View className='bg-[#F3F3F3] flex-1'>
       <Pressable
         onPress={() => router.push('/crear_outfit')}
         className="border border-dashed border-neutral-600 rounded-xl py-4 mb-6 items-center"

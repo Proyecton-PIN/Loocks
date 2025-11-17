@@ -72,7 +72,7 @@ export default function CustomCamera({ onTakeImage }: Props) {
               onPress={tomarFoto}
               className="bg-white px-4 py-3 rounded-full"
             >
-              <Text className="text-black font-bold">Tomar Foto</Text>
+              <Text className="text-[#222222] font-bold">Tomar Foto</Text>
             </Pressable>
           </View>
 

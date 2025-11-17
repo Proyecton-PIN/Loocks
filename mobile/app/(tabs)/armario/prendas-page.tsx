@@ -1,73 +1,42 @@
-import EditDetailsModal from '@/components/armario/edit-details-modal';
-import CustomCamera from '@/components/camera/custom-camera';
-import PrendaCard from '@/components/prenda/prenda-card';
-import PrendaDetailsModal from '@/components/prenda/prenda-details-modal';
-import PrendaFilter from '@/components/prenda/prenda-filter';
-import { useArticulos } from '@/hooks/useArticulos';
-import { Prenda } from '@/lib/domain/models/prenda';
-import React, { useState } from 'react';
-import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { FlatList, TouchableOpacity, View } from 'react-native';
+import PrendaCategoriaCard from '../../../components/prenda/prendaCategoriaCard';
+
+const categorias = [
+  { id: 1, nombre: 'Accesorios', color: '#E5E5F5', icon: '👜', cantidad: 8 },
+  { id: 2, nombre: 'Camisetas', color: '#FFE5F5', icon: '👕', cantidad: 10 },
+  { id: 3, nombre: 'Gorras', color: '#E5F5FF', icon: '🧢', cantidad: 10 },
+  { id: 4, nombre: 'Vestidos', color: '#FFF5E5', icon: '👗', cantidad: 8 },
+  { id: 5, nombre: 'Sudaderas', color: '#F5E5FF', icon: '🧥', cantidad: 10 },
+  { id: 6, nombre: 'Todas', color: '#E5FFE5', icon: '⭐', cantidad: 27 },
+];
 
 export default function PrendasPage() {
-  const [selectedPrenda, setSelectedPrenda] = useState<Prenda | undefined>(
-    undefined,
-  );
-
-  const isLoading = useArticulos((s) => s.isLoading);
-  const prendas = useArticulos((s) => s.prendas);
-  const [filteredPrendas, setFilteredPrendas] = React.useState(prendas);
-  const generateDetails = useArticulos((s) => s.generateDetails);
-  const newItem = useArticulos((s) => s.newItem);
-  const clearNewItem = useArticulos((s) => s.clearNewItem);
-  const addArticulo = useArticulos((s) => s.addArticulo);
-
-  React.useEffect(() => {
-    setFilteredPrendas(prendas);
-  }, [prendas]);
-
-  if (isLoading)
-    return (
-      <ActivityIndicator size="large" color="#999" style={{ marginTop: 30 }} />
-    );
-
   return (
-    <View>
-      <CustomCamera onTakeImage={generateDetails} />
-      <PrendaFilter prendas={prendas} onChange={setFilteredPrendas} />
+    <View className="flex-1 bg-[#F6F6F6] pt-2">
       <FlatList
-        key="prendas"
-        data={filteredPrendas}
-        renderItem={(item) => (
-          <PrendaCard data={item.item} onPress={setSelectedPrenda} />
+        data={categorias}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <PrendaCategoriaCard
+            initialName={item.nombre}
+            initialColor={item.color}
+            initialIcon={item.icon}
+            cantidad={item.cantidad}
+          />
         )}
-        numColumns={2}
-        columnWrapperStyle={{ justifyContent: 'space-between' }}
-        contentContainerStyle={{ paddingBottom: 120 }}
-        ListEmptyComponent={
-          isLoading ? (
-            <ActivityIndicator
-              size="large"
-              color="#999"
-              style={{ marginTop: 30 }}
-            />
-          ) : (
-            <Text className="text-gray-500 text-center mt-10">
-              No hay prendas todavía
-            </Text>
-          )
-        }
+        ItemSeparatorComponent={() => <View className="h-4" />}
+        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16 }}
       />
-
-      <EditDetailsModal
-        data={newItem}
-        onClose={clearNewItem}
-        onSave={addArticulo}
-      />
-
-      <PrendaDetailsModal
-        data={selectedPrenda}
-        onClose={() => setSelectedPrenda(undefined)}
-      />
+      <View className="absolute bottom-10 left-0 right-0 items-center pointer-events-none">
+        <TouchableOpacity
+          onPress={() => {}}
+          className="w-18 h-18 rounded-full bg-[#5639F8] items-center justify-center shadow-lg pointer-events-auto"
+          style={{ elevation: 8 }}
+        >
+          <Ionicons name="add" size={46} color="#fff" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
+  Pressable,
   Text,
   TextInput,
   TouchableOpacity,
@@ -12,103 +13,108 @@ import {
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const error = useAuth((s) => s.error);
   const login = useAuth((s) => s.login);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = () => {
     setIsLoading(true);
-
-    login(email, password).then(() => {
-      setIsLoading(false);
-      // setPassword('');
-    });
+    login(email, password).finally(() => setIsLoading(false));
   };
 
   return (
-    <View className="flex-1 justify-center px-6">
-      <View className="flex-1 justify-center">
+    <View className="flex-1 justify-center items-center bg-[#F3F3F3] px-4">
+      <View className="w-full max-w-[340px]">
         {/* Header */}
-        <View className="mb-12 items-center">
-          <Text className="text-gray-400">Ingresa tus credenciales</Text>
+        <View className="mt-7 mb-10 items-center">
+          <Text className="text-black text-[25px] font-extrabold tracking-wide">LOOCKS</Text>
         </View>
-
         {/* Email */}
-        <View className="mb-5">
-          <Text className="text-sm font-medium text-gray-400 mb-2">
-            Correo Electrónico
-          </Text>
-          <View className="flex-row items-center border border-gray-700 rounded-xl px-3 bg-gray-900">
-            <Ionicons name="mail-outline" size={20} color="#9CA3AF" />
-            <TextInput
-              className="flex-1 text-white py-3 px-2 text-base"
-              placeholder="tu@email.com"
-              placeholderTextColor="#9CA3AF"
-              value={email}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              onChangeText={setEmail}
-              onSubmitEditing={handleSubmit}
-            />
-          </View>
+        <View className="mb-3">
+          <TextInput
+            className="bg-white rounded-lg px-4 py-3 text-base text-black"
+            placeholder="Email"
+            placeholderTextColor="#717171"
+            value={email}
+            autoCapitalize="none"
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            returnKeyType="next"
+          />
         </View>
-
         {/* Password */}
-        <View className="mb-5">
-          <Text className="text-sm font-medium text-gray-400 mb-2">
-            Contraseña
-          </Text>
-          <View className="flex-row items-center border border-gray-700 rounded-xl px-3 bg-gray-900">
-            <Ionicons name="lock-closed-outline" size={20} color="#9CA3AF" />
-            <TextInput
-              className="flex-1 text-white py-3 px-2 text-base"
-              placeholder="Tu contraseña"
-              placeholderTextColor="#9CA3AF"
-              secureTextEntry={!showPassword}
-              value={password}
-              autoCapitalize="none"
-              onChangeText={setPassword}
-              onSubmitEditing={handleSubmit}
-            />
-            <TouchableOpacity
-              onPress={() => setShowPassword(!showPassword)}
-              className="p-2"
-            >
-              <Ionicons
-                name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                size={20}
-                color="#9CA3AF"
-              />
-            </TouchableOpacity>
-          </View>
+        <View className="mb-2">
+          <TextInput
+            className="bg-white rounded-lg px-4 py-3 text-base text-black"
+            placeholder="Password"
+            placeholderTextColor="#717171"
+            secureTextEntry
+            value={password}
+            autoCapitalize="none"
+            onChangeText={setPassword}
+            returnKeyType="go"
+          />
         </View>
-
+        <View className="flex-row justify-end">
+          <Pressable onPress={() => {}}>
+            <Text className="text-xs text-[#6A5DF8] underline mr-1">Forgot Password?</Text>
+          </Pressable>
+        </View>
         {/* Error */}
         {error && (
-          <View className="bg-red-100 border border-red-300 rounded-xl p-3 mb-4">
+          <View className="bg-red-100 border border-red-200 rounded-xl px-4 py-2 mt-2 mb-2">
             <Text className="text-red-700 text-center text-sm">{error}</Text>
           </View>
         )}
-
-        {/* Botón */}
+        {/* Botón principal */}
         <TouchableOpacity
           disabled={isLoading}
           onPress={handleSubmit}
-          className={`w-full py-4 rounded-xl mt-6 ${
-            isLoading
-              ? 'bg-blue-600 opacity-50'
-              : 'bg-blue-600 active:bg-blue-700'
-          }`}
+          className="w-full py-4 rounded-xl my-6 bg-[#E0DBFF]"
         >
           {isLoading ? (
             <ActivityIndicator color="#fff" />
           ) : (
             <Text className="text-white text-center font-semibold text-base">
-              Iniciar Sesión
+              PRIMARIO
             </Text>
           )}
         </TouchableOpacity>
+        {/* Separador */}
+        <View className="flex-row items-center my-3">
+          <View className="flex-1 h-px bg-gray-300" />
+          <Text className="px-2 text-sm text-gray-400">or</Text>
+          <View className="flex-1 h-px bg-gray-300" />
+        </View>
+        {/* Botón Google */}
+        <TouchableOpacity
+          onPress={() => {}}
+          className="flex-row items-center w-full border border-gray-300 rounded-xl py-3 mb-4 bg-white"
+        >
+          <Ionicons name="logo-google" size={20} color="#111" className="ml-2" />
+          <Text className="flex-1 text-center text-base font-semibold text-gray-800">
+            Continue with Google
+          </Text>
+        </TouchableOpacity>
+        {/* Botón Apple */}
+        <TouchableOpacity
+          onPress={() => {}}
+          className="flex-row items-center w-full border border-gray-300 rounded-xl py-3 mb-6 bg-white"
+        >
+          <Ionicons name="logo-apple" size={20} color="#111" className="ml-2" />
+          <Text className="flex-1 text-center text-base font-semibold text-gray-800">
+            Continue with Apple
+          </Text>
+        </TouchableOpacity>
+        {/* Footer */}
+        <View className="mt-2 mb-1 flex-row justify-center">
+          <Text className="text-sm text-gray-800">Don’t have an account?</Text>
+          <Pressable onPress={() => {}}>
+            <Text className="text-[#6A5DF8] text-sm font-semibold ml-1 underline">
+              Sing Up
+            </Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   );

@@ -19,7 +19,7 @@ export default function CustomCameraAcceptModal({
 }: Props) {
   return (
     <Modal visible={visible} animationType="slide">
-      <View className="flex-1 bg-black">
+      <View className="flex-1 bg-[#222222]">
         <Image
           source={{ uri }}
           className="flex-1 w-full h-full"
@@ -44,7 +44,7 @@ export default function CustomCameraAcceptModal({
 
         <Pressable
           onPress={onClose}
-          className="absolute top-10 left-5 bg-black/60 p-2 rounded-md"
+          className="absolute top-10 left-5 bg-[#222222]/60 p-2 rounded-md"
         >
           <Ionicons name="close" size={20} color={'white'} />
         </Pressable>

@@ -6,24 +6,9 @@ import '../global.css';
 
 export default function RootLayout() {
   return (
-    <View className="flex-1">
-      <StatusBar style="light" />
-      <Stack
-        screenOptions={{
-          contentStyle: {
-            backgroundColor: '#000',
-          },
-          headerStyle: {
-            backgroundColor: '#000',
-          },
-          headerTitle: 'loocks',
-          headerTitleStyle: {
-            color: 'white',
-            fontSize: 30,
-            fontWeight: 'semibold',
-          },
-        }}
-      />
+    <View className="flex-1 bg-[#F3F3F3]">
+      <StatusBar style="dark" />
+      <Stack screenOptions={{ headerShown: false }} />
     </View>
   );
 }

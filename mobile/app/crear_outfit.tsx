@@ -156,21 +156,21 @@ export default function CrearOutfit() {
   const cardHeight = Math.min(cardWidth, Math.floor(availableForSlots / 3));
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'black', padding: 16 }}>
+    <View style={{ flex: 1, backgroundColor: '#F3F3F3', padding: 16 }}>
       <Stack.Screen options={{ title: 'Crear Outfit' }} />
 
       <View style={{ flex: 1, justifyContent: 'space-between' }}>
         <View>
-          <Text style={{ color: 'white', marginBottom: 6, fontSize: 13 }}>Categoría (mood)</Text>
+          <Text style={{ color: '#222222', marginBottom: 6, fontSize: 13 }}>Categoría (mood)</Text>
           <TextInput
             value={mood}
             onChangeText={setMood}
             placeholder="Ej: Casual, Elegante..."
             placeholderTextColor="#888"
-            style={{ backgroundColor: '#111', color: 'white', padding: 8, borderRadius: 8, marginBottom: 8, fontSize: 13 }}
+            style={{ backgroundColor: '#DFDFDF', color: '#222222', padding: 8, borderRadius: 8, marginBottom: 8, fontSize: 13 }}
           />
 
-          <Text style={{ color: 'white', fontSize: 13, marginBottom: 6 }}>Slides: desliza para seleccionar la prenda visible</Text>
+          <Text style={{ color: '#222222', fontSize: 13, marginBottom: 6 }}>Slides: desliza para seleccionar la prenda visible</Text>
 
           {[0, 1, 2].map((slotIndex) => {
           const looped = getLoopedData(articulos);
@@ -262,7 +262,7 @@ export default function CrearOutfit() {
                         ) : (
                           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                             <Ionicons name="shirt-outline" size={48} color="#555" />
-                            <Text style={{ color: '#777', marginTop: 6 }}>{item.nombre ?? `#${item.id}`}</Text>
+                            <Text style={{ color: '#222222', marginTop: 6 }}>{item.nombre ?? `#${item.id}`}</Text>
                           </View>
                         )}
                       </TouchableOpacity>
@@ -271,7 +271,7 @@ export default function CrearOutfit() {
                 }}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 2, paddingHorizontal: 8, alignItems: 'center' }}
-                ListEmptyComponent={loading ? <ActivityIndicator size="large" color="#999" style={{ marginTop: 30 }} /> : <Text style={{ color: '#777' }}>No hay prendas</Text>}
+                ListEmptyComponent={loading ? <ActivityIndicator size="large" color="#999" style={{ marginTop: 30 }} /> : <Text style={{ color: '#222222' }}>No hay prendas</Text>}
                 ref={(el) => { flatlistRefs.current[slotIndex] = el; }}
                 onViewableItemsChanged={onViewableItemsChanged}
                 viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
@@ -282,29 +282,29 @@ export default function CrearOutfit() {
         </View>
 
         <View style={{ paddingTop: 6 }}>
-          <Text style={{ color: 'white', marginBottom: 4, fontSize: 13 }}>Satisfacción (opcional)</Text>
+          <Text style={{ color: '#222222', marginBottom: 4, fontSize: 13 }}>Satisfacción (opcional)</Text>
           <TextInput
             value={satisfaccion ?? ''}
             onChangeText={setSatisfaccion}
             placeholder="p.ej. 8/10"
             placeholderTextColor="#888"
-            style={{ backgroundColor: '#111', color: 'white', padding: 8, borderRadius: 8, marginBottom: 8, fontSize: 13 }}
+            style={{ backgroundColor: '#DFDFDF', color: '#222222', padding: 8, borderRadius: 8, marginBottom: 8, fontSize: 13 }}
           />
 
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
             <TouchableOpacity onPress={() => setIsFavorito((s) => !s)} style={{ marginRight: 8 }}>
-              <View style={{ width: 20, height: 20, borderRadius: 4, backgroundColor: isFavorito ? '#ffcc00' : '#333', alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ width: 20, height: 20, borderRadius: 4, backgroundColor: isFavorito ? '#ffcc00' : '#DFDFDF', alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{ fontSize: 12 }}>{isFavorito ? '★' : ''}</Text>
               </View>
             </TouchableOpacity>
-            <Text style={{ color: 'white', fontSize: 13 }}>Marcar como favorito</Text>
+            <Text style={{ color: '#222222', fontSize: 13 }}>Marcar como favorito</Text>
           </View>
 
           <TouchableOpacity
             onPress={guardar}
             style={{
               marginTop: 6,
-              backgroundColor: '#1e90ff',
+              backgroundColor: '#5639F8',
               paddingVertical: 10,
               paddingHorizontal: 14,
               borderRadius: 8,
