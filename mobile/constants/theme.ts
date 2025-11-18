@@ -4,6 +4,10 @@ const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
 export const Colors = {
+  muted: '#686868',
+  text: '#222222',
+  card: '#F3F3F3',
+  background: '#FFFFFF',
   light: {
     text: '#11181C',
     background: '#fff',
