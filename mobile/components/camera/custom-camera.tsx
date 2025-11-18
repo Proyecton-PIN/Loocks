@@ -1,4 +1,7 @@
+import { AddIcon } from '@/constants/icons';
+import { Colors } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
+import clsx from 'clsx';
 import { Camera, CameraView } from 'expo-camera';
 import { useRef, useState } from 'react';
 import { Alert, Modal, Pressable, Text, View } from 'react-native';
@@ -8,9 +11,10 @@ import { Alert, Modal, Pressable, Text, View } from 'react-native';
 
 interface Props {
   onTakeImage(uri?: string): void;
+  className?: string;
 }
 
-export default function CustomCamera({ onTakeImage }: Props) {
+export default function CustomCamera({ onTakeImage, className }: Props) {
   const [mostrarCamara, setMostrarCamara] = useState(false);
   const [foto, setFoto] = useState<string | undefined>(undefined);
   const camaraRef = useRef<CameraView | null>(null);
@@ -54,9 +58,13 @@ export default function CustomCamera({ onTakeImage }: Props) {
     <View>
       <Pressable
         onPress={solicitarPermisos}
-        className="border border-dashed border-neutral-600 rounded-xl py-4 mb-6 items-center"
+        className={clsx(
+          'aspect-square rounded-full w-[58] items-center justify-center',
+          className,
+        )}
+        style={{ backgroundColor: Colors.primary }}
       >
-        <Text className="text-white">+ Añadir prenda</Text>
+        <AddIcon />
       </Pressable>
 
       {/* We no longer show a local accept modal; after taking the photo we
