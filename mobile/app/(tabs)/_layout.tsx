@@ -29,7 +29,7 @@ export default function TabLayout() {
       screenOptions={{
         header: ({ route }) => (
           <View
-            className="mx-4 pt-12 pb-5 px-5"
+            className="pt-12 pb-5"
             style={{ backgroundColor: Colors.background }}
           >
             <Text className="text-[26px] font-bold text-[#2A2343]">
