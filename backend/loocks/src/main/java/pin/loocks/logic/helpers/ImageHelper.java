@@ -115,7 +115,7 @@ public class ImageHelper {
     }
   }
 
-  public static byte[] bage64ToBytes(String base64Image) {
+  public static byte[] base64ToBytes(String base64Image) {
     return Base64.getDecoder().decode(base64Image);
   }
 }

@@ -15,11 +15,12 @@ public class ClothingAnalysisDTO {
 	private String nombre;
 	private String marca;
 
-	private List<PorcentajeColor> colors;
+	private List<PorcentajeColor> colores;
 
 	private List<String> tags;
 	private Estacion estacion;
 
 	private TipoArticulo tipo;
-	private String base64Img;
+
+	private String base64Img = null;
 }

@@ -2,6 +2,7 @@ package pin.loocks.logic.services;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,8 @@ public class ArticuloService {
     newArticulo.setUserId(userId);
     newArticulo.setTags(tagSerice.getOrCreateTags(dto.getTags()));
 
-    String imageUrl = storageService.uploadFile(ImageHelper.bage64ToBytes(dto.getBase64Img()), "users", userId);
+    String imageUrl = storageService.uploadFile(ImageHelper.base64ToBytes(dto.getBase64Img()), "user-images/users",
+        userId, String.valueOf(new Date().getTime()) + ".png");
     newArticulo.setImageUrl(imageUrl);
 
     return articuloRepository.save(newArticulo);

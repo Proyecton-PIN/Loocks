@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import pin.loocks.data.repositories.PerfilRepository;
-import jakarta.transaction.Transactional;
 import pin.loocks.domain.dtos.LoginRequestDTO;
 import pin.loocks.domain.dtos.RegisterRequestDTO;
 import pin.loocks.domain.models.Armario;

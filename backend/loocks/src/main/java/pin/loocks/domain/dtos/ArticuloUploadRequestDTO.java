@@ -21,7 +21,7 @@ public class ArticuloUploadRequestDTO {
   private List<String> tags;
 
   @NotNull
-  private List<PorcentajeColor> colors;
+  private List<PorcentajeColor> colores;
 
   @NotNull
   private Estacion estacion;

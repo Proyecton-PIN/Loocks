@@ -4,6 +4,9 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -48,6 +51,7 @@ public class Articulo {
   @Temporal(TemporalType.DATE)
   private Date fechaCompra;
 
+  @JdbcTypeCode(SqlTypes.JSON)
   @Column(columnDefinition = "jsonb") 
   @Convert(converter = ColorPorcentajeListConverter.class)
   private List<PorcentajeColor> colores;
@@ -89,8 +93,9 @@ public class Articulo {
     this.nombre = dto.getNombre();
     this.marca = dto.getMarca();
     this.fechaCompra = dto.getFechaCompra();
-    this.colores = dto.getColors();
+    this.colores = dto.getColores();
     this.estacion = dto.getEstacion();
+    this.tipo = dto.getTipo();
   }
 
 }

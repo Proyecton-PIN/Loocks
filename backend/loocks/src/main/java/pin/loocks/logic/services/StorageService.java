@@ -23,9 +23,9 @@ public class StorageService {
 
   private final RestTemplate restTemplate = new RestTemplate();;
 
-  public String uploadFile(byte[] file, String bucketName, String path) throws IOException {
-    String url = String.format("%s/storage/v1/object/%s/%s",
-        supabaseUrl, bucketName, path);
+  public String uploadFile(byte[] file, String bucketName, String path, String name) throws IOException {
+    String url = String.format("%s/storage/v1/object/%s/%s/%s",
+        supabaseUrl, bucketName, path, name);
 
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", "Bearer " + supabaseKey);
