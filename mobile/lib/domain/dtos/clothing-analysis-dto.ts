@@ -1,11 +1,15 @@
+import { Estacion } from '../enums/estacion';
+import { TipoArticulo } from '../enums/tipo-accesorio';
 
 export interface ClothingAnalysisDTO {
-  primaryColor: string;
-  colors: ColorInfo[];
+  nombre: string;
+  marca: string;
+  colores: ColorInfo[];
   tags: string[];
-  seassons: string;
-  isPrenda: boolean;
-  type: string;
+  estacion: Estacion;
+  tipo: TipoArticulo;
+  base64Img: string;
+  fechaCompra?: Date;
 }
 
 interface ColorInfo {

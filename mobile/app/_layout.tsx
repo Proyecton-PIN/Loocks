@@ -8,7 +8,10 @@ export default function RootLayout() {
   return (
     <View className="flex-1 bg-[#F3F3F3]">
       <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack
+        screenOptions={{ headerShown: false }}
+        initialRouteName="articulo-detalles"
+      />
     </View>
   );
 }

@@ -1,12 +1,13 @@
 import { ApiUrl } from '@/constants/api-constants';
 import http from '@/lib/data/http';
 import { ClothingAnalysisDTO } from '@/lib/domain/dtos/clothing-analysis-dto';
+import { Articulo } from '@/lib/domain/models/articulo';
 import { Prenda } from '@/lib/domain/models/prenda';
 import { SecureStore } from './secure-store-service';
 
-export async function fetchArticulos(): Promise<Prenda[]> {
+export async function fetchArticulos(): Promise<Articulo[]> {
   try {
-    const data = await http.get<Prenda[]>('articulos');
+    const data = await http.get<Articulo[]>('articulos');
     return data;
   } catch (err) {
     console.error('Error cargando prendas:', err);
@@ -16,85 +17,50 @@ export async function fetchArticulos(): Promise<Prenda[]> {
 
 export async function generateDetails(
   uri: string,
-): Promise<{ image?: string; details?: ClothingAnalysisDTO } | undefined> {
-  // Send the photo to the backend processPreview endpoint which returns
-  // a processed image and analysis details.
+): Promise<ClothingAnalysisDTO | undefined> {
+  // Send the pho.
+  console.log(uri);
+
   const formData = new FormData();
-  formData.append(
-    'file',
-    {
-      uri: uri,
-      type: 'image/png',
-      name: 'photo.png',
-    } as any,
-  );
+  formData.append('file', {
+    uri: uri,
+    type: 'image/jpeg',
+    name: 'photo.jpg',
+  } as any);
+
   try {
-    // Use the http wrapper's postForm helper which handles baseUrl and
-    // Authorization header. Keep logging to help diagnose issues.
-    console.log('generateDetails: calling http.postForm processPreview fileUri=', uri);
-    const resp = await http.postForm<{ imageUrl?: string; imageBase64?: string; details?: ClothingAnalysisDTO; id?: number; type?: string }>(
-      'processPreview',
+    console.log(
+      'generateDetails: calling http.postForm processPreview fileUri=',
+      uri,
+    );
+    const resp = await http.postForm<ClothingAnalysisDTO>(
+      'articulos/getDetails',
       formData,
     );
+
+    console.log(resp);
 
     if (!resp) {
       console.warn('generateDetails: empty response from postForm');
       return undefined;
     }
 
-    // Normalize returned fields: backend may return imageUrl or imageBase64
-    return resp as { image?: string; details?: ClothingAnalysisDTO };
+    return resp;
   } catch (e) {
     console.log('generateDetails error', e);
     return undefined;
   }
 }
 
-export async function uploadPrenda(
-  data: any,
-  uri: string,
-): Promise<Prenda | undefined> {
-  const formData = new FormData();
-  formData.append('file', {
-    uri: uri,
-    type: 'image/png', // o el tipo que corresponda
-    name: 'photo.png', // nombre del archivo
-  } as any);
-
-  formData.append('data', data);
-
+export async function createArticulo(
+  data: ClothingAnalysisDTO,
+): Promise<Articulo | undefined> {
   try {
-    const resp = await http.post<Prenda>('articulos/create/prenda', {
+    const resp = await http.post<Articulo>('articulos/create', {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-      body: formData,
-    });
-    return resp;
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-export async function uploadAccesorio(
-  data: any,
-  uri: string,
-): Promise<Prenda | undefined> {
-  const formData = new FormData();
-  formData.append('file', {
-    uri: uri,
-    type: 'image/png', // o el tipo que corresponda
-    name: 'photo.png', // nombre del archivo
-  } as any);
-
-  formData.append('data', data);
-
-  try {
-    const resp = await http.post<Prenda>('articulos/create/articulo', {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      body: formData,
+      body: JSON.stringify(data),
     });
     return resp;
   } catch (e) {
