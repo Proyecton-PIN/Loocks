@@ -1,4 +1,6 @@
-import CustomDatePicker from '@/components/shared/custom-date-picker';
+import StyledDatePicker from '@/components/shared/styled-date-picker';
+import StyledPicker from '@/components/shared/styled-picker';
+import StyledTextInput from '@/components/shared/styled-text-input';
 import { CloseIcon, LeftArrowIcon } from '@/constants/icons';
 import { Colors } from '@/constants/theme';
 import { useArticulos } from '@/hooks/useArticulos';
@@ -7,14 +9,7 @@ import { TipoArticulo } from '@/lib/domain/enums/tipo-accesorio';
 import { Picker } from '@react-native-picker/picker';
 import { router, Stack } from 'expo-router';
 import React from 'react';
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ArticuloDetalles() {
@@ -52,71 +47,59 @@ export default function ArticuloDetalles() {
         className="w-full aspect-square h-auto rounded-xl overflow-clip"
       />
 
-      <Text className="mt-5 font-bold mb-1">Nombre</Text>
-      <TextInput
-        className="bg-white rounded-lg px-4 py-3 text-base text-black"
-        placeholder="Nombre"
-        placeholderTextColor="#717171"
-        value={data?.nombre ?? ''}
-        autoCapitalize="none"
-        onChangeText={(value) => {
-          updateNewItem({ nombre: value });
-        }}
-        keyboardType="email-address"
-        returnKeyType="next"
-      />
+      <View className="flex h-[833px] gap-[30px]">
+        <StyledTextInput
+          placeholder="Nombre"
+          label="Nombre"
+          onChangeText={(v) => updateNewItem({ nombre: v })}
+          value={data?.nombre}
+          returnKeyType="next"
+          autoCapitalize="sentences"
+        />
 
-      <Text className="mt-5 font-bold mb-1">Marca</Text>
-      <TextInput
-        className="bg-white rounded-lg px-4 py-3 text-base text-black"
-        placeholder="Marca"
-        placeholderTextColor="#717171"
-        value={data?.marca ?? ''}
-        autoCapitalize="none"
-        onChangeText={(value) => {
-          updateNewItem({ marca: value });
-        }}
-        keyboardType="email-address"
-        returnKeyType="next"
-      />
-
-      <Text className="mt-5 font-bold mb-1">Estación</Text>
-      <View className="bg-white rounded-lg px-2 textx-base text-black">
-        <Picker
-          onValueChange={(value) => {
-            updateNewItem({ estacion: value });
+        <StyledTextInput
+          placeholder="Marca"
+          placeholderTextColor="#717171"
+          value={data?.marca ?? ''}
+          autoCapitalize="none"
+          onChangeText={(value) => {
+            updateNewItem({ marca: value });
           }}
-          selectedValue={Estacion.PRIMAVERA}
+          keyboardType="email-address"
+          returnKeyType="next"
+          label="Marca"
+        />
+
+        <StyledPicker
+          label="Estación"
+          selectedValue={data?.estacion}
+          onValueChange={(v) => updateNewItem({ estacion: v })}
         >
           {Object.values(Estacion).map((e) => (
             <Picker.Item key={e} label={e.toString()} value={e.valueOf()} />
           ))}
-        </Picker>
-      </View>
+        </StyledPicker>
 
-      <Text className="mt-5 font-bold mb-1">Tipo</Text>
-      <View className="bg-white rounded-lg px-2 textx-base text-black">
-        <Picker
-          selectedValue={TipoArticulo.TODOS}
-          onValueChange={(value) => {
-            updateNewItem({ tipo: value });
-          }}
+        <StyledPicker
+          label="Tipo de prenda"
+          selectedValue={data?.tipo}
+          onValueChange={(v) => updateNewItem({ tipo: v })}
         >
           {Object.values(TipoArticulo).map((e) => (
             <Picker.Item key={e} label={e.toString()} value={e.valueOf()} />
           ))}
-        </Picker>
-      </View>
+        </StyledPicker>
 
-      <Text className="mt-5 font-bold mb-1">Fecha de compra</Text>
-      <CustomDatePicker
-        onChange={(value) => {
-          updateNewItem({
-            fechaCompra: value,
-          });
-        }}
-        currentValue={data?.fechaCompra}
-      />
+        <StyledDatePicker
+          label="Fecha de compra"
+          onChange={(_, value) => {
+            updateNewItem({
+              fechaCompra: value,
+            });
+          }}
+          value={data?.fechaCompra ?? new Date()}
+        />
+      </View>
 
       <Pressable
         className="rounded-lg py-3 justify-center items-center

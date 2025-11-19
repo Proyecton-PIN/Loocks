@@ -46,6 +46,23 @@ export default {
         },
       ],
       'expo-secure-store',
+      [
+        'expo-font',
+        {
+          fonts: [
+            './assets/fonts/satoshi/Satoshi-Black.otf',
+            './assets/fonts/satoshi/Satoshi-BlackItalic.otf',
+            './assets/fonts/satoshi/Satoshi-Bold.otf',
+            './assets/fonts/satoshi/Satoshi-BoldItalic.otf',
+            './assets/fonts/satoshi/Satoshi-Italic.otf',
+            './assets/fonts/satoshi/Satoshi-Light.otf',
+            './assets/fonts/satoshi/Satoshi-LightItalic.otf',
+            './assets/fonts/satoshi/Satoshi-Medium.otf',
+            './assets/fonts/satoshi/Satoshi-MediumItalic.otf',
+            './assets/fonts/satoshi/Satoshi-Regular.otf',
+          ],
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,
