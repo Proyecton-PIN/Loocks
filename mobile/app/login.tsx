@@ -26,15 +26,17 @@ export default function Login() {
     <View className="flex-1 justify-center items-center bg-[#F3F3F3] px-4">
       <View className="w-full max-w-[340px]">
         {/* Header */}
-        <View className="mt-7 mb-10 items-center">
-          <Text className="text-black text-[25px] font-extrabold tracking-wide">LOOCKS</Text>
+        <View className="mt-3 mb-[60px] items-center">
+          <Text className="text-black text-[25px] font-bold tracking-wide">LOOCKS</Text>
+          <Text className="text-black text-[12px] font-semibold tracking-wide">Vestir bien, sin esfuerzo</Text>
         </View>
         {/* Email */}
         <View className="mb-3">
+          <Text className="mb-1 text-black text-[12px] font-bold tracking-wide">Inicio de Sesión</Text>
           <TextInput
             className="bg-white rounded-lg px-4 py-3 text-base text-black"
             placeholder="Email"
-            placeholderTextColor="#717171"
+            placeholderTextColor="#ffff"
             value={email}
             autoCapitalize="none"
             onChangeText={setEmail}
@@ -47,7 +49,7 @@ export default function Login() {
           <TextInput
             className="bg-white rounded-lg px-4 py-3 text-base text-black"
             placeholder="Password"
-            placeholderTextColor="#717171"
+            placeholderTextColor="#ffff"
             secureTextEntry
             value={password}
             autoCapitalize="none"
@@ -70,13 +72,13 @@ export default function Login() {
         <TouchableOpacity
           disabled={isLoading}
           onPress={handleSubmit}
-          className="w-full py-4 rounded-xl my-6 bg-[#E0DBFF]"
+          className="w-full py-3 rounded-xl my-6 bg-[#5639F8]"
         >
           {isLoading ? (
             <ActivityIndicator color="#fff" />
           ) : (
             <Text className="text-white text-center font-semibold text-base">
-              PRIMARIO
+              Aceptar
             </Text>
           )}
         </TouchableOpacity>
@@ -89,7 +91,7 @@ export default function Login() {
         {/* Botón Google */}
         <TouchableOpacity
           onPress={() => {}}
-          className="flex-row items-center w-full border border-gray-300 rounded-xl py-3 mb-4 bg-white"
+          className="flex-row items-center w-full border border-gray-300 rounded-xl py-2 mb-4 bg-[#F3F3F3]"
         >
           <Ionicons name="logo-google" size={20} color="#111" className="ml-2" />
           <Text className="flex-1 text-center text-base font-semibold text-gray-800">
@@ -99,7 +101,7 @@ export default function Login() {
         {/* Botón Apple */}
         <TouchableOpacity
           onPress={() => {}}
-          className="flex-row items-center w-full border border-gray-300 rounded-xl py-3 mb-6 bg-white"
+          className="flex-row items-center w-full border border-gray-300 rounded-xl py-2 mb-6 bg-[#F3F3F3]"
         >
           <Ionicons name="logo-apple" size={20} color="#111" className="ml-2" />
           <Text className="flex-1 text-center text-base font-semibold text-gray-800">
