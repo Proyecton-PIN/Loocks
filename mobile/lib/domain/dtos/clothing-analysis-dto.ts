@@ -13,5 +13,5 @@ export interface ClothingAnalysisDTO {
 
 export interface ColorInfo {
   color: string;
-  percentage: number;
+  porcentaje: number;
 }

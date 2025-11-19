@@ -38,8 +38,6 @@ export async function generateDetails(
       formData,
     );
 
-    console.log(resp);
-
     if (!resp) {
       console.warn('generateDetails: empty response from postForm');
       return undefined;
@@ -55,9 +53,6 @@ export async function generateDetails(
 export async function createArticulo(data: Articulo): Promise<Articulo | undefined> {
   try {
     const resp = await http.post<Articulo>('articulos/create', {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
       body: JSON.stringify(data),
     });
     return resp;

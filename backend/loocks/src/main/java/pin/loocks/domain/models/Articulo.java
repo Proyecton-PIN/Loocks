@@ -7,6 +7,8 @@ import java.util.List;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -70,6 +72,7 @@ public class Articulo {
 
   @ManyToOne
   @JoinColumn(name = "armario_id", nullable = false)
+  @JsonIgnore
   private Armario armario;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "articulo")

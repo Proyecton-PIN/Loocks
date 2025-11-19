@@ -50,7 +50,7 @@ export default function ArticuloDetalles() {
             selectedArticulo?.imageUrl ??
             `data:image/png;base64,${selectedArticulo?.base64Img}`,
         }}
-        className="w-full aspect-square h-auto rounded-xl overflow-clip"
+        className="w-full aspect-square h-auto rounded-xl overflow-clip mb-[30px]"
       />
 
       <View className="flex gap-[30px]">
@@ -115,7 +115,7 @@ export default function ArticuloDetalles() {
             updateSelectedArticulo({
               colores: [
                 ...(selectedArticulo?.colores ?? []),
-                { color: hex, percentage: 0 },
+                { color: hex, porcentaje: 0 },
               ],
             });
           }}

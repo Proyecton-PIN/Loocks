@@ -58,6 +58,7 @@ export const useArticulos = create<State>((set, get) => ({
     if (!newArticulo) return;
 
     set((s) => ({ articulos: [...s.articulos, newArticulo] }));
+    router.back();
   },
 
   updateSelectedArticulo(data: Partial<Articulo>) {
