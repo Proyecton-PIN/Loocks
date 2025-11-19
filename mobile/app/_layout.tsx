@@ -10,7 +10,7 @@ export default function RootLayout() {
       <StatusBar style="dark" />
       <Stack
         screenOptions={{ headerShown: false }}
-        initialRouteName="articulo-detalles"
+        initialRouteName="inicio"
       />
     </View>
   );

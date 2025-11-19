@@ -1,7 +1,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { router } from 'expo-router';
 import React, { useEffect } from 'react';
-import Login from './login';
+import Inicio from './inicio';
 
 export default function RootIndex() {
   const checkAuth = useAuth((s) => s.checkAuth);
@@ -12,5 +12,5 @@ export default function RootIndex() {
     });
   }, []);
 
-  return <Login />;
+  return <Inicio/>;
 }
