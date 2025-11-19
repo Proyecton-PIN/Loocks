@@ -66,10 +66,10 @@ export default function Inicio() {
 
       <View className="flex-1 justify-end items-center px-4 pb-12">
         <View className="w-full max-w-[350px] bg-white rounded-3xl shadow-xl p-6">
-          <Text className="text-center text-3xl font-bold text-gray-900 mb-1">
+          <Text className="text-center text-4xl font-bold text-gray-900 mb-1">
             Loocks
           </Text>
-          <Text className="text-center text-base text-gray-700 mb-6">
+          <Text className="text-center font-semibold text-base text-gray-700 mb-[100px]">
             Vestir bien, sin esfuerzo
           </Text>
 
@@ -77,7 +77,7 @@ export default function Inicio() {
             onPress={() => {
               /* Registro*/
             }}
-            className="w-full rounded-xl py-2 mb-3 bg-[#5639F8]"
+            className="w-full rounded-xl py-[10px] mb-3 bg-[#5639F8]"
           >
             <Text className="text-center text-base font-semibold text-white">
               Empezar...
@@ -88,7 +88,7 @@ export default function Inicio() {
             onPress={() => {
               router.replace('/login');
             }}
-            className="w-full border border-gray-300 rounded-xl py-2 bg-[#F3F3F3]"
+            className="w-full border border-gray-300 rounded-xl py-[8px] bg-[#F3F3F3]"
           >
             <Text className="text-center text-base font-semibold text-gray-400">
               Iniciar sesión...
