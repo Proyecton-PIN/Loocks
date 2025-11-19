@@ -1,15 +1,16 @@
 import { useAuth } from '@/hooks/useAuth';
-import React from 'react';
+import { router } from 'expo-router';
+import React, { useEffect } from 'react';
 import Inicio from './inicio';
 
 export default function RootIndex() {
   const checkAuth = useAuth((s) => s.checkAuth);
 
-  /*useEffect(() => {
+  useEffect(() => {
     checkAuth().then((logged) => {
       if (logged) router.replace('/(tabs)/armario' as any);
     });
-  }, []);*/
+  }, []);
 
   return <Inicio/>;
 }
