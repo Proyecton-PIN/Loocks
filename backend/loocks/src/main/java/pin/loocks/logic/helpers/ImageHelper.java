@@ -37,9 +37,15 @@ public class ImageHelper {
     String publicId = (String) uploadImage.get("public_id");
 
     String transformedUrl = cloudinary.url()
-            .transformation(new Transformation().effect("background_removal"))
-            .format("png")
-            .generate(publicId);
+        .transformation(new Transformation()
+            .width(800) // Reducir a 800px de ancho (ajusta según necesites)
+            .height(800) // Reducir a 800px de alto
+            .crop("limit") // Mantener proporción
+            .quality(60) // Reducir calidad (30-80 según necesites)
+            .fetchFormat("jpg") // Usar JPG en vez de PNG (mucho más liviano)
+            .chain().effect("background_removal"))
+        .format("png")
+        .generate(publicId);
     
     System.out.println("URL de imagen transformada: " + transformedUrl);
     

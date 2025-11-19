@@ -44,7 +44,7 @@ export default function TabLayout() {
         <View
           className="flex-row pb-5 pt-4 px-5"
           style={{
-            backgroundColor: Colors.card,
+            backgroundColor: Colors.background,
             borderTopColor: Colors.muted,
             borderTopWidth: 0.5,
           }}
