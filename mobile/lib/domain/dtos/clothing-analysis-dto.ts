@@ -3,16 +3,15 @@ import { TipoArticulo } from '../enums/tipo-accesorio';
 
 export interface ClothingAnalysisDTO {
   nombre: string;
-  marca: string;
+  marca?: string;
   colores: ColorInfo[];
   tags: string[];
   estacion: Estacion;
   tipo: TipoArticulo;
-  base64Img: string;
-  fechaCompra?: Date;
+  base64Img?: string;
 }
 
-interface ColorInfo {
+export interface ColorInfo {
   color: string;
   percentage: number;
 }

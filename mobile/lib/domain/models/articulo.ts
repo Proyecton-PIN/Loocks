@@ -1,11 +1,6 @@
-export interface Articulo {
-  nombre?: string;
-  marca?: string;
-  fechaCompra?: string;
-  colorPrimario: string;
-  coloresSecundarios: string[];
-  estacion: string;
-  imageUrl: string;
-  tagsIds?: string[];
-  type: string;
+import { ClothingAnalysisDTO } from '../dtos/clothing-analysis-dto';
+
+export interface Articulo extends ClothingAnalysisDTO {
+  imageUrl?: string;
+  fechaCompra?: Date;
 }

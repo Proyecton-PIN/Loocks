@@ -52,9 +52,7 @@ export async function generateDetails(
   }
 }
 
-export async function createArticulo(
-  data: ClothingAnalysisDTO,
-): Promise<Articulo | undefined> {
+export async function createArticulo(data: Articulo): Promise<Articulo | undefined> {
   try {
     const resp = await http.post<Articulo>('articulos/create', {
       headers: {

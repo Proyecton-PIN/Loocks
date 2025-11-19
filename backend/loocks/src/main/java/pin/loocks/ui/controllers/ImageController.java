@@ -102,7 +102,7 @@ public class ImageController {
       @AuthenticationPrincipal UserDetails userDetails,
       @Parameter(description = "Image file", required = true) @RequestParam("file") MultipartFile img)
       throws IOException {
-    File tempFile = File.createTempFile("upload-", img.getOriginalFilename());
+  File tempFile = File.createTempFile("upload-", img.getOriginalFilename());
     img.transferTo(tempFile);
 
     if (img.isEmpty())

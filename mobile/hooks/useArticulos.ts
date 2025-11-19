@@ -11,13 +11,13 @@ import { create } from 'zustand';
 interface State {
   isLoading: boolean;
   articulos: Articulo[];
-  newItem?: ClothingAnalysisDTO;
+  selectedArticulo?: Articulo;
 
   fetchPrendas(): Promise<void>;
   generateDetails(uri?: string): Promise<void>;
-  clearNewItem(): void;
+  unselectArticulo(): void;
   addArticulo(): Promise<void>;
-  updateNewItem(data: Partial<ClothingAnalysisDTO>): void;
+  updateSelectedArticulo(data: Partial<Articulo>): void;
 }
 
 export const useArticulos = create<State>((set, get) => ({
@@ -36,37 +36,37 @@ export const useArticulos = create<State>((set, get) => ({
     const resp = await generateDetails(uri);
 
     if (!resp) {
-      set({ newItem: undefined, isLoading: false });
+      set({ selectedArticulo: undefined, isLoading: false });
       return;
     }
 
     set({
-      newItem: resp,
+      selectedArticulo: resp,
       isLoading: false,
     });
     router.push('/articulo-detalles');
   },
 
-  clearNewItem() {
-    set({ newItem: undefined });
+  unselectArticulo() {
+    set({ selectedArticulo: undefined });
   },
 
   async addArticulo() {
-    if (!get().newItem) return;
+    if (!get().selectedArticulo) return;
 
-    const newArticulo = await createArticulo(get().newItem!);
+    const newArticulo = await createArticulo(get().selectedArticulo!);
     if (!newArticulo) return;
 
     set((s) => ({ articulos: [...s.articulos, newArticulo] }));
   },
 
-  updateNewItem(data: Partial<ClothingAnalysisDTO>) {
-    let newData = get().newItem;
+  updateSelectedArticulo(data: Partial<Articulo>) {
+    let newData = get().selectedArticulo;
     newData = {
       ...newData,
       ...data,
     } as ClothingAnalysisDTO;
 
-    set({ newItem: newData });
+    set({ selectedArticulo: newData });
   },
 }));
