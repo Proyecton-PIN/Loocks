@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pin.loocks.domain.dtos.FilterRequestDTO;
 import pin.loocks.domain.dtos.GenerateOutfitSuggestionsRequestDTO;
+import pin.loocks.domain.models.CustomUserDetails;
 import pin.loocks.domain.models.Outfit;
 import pin.loocks.logic.services.OutfitService;
 
@@ -24,9 +26,11 @@ public class OutfitController {
     private OutfitService outfitService;
 
     @PostMapping("/filtered")
-    public ResponseEntity<List<Outfit>> getFilteredOutfits(@RequestBody FilterRequestDTO request) {
+    public ResponseEntity<List<Outfit>> getFilteredOutfits(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody FilterRequestDTO request) {
         try {
-            List<Outfit> outfits = outfitService.getFilteredOutfits(request);
+            List<Outfit> outfits = outfitService.getFilteredOutfits(request, userDetails.getPerfil());
             return ResponseEntity.ok().body(outfits);
         } catch (Exception e) {
             System.out.println(e.getMessage());
