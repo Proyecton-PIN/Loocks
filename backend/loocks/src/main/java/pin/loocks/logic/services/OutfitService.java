@@ -16,13 +16,19 @@ import jakarta.persistence.criteria.Root;
 import pin.loocks.data.repositories.OutfitRepository;
 import pin.loocks.domain.dtos.FilterRequestDTO;
 import pin.loocks.domain.dtos.GenerateOutfitSuggestionsRequestDTO;
+import pin.loocks.domain.enums.Zona;
+import pin.loocks.domain.models.Articulo;
 import pin.loocks.domain.models.Outfit;
 import pin.loocks.domain.models.Perfil;
+import pin.loocks.logic.helpers.ColorHelper;
 
 @Service
 public class OutfitService {
   @Autowired
   private OutfitRepository outfitRepository;
+
+  @Autowired
+  private ArticuloService articuloService;
 
   public List<Outfit> getFilteredOutfits(FilterRequestDTO filter, Perfil perfil) {
     Pageable pageable = PageRequest.of(filter.getOffset() / filter.getLimit(), filter.getLimit());
@@ -33,15 +39,58 @@ public class OutfitService {
     return result.getContent();
   }
 
-  public List<Outfit> generateSuggestions(GenerateOutfitSuggestionsRequestDTO request) {
-    // TODO:
-    return null;
-  }
-
   public Outfit createOutfit() {
     // TODO:
     return null;
   }
+
+  public List<Outfit> generateSuggestions(
+      GenerateOutfitSuggestionsRequestDTO request,
+      String userId) {
+
+    List<Articulo> torsos = articuloService.getFilteredArticulos(
+        new FilterRequestDTO(List.of(Zona.TORSO)),
+        userId);
+
+    List<Articulo> piernas = articuloService.getFilteredArticulos(
+        new FilterRequestDTO(List.of(Zona.PIERNAS)),
+        userId);
+
+    List<Articulo> pies = articuloService.getFilteredArticulos(
+        new FilterRequestDTO(List.of(Zona.PIES)),
+        userId);
+
+    List<Outfit> outfits = List.of();
+
+    for (Articulo torso : torsos) {
+      for (Articulo pierna : piernas) {
+        for (Articulo pie : pies) {
+          double colorScore = 0.8 * ColorHelper.distanciaColorHex(torso.getColorPrimario(), pierna.getColorPrimario()) +
+              0.2 * ColorHelper.distanciaColorHex(pierna.getColorPrimario(), pie.getColorPrimario());
+          /**
+           * TODO:
+           * usosScore
+           * isFavoritoScore
+           * estiloScore
+           * estacionScore
+           * 
+           * quitar request.getOutfitsBaneados()
+           */
+
+          if (colorScore < 0.6)
+            continue;
+
+          outfits.add(new Outfit(torso, pierna, pie));
+        }
+      }
+    }
+
+    // TODO: Añadir abrigo, si es necesario
+    // TODO: Añadir extra suggestions
+
+    return outfits.subList(0, request.getLimit());
+  }
+
 
   private Specification<Outfit> getFilterSpecs(FilterRequestDTO filter, Perfil perfil) {
     return (Root<Outfit> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {

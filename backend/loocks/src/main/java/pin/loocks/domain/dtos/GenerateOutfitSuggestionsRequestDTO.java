@@ -17,5 +17,5 @@ public class GenerateOutfitSuggestionsRequestDTO {
   private Articulo prendaBase;
   private Double nivelDeAbrigo;
   private String primaryColor;
-  private int limit = 0;
+  private int limit = 5;
 }

@@ -17,6 +17,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pin.loocks.domain.enums.Estacion;
 import pin.loocks.domain.enums.Estilo;
@@ -24,6 +25,7 @@ import pin.loocks.domain.enums.Estilo;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Outfit {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,4 +58,10 @@ public class Outfit {
   // @ManyToMany
   // @JoinTable(name = "outfit_tag")
   // private List<Tag> tags;
+
+  public Outfit(Articulo torso, Articulo pierna, Articulo pie) {
+    this.articulos.addAll(List.of(torso, pierna, pie));
+    this.estacion = torso.getEstacion();
+    this.estilo = torso.getEstilo();
+  }
 }
