@@ -83,9 +83,11 @@ public class ArticuloController {
   }
 
   @PostMapping("/filtered")
-  public ResponseEntity<List<Articulo>> getFiltereArticulos(@RequestBody FilterRequestDTO request) {
+  public ResponseEntity<List<Articulo>> getFiltereArticulos(
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @RequestBody FilterRequestDTO request) {
     try {
-      List<Articulo> articulos = articuloService.getFilteredArticulos(request);
+      List<Articulo> articulos = articuloService.getFilteredArticulos(request, userDetails.getId());
       return ResponseEntity.ok().body(articulos);
     } catch (Exception e) {
       System.out.println(e.getMessage());

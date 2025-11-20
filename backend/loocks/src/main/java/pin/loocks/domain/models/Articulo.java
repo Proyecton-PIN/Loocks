@@ -3,9 +3,6 @@ package pin.loocks.domain.models;
 import java.sql.Date;
 import java.util.List;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -54,7 +51,7 @@ public class Articulo {
   @Temporal(TemporalType.DATE)
   private Date fechaCompra;
 
-  @JdbcTypeCode(SqlTypes.JSON)
+  // @JdbcTypeCode(SqlTypes.JSON)
   @Column(columnDefinition = "jsonb")
   @Convert(converter = ColorPorcentajeListConverter.class)
   private List<PorcentajeColor> colores;

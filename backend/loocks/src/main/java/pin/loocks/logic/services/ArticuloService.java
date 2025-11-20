@@ -25,7 +25,6 @@ import pin.loocks.domain.dtos.FilterRequestDTO;
 import pin.loocks.domain.enums.Zona;
 import pin.loocks.domain.models.Armario;
 import pin.loocks.domain.models.Articulo;
-import pin.loocks.domain.models.Outfit;
 import pin.loocks.logic.helpers.ImageHelper;
 
 @Service
@@ -68,18 +67,20 @@ public class ArticuloService {
     return articuloRepository.save(newArticulo);
   }
 
-  public List<Articulo> getFilteredArticulos(FilterRequestDTO filter) {
+  public List<Articulo> getFilteredArticulos(FilterRequestDTO filter, String userId) {
     Pageable pageable = PageRequest.of(filter.getOffset() / filter.getLimit(), filter.getLimit());
-    Specification<Articulo> specs = getFilterSpecs(filter);
+    Specification<Articulo> specs = getFilterSpecs(filter, userId);
 
     Page<Articulo> result = articuloRepository.findAll(specs, pageable);
 
     return result.getContent();
   }
 
-  private Specification<Articulo> getFilterSpecs(FilterRequestDTO filter) {
+  private Specification<Articulo> getFilterSpecs(FilterRequestDTO filter, String userId) {
     return (Root<Articulo> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
       Predicate p = cb.conjunction();
+
+      p = cb.and(p, cb.equal(root.get("userId"), userId));
 
       if (filter.getEstilo() != null) {
         p = cb.and(p, cb.equal(root.get("estilo"), filter.getEstilo()));

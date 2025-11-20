@@ -39,5 +39,7 @@ public class CustomUserDetails implements UserDetails {
     return perfil.getEmail();
   }
 
-  
+  public Perfil getPerfil() {
+    return perfil;
+  }
 }
