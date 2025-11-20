@@ -4,5 +4,6 @@ public enum Estacion {
   PRIMAVERA,
   VERANO,
   OTONO,
-  INVIERNO
+  INVIERNO,
+  ENTRETIEMPO
 }

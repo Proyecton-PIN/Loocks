@@ -1,7 +1,6 @@
 package pin.loocks.domain.models;
 
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.hibernate.annotations.JdbcTypeCode;
@@ -31,7 +30,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pin.loocks.domain.dtos.ArticuloUploadRequestDTO;
 import pin.loocks.domain.enums.Estacion;
-import pin.loocks.domain.enums.TipoArticulo;
+import pin.loocks.domain.enums.Estilo;
 import pin.loocks.logic.converters.ColorPorcentajeListConverter;
 
 @Entity
@@ -54,14 +53,29 @@ public class Articulo {
   private Date fechaCompra;
 
   @JdbcTypeCode(SqlTypes.JSON)
-  @Column(columnDefinition = "jsonb") 
+  @Column(columnDefinition = "jsonb")
   @Convert(converter = ColorPorcentajeListConverter.class)
   private List<PorcentajeColor> colores;
-  
-  @Enumerated(EnumType.ORDINAL)
+
+  private Boolean puedePonerseEncimaDeOtraPrenda = false;
+
+  @Column(nullable = false)
+  private String colorPrimario;
+
+  @Enumerated(EnumType.STRING)
   private Estacion estacion;
 
-  private LocalDate fechaUltimoUso;
+  @Enumerated(EnumType.STRING)
+  private Estilo estilo;
+
+  @ManyToMany
+  @JoinTable(name = "articulo_zonacubierta")
+  private List<ZonaCubierta> zonasCubiertas;
+
+  @Temporal(TemporalType.DATE)
+  private Date fechaUltimoUso;
+
+  private Double nivelDeAbrig = 0.5;
 
   @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
   private Integer usos = 0;
@@ -76,29 +90,31 @@ public class Articulo {
   private Armario armario;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "articulo")
+  @JsonIgnore
   private List<Prestamo> prestamos;
 
-  @ManyToMany
-  @JoinTable(name = "articulo_tag")
-  private List<Tag> tags;
+  // @ManyToMany
+  // @JoinTable(name = "articulo_tag")
+  // private List<Tag> tags;
 
   @Column(nullable = false)
+  @JsonIgnore
   private String userId;
 
   @Column(nullable = false)
-    private String imageUrl;
+  private String imageUrl;
 
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private TipoArticulo tipo = TipoArticulo.TODOS;
+  // @Enumerated(EnumType.STRING)
+  // @Column(nullable = false)
+  // private TipoArticulo tipo = TipoArticulo.TODOS;
 
   public Articulo(ArticuloUploadRequestDTO dto) {
-    this.nombre = dto.getNombre();
-    this.marca = dto.getMarca();
-    this.fechaCompra = dto.getFechaCompra();
-    this.colores = dto.getColores();
-    this.estacion = dto.getEstacion();
-    this.tipo = dto.getTipo();
+    // this.nombre = dto.getNombre();
+    // this.marca = dto.getMarca();
+    // this.fechaCompra = dto.getFechaCompra();
+    // this.colores = dto.getColores();
+    // this.estacion = dto.getEstacion();
+    // this.tipo = dto.getTipo();
   }
 
 }

@@ -2,19 +2,24 @@ package pin.loocks.domain.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
+import pin.loocks.domain.enums.Estacion;
+import pin.loocks.domain.enums.Estilo;
 
 @Entity
 @Getter
@@ -24,11 +29,17 @@ public class Outfit {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String satisfaccion;
+  // private String satisfaccion;
 
-  private String mood;
+  // private String mood;
+
+  @Enumerated(EnumType.STRING)
+  private Estacion estacion = Estacion.ENTRETIEMPO;
+
+  @Enumerated(EnumType.STRING)
+  private Estilo estilo = Estilo.CASUAL;
   
-  @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+  @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
   private boolean isFavorito;
 
   @ManyToMany(mappedBy = "outfits")
@@ -36,12 +47,13 @@ public class Outfit {
 
   @ManyToOne
   @JoinColumn(name = "perfil_id", nullable = false)
+  @JsonIgnore
   private Perfil perfil;
 
   @OneToMany(mappedBy = "outfit", cascade = CascadeType.ALL)
   private List<OutfitLog> logs;
 
-  @ManyToMany
-  @JoinTable(name = "outfit_tag")
-  private List<Tag> tags;
+  // @ManyToMany
+  // @JoinTable(name = "outfit_tag")
+  // private List<Tag> tags;
 }
