@@ -116,6 +116,7 @@ public class Articulo {
     this.marca = dto.getMarca();
     this.fechaCompra = dto.getFechaCompra();
     this.colores = dto.getColores();
+    this.colorPrimario = dto.getColorPrimario();
     this.estacion = dto.getEstacion();
     this.estilo = dto.getEstilo();
     this.zonasCubiertas = dto.getZonasCubiertas();
