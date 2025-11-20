@@ -22,7 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import pin.loocks.domain.dtos.ClothingAnalysisDTO;
 import pin.loocks.domain.dtos.LLMResponseDTO;
 import pin.loocks.domain.enums.Estacion;
-import pin.loocks.domain.enums.TipoArticulo;
+import pin.loocks.domain.enums.Estilo;
+import pin.loocks.domain.enums.Zona;
 import pin.loocks.logic.helpers.ImageHelper;
 import pin.loocks.logic.helpers.StringHelper;
 
@@ -46,6 +47,7 @@ public class LLMApi {
       {
         \"nombre\": \"nombre\",
         \"marca\": \"marca\",
+        \"colorPrimario\": \"#00ff00\",
         \"colores\": [
           {
             \"color\": \"#00ff00\",
@@ -56,16 +58,24 @@ public class LLMApi {
             \"porcentaje\": 10
           }
         ],
-        \"estacion\": \"PRIMAVERA\",
-        \"tags\": [\"tag1\", \"tag2\", \"tag3\"],
-        \"tipo\": \"GORRAS\"
+        \"estacion\": \"something\",
+        \"estilo\": \"something\",
+        \"zonasCubiertas\": [\"something1\",\"something2\"],
+        \"nivelDeAbrigo\": 0.5,
+        \"puedePonerseEncimaDeOtraPrenda\": false,
       }
 
       If you don't know the value of any field, skip it.
       The field "estacion" must be one of the next values or the first if not known:
         %s
-      The field "tipo" must be one of the next values or the last if not knwon:
+      The field \"estilo\" must be one of the next values or the last if not knwon:
         %s
+      The field \"zonasCubiertas\" must be one of the next values or the last if not knwon:
+        %s
+
+      The field \"nivelDeAbrigo\" must be between 0 and 1.ç
+
+      The field \"puedePonerseEncimaDeOtraPrenda\" indicates if the clothing used to be on top of the others.
 
       If there isn't any clothing or you can't recognize any, return the next json:
       {}
@@ -73,15 +83,20 @@ public class LLMApi {
       Remove any markdown anotations and any decoration, onle give me the details in json format.
       """;
 
-    String tiposArticulos = Arrays.stream(TipoArticulo.values())
+    String estilos = Arrays.stream(Estilo.values())
+        .map(Enum::name)
+        .collect(Collectors.joining(", "));
+
+    String zonasCubiertas = Arrays.stream(Zona.values())
       .map(Enum::name)
       .collect(Collectors.joining(", "));
 
     String estaciones = Arrays.stream(Estacion.values())
       .map(Enum::name)
       .collect(Collectors.joining(", "));
+
     
-    String prompt = String.format(basePrompt, estaciones, tiposArticulos);
+    String prompt = String.format(basePrompt, estaciones, estilos, zonasCubiertas);
 
     MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
     body.add("contents", List.of(

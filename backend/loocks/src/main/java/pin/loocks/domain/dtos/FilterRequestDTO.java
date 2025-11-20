@@ -10,7 +10,7 @@ import pin.loocks.domain.enums.Zona;
 @Data
 public class FilterRequestDTO {
   private int offset = 0;
-  private int limit;
+  private int limit = 9999;
 
   private Estilo estilo;
   private Estacion estacion;

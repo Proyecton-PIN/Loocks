@@ -25,6 +25,7 @@ public class ImageHelper {
   @Value("${cloudinary.cloudURL}")
   private String cloudinaryUrl;
 
+  @SuppressWarnings("rawtypes")
   public File removeBackground(File image){
     try{
     Cloudinary cloudinary = new Cloudinary(cloudinaryUrl);

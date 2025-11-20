@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import pin.loocks.data.repositories.PerfilRepository;
 import pin.loocks.domain.dtos.LoginRequestDTO;
 import pin.loocks.domain.dtos.RegisterRequestDTO;
@@ -20,6 +21,7 @@ public class AuthService implements UserDetailsService {
   @Autowired
   private PerfilRepository perfilRepository;
 
+  @Transactional
   public Perfil registerUser(RegisterRequestDTO request) {
     if (perfilRepository.existsByEmail(request.getEmail())) {
       return null;

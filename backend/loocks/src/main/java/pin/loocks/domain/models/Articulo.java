@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -31,6 +32,7 @@ import lombok.Setter;
 import pin.loocks.domain.dtos.ArticuloUploadRequestDTO;
 import pin.loocks.domain.enums.Estacion;
 import pin.loocks.domain.enums.Estilo;
+import pin.loocks.domain.enums.Zona;
 import pin.loocks.logic.converters.ColorPorcentajeListConverter;
 
 @Entity
@@ -68,14 +70,13 @@ public class Articulo {
   @Enumerated(EnumType.STRING)
   private Estilo estilo;
 
-  @ManyToMany
-  @JoinTable(name = "articulo_zonacubierta")
-  private List<ZonaCubierta> zonasCubiertas;
+  @ElementCollection
+  private List<Zona> zonasCubiertas;
 
   @Temporal(TemporalType.DATE)
   private Date fechaUltimoUso;
 
-  private Double nivelDeAbrig = 0.5;
+  private Double nivelDeAbrigo = 0.5;
 
   @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
   private Integer usos = 0;
@@ -101,6 +102,8 @@ public class Articulo {
   @JsonIgnore
   private String userId;
 
+  private Boolean isFavorito = false;
+
   @Column(nullable = false)
   private String imageUrl;
 
@@ -109,12 +112,14 @@ public class Articulo {
   // private TipoArticulo tipo = TipoArticulo.TODOS;
 
   public Articulo(ArticuloUploadRequestDTO dto) {
-    // this.nombre = dto.getNombre();
-    // this.marca = dto.getMarca();
-    // this.fechaCompra = dto.getFechaCompra();
-    // this.colores = dto.getColores();
-    // this.estacion = dto.getEstacion();
-    // this.tipo = dto.getTipo();
+    this.nombre = dto.getNombre();
+    this.marca = dto.getMarca();
+    this.fechaCompra = dto.getFechaCompra();
+    this.colores = dto.getColores();
+    this.estacion = dto.getEstacion();
+    this.estilo = dto.getEstilo();
+    this.zonasCubiertas = dto.getZonasCubiertas();
+    this.puedePonerseEncimaDeOtraPrenda = dto.getPuedePonerseEncimaDeOtraPrenda();
   }
 
 }

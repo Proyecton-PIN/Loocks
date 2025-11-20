@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
 import pin.loocks.domain.enums.Estacion;
-import pin.loocks.domain.enums.TipoArticulo;
+import pin.loocks.domain.enums.Estilo;
+import pin.loocks.domain.enums.Zona;
 import pin.loocks.domain.models.PorcentajeColor;
 
 @Data
@@ -15,12 +16,14 @@ public class ClothingAnalysisDTO {
 	private String nombre;
 	private String marca;
 
+	private String colorPrimario;
 	private List<PorcentajeColor> colores;
 
-	private List<String> tags;
+	private Estilo estilo;
 	private Estacion estacion;
+	private List<Zona> zonasCubiertas;
+	private Boolean puedePonerseEncimaDeOtraPrenda;
 
-	private TipoArticulo tipo;
-
+	private Double nivelDeAbrigo;
 	private String base64Img = null;
 }

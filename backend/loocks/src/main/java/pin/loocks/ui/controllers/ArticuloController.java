@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import pin.loocks.data.repositories.ArticuloRepository;
 import pin.loocks.domain.dtos.ArticuloUploadRequestDTO;
 import pin.loocks.domain.dtos.ClothingAnalysisDTO;
+import pin.loocks.domain.dtos.FilterRequestDTO;
 import pin.loocks.domain.models.Articulo;
 import pin.loocks.domain.models.CustomUserDetails;
 import pin.loocks.logic.services.ArticuloService;
@@ -79,6 +80,17 @@ public class ArticuloController {
     return articuloRepository.findById(id)
       .map(ResponseEntity::ok)
       .orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  @PostMapping("/filtered")
+  public ResponseEntity<List<Articulo>> getFiltereArticulos(@RequestBody FilterRequestDTO request) {
+    try {
+      List<Articulo> articulos = articuloService.getFilteredArticulos(request);
+      return ResponseEntity.ok().body(articulos);
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      return ResponseEntity.internalServerError().build();
+    }
   }
 
   @GetMapping
