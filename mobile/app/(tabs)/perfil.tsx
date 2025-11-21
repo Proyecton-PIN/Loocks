@@ -1,12 +1,15 @@
 import {
   BellIcon,
   IconProps,
+  LogoutIcon,
   PersonalIcon,
   SettingsIcon,
   SuscriptionIcon,
   TranslateIcon,
 } from '@/constants/icons';
 import { Colors } from '@/constants/theme';
+import { SecureStore } from '@/lib/logic/services/secure-store-service';
+import { router } from 'expo-router';
 import React from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
@@ -61,6 +64,15 @@ export default function ProfileSettingsScreen() {
         label: 'Notificaciones',
         hasBadge: false,
         onPress: () => {},
+      },
+      {
+        icon: LogoutIcon,
+        label: 'Cerrar sesión',
+        hasBadge: false,
+        onPress() {
+          SecureStore.remove('token');
+          router.replace('/inicio');
+        },
       },
     ],
   ];
