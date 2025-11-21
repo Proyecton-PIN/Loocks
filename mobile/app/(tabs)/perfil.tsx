@@ -1,4 +1,11 @@
-import { BellIcon, PersonalIcon, SettingsIcon, SuscriptionIcon, TranslateIcon } from '@/constants/icons';
+import {
+  BellIcon,
+  IconProps,
+  PersonalIcon,
+  SettingsIcon,
+  SuscriptionIcon,
+  TranslateIcon,
+} from '@/constants/icons';
 import { Colors } from '@/constants/theme';
 import React from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -9,61 +16,70 @@ const ChevronIcon = () => (
   </View>
 );
 
+interface MenuSectionItem {
+  icon: (props: IconProps) => React.JSX.Element;
+  label: string;
+  badge?: string;
+  hasBadge: boolean;
+  onPress?(): void;
+}
+
 export default function ProfileSettingsScreen() {
   const userData = {
     profileImage: require('@/assets/images/imagen.png'),
-    username: "_andreea",
-    fullName: "Andrea Rufo"
+    username: '_andreea',
+    fullName: 'Andrea Rufo',
   };
 
-  const menuSections = [
+  const menuSections: MenuSectionItem[][] = [
     [
       {
         icon: SuscriptionIcon,
-        label: "Suscripción",
-        badge: "PRO",
-        hasBadge: true
+        label: 'Suscripción',
+        badge: 'PRO',
+        hasBadge: true,
       },
       {
         icon: PersonalIcon,
-        label: "Datos Personales",
-        hasBadge: false
-      }
+        label: 'Datos Personales',
+        hasBadge: false,
+      },
     ],
     [
       {
         icon: TranslateIcon,
-        label: "Idioma",
-        hasBadge: false
+        label: 'Idioma',
+        hasBadge: false,
       },
       {
         icon: SettingsIcon,
-        label: "Ajustes",
-        hasBadge: false
+        label: 'Ajustes',
+        hasBadge: false,
       },
       {
         icon: BellIcon,
-        label: "Notificaciones",
-        hasBadge: false
-      }
-    ]
+        label: 'Notificaciones',
+        hasBadge: false,
+        onPress: () => {},
+      },
+    ],
   ];
 
   return (
-    <ScrollView 
-      style={{ 
+    <ScrollView
+      style={{
         backgroundColor: Colors.background,
-        flex: 1
+        flex: 1,
       }}
       contentContainerStyle={{
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 16,
-        paddingVertical: 16
+        paddingVertical: 16,
       }}
     >
-      <View 
-        style={{ 
+      <View
+        style={{
           backgroundColor: Colors.background,
           borderRadius: 16,
           width: '100%',
@@ -72,23 +88,22 @@ export default function ProfileSettingsScreen() {
           shadowOpacity: 0.1,
           shadowRadius: 8,
           elevation: 5,
-          overflow: 'hidden'
+          overflow: 'hidden',
         }}
       >
-        
         {/* Perfil Header */}
-        <View 
-          style={{ 
+        <View
+          style={{
             backgroundColor: Colors.background,
             paddingTop: 32,
             paddingBottom: 24,
             paddingHorizontal: 24,
-            alignItems: 'center'
+            alignItems: 'center',
           }}
         >
           {/* Imagen de Perfil */}
-          <View 
-            style={{ 
+          <View
+            style={{
               borderColor: Colors.background,
               width: 96,
               height: 96,
@@ -99,7 +114,7 @@ export default function ProfileSettingsScreen() {
               shadowColor: '#000',
               shadowOpacity: 0.1,
               shadowRadius: 4,
-              elevation: 3
+              elevation: 3,
             }}
           >
             <Image
@@ -107,24 +122,24 @@ export default function ProfileSettingsScreen() {
               style={{ width: '100%', height: '100%' }}
             />
           </View>
-          
+
           {/* Username */}
-          <Text 
-            style={{ 
+          <Text
+            style={{
               color: Colors.primary,
               fontSize: 20,
               fontWeight: '600',
-              marginBottom: 4
+              marginBottom: 4,
             }}
           >
             {userData.username}
           </Text>
-          
+
           {/* Full Name */}
-          <Text 
-            style={{ 
+          <Text
+            style={{
               color: Colors.muted,
-              fontSize: 14
+              fontSize: 14,
             }}
           >
             {userData.fullName}
@@ -139,38 +154,51 @@ export default function ProfileSettingsScreen() {
                 const Icon = item.icon;
                 return (
                   <View key={itemIndex} style={{ marginBottom: 8 }}>
-                    <TouchableOpacity 
-                      style={{ 
+                    <TouchableOpacity
+                      style={{
                         backgroundColor: Colors.white,
                         paddingHorizontal: 16,
                         paddingVertical: 16,
                         borderRadius: 8,
                         flexDirection: 'row',
                         justifyContent: 'space-between',
-                        alignItems: 'center'
+                        alignItems: 'center',
                       }}
-                      onPress={() => {}}
+                      onPress={item.onPress}
                     >
-                      <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, gap: 12 }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          flex: 1,
+                          gap: 12,
+                        }}
+                      >
                         <Icon />
-                        <Text 
+                        <Text
                           style={{ color: Colors.black, fontWeight: '500' }}
                         >
                           {item.label}
                         </Text>
                       </View>
-                      
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
                         {item.hasBadge && (
-                          <Text 
-                            style={{ 
+                          <Text
+                            style={{
                               color: Colors.black,
                               backgroundColor: Colors.secondary,
                               fontSize: 12,
                               fontWeight: '700',
                               paddingHorizontal: 8,
                               paddingVertical: 4,
-                              borderRadius: 4
+                              borderRadius: 4,
                             }}
                           >
                             {item.badge}
