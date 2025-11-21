@@ -17,8 +17,8 @@ type NavBarItem = {
 };
 
 const tabConfig: NavBarItem[] = [
-  { name: 'calendario', label: 'Calendario', icon: CalendarioIcon },
   { name: 'principal', label: 'Home', icon: HomeIcon },
+  { name: 'calendario', label: 'Calendario', icon: CalendarioIcon },
   { name: 'armario', label: 'Armario', icon: ArmarioIcon },
   { name: 'perfil', label: 'Perfil', icon: PersonaIcon },
 ];
@@ -70,9 +70,9 @@ export default function TabLayout() {
           })}
         </View>
       )}
-    >
-      <Tabs.Screen name="calendario" />
+      >
       <Tabs.Screen name="principal" />
+      <Tabs.Screen name="calendario" />
       <Tabs.Screen name="armario" />
       <Tabs.Screen name="perfil" />
     </Tabs>
