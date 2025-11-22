@@ -27,18 +27,19 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        header: ({ route }) => (
-          <View
-            className="pt-12 pb-5"
-            style={{ backgroundColor: Colors.background }}
-          >
-            <Text className="text-[26px] font-bold text-[#2A2343]">
-              {route.name === 'armario'
-                ? 'Armario'
-                : route.name.charAt(0).toUpperCase() + route.name.slice(1)}
-            </Text>
-          </View>
-        ),
+        headerShown: false,
+        // header: ({ route }) => (
+        //   <View
+        //     className="pt-12 pb-5"
+        //     style={{ backgroundColor: Colors.background }}
+        //   >
+        //     <Text className="text-[26px] font-bold text-[#2A2343]">
+        //       {route.name === 'armario'
+        //         ? 'Armario'
+        //         : route.name.charAt(0).toUpperCase() + route.name.slice(1)}
+        //     </Text>
+        //   </View>
+        // ),
       }}
       tabBar={({ state, navigation }) => (
         <View
@@ -61,7 +62,7 @@ export default function TabLayout() {
                 <Text
                   // className={`text-md ${isFocused ? 'text-[#5639F8] font-bold' : 'text-[#91919F]'}`}
                   className="text-md font-normal"
-                  style={{ color: isFocused ? Colors.text : Colors.muted }}
+                  style={{ color: isFocused ? Colors.black : Colors.muted }}
                 >
                   {tab.label}
                 </Text>
@@ -70,11 +71,10 @@ export default function TabLayout() {
           })}
         </View>
       )}
-      >
-      <Tabs.Screen name="principal" />
-      <Tabs.Screen name="calendario" />
-      <Tabs.Screen name="armario" />
-      <Tabs.Screen name="perfil" />
+    >
+      {tabConfig.map((e) => (
+        <Tabs.Screen name={e.name} />
+      ))}
     </Tabs>
   );
 }
