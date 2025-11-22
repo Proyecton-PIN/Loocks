@@ -18,15 +18,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import pin.loocks.data.repositories.ArticuloRepository;
+import pin.loocks.domain.dtos.ArticuloDetailDTO;
+import pin.loocks.domain.dtos.ArticuloUpdateDTO;
 import pin.loocks.domain.dtos.ArticuloUploadRequestDTO;
 import pin.loocks.domain.dtos.ClothingAnalysisDTO;
 import pin.loocks.domain.dtos.FilterRequestDTO;
 import pin.loocks.domain.models.Articulo;
 import pin.loocks.domain.models.CustomUserDetails;
 import pin.loocks.logic.services.ArticuloService;
+
+
 
 @RestController
 @RequestMapping("/api/articulos")
@@ -75,7 +81,7 @@ public class ArticuloController {
     }
   }
 
-  @GetMapping("/{id}")
+   @GetMapping("/{id}")
   public ResponseEntity<Articulo> getArticuloById(@PathVariable Long id) {
     return articuloRepository.findById(id)
       .map(ResponseEntity::ok)
@@ -83,7 +89,7 @@ public class ArticuloController {
   }
 
   @PostMapping("/filtered")
-  public ResponseEntity<List<Articulo>> getFiltereArticulos(
+  public ResponseEntity<List<Articulo>> getFilteredArticulos(
       @AuthenticationPrincipal CustomUserDetails userDetails,
       @RequestBody FilterRequestDTO request) {
     try {
@@ -99,6 +105,28 @@ public class ArticuloController {
   public ResponseEntity<List<Articulo>> getArticulosByUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
     return ResponseEntity.ok(articuloRepository.findByUserId(userDetails.getId()));
   }
+
+  @GetMapping("/{id}/details") 
+  public ResponseEntity<ArticuloDetailDTO> getArticuloDetails( @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails user) { 
+    
+      ArticuloDetailDTO response = articuloService.getArticuloDetails(id, user.getId());
+      return ResponseEntity.ok(response);
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteArticuloById(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails user) {
+    
+    articuloService.deleteArticuloById(id, user.getId());
+    return ResponseEntity.noContent().build();
+  }
+
+   @PutMapping("/{id}")
+  public ResponseEntity<Articulo > updateArticulo(@PathVariable Long id, @RequestBody ArticuloUpdateDTO updateData, @AuthenticationPrincipal CustomUserDetails user){
+    
+    Articulo updated = articuloService.updateArticulo(id, updateData, user.getId());
+    return ResponseEntity.ok(updated);
+  }
+
 }
 
 
