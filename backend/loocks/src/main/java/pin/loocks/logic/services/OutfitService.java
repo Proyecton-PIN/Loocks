@@ -88,7 +88,14 @@ public class OutfitService {
     // TODO: Añadir abrigo, si es necesario
     // TODO: Añadir extra suggestions
 
-    return outfits.subList(0, request.getLimit());
+    if (outfits.isEmpty())
+      return List.of();
+
+    int limit = request.getLimit();
+    if (outfits.size() < request.getLimit())
+      limit = outfits.size();
+
+    return outfits.subList(0, limit);
   }
 
 

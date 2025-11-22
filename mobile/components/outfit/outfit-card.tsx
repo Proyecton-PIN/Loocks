@@ -1,12 +1,25 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Outfit } from '@/lib/domain/models/outift';
+import clsx from 'clsx';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Image, View } from 'react-native';
 
-export default function OutfitCard() {
+interface Props {
+  data: Partial<Outfit>;
+  className?: string;
+}
+
+export default function OutfitCard({ data, className }: Props) {
   return (
-    <View className="w-full bg-neutral-800 rounded-xl p-6 mb-3 items-center justify-center">
-      <Ionicons name="color-palette-outline" size={40} color="#555" />
-      <Text className="text-gray-500 mt-2 text-sm">Outfit</Text>
+    <View
+      className={clsx('flex-wrap gap-[10] rounded-xl overflow-clip', className)}
+    >
+      {data.articulos?.slice(4).map((e, idx) => (
+        <Image
+          key={idx}
+          className="bg-red-500 h-[115] w-[90]"
+          source={{ uri: e.imageUrl }}
+        />
+      ))}
     </View>
   );
 }

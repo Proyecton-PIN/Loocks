@@ -45,9 +45,16 @@ public class OutfitController {
     }
 
     @PostMapping("generateSuggestions")
-    public ResponseEntity<List<Outfit>> generateSuggestions(@RequestBody GenerateOutfitSuggestionsRequestDTO entity) {
-        // TODO: process POST request
-        return null;
+    public ResponseEntity<List<Outfit>> generateSuggestions(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody GenerateOutfitSuggestionsRequestDTO request) {
+        try {
+            List<Outfit> outfits = outfitService.generateSuggestions(request, userDetails.getId());
+            return ResponseEntity.ok().body(outfits);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     // @Autowired

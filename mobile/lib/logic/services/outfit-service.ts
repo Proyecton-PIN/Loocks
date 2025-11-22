@@ -1,33 +1,28 @@
-import { ApiUrl } from '@/constants/api-constants';
-import { SecureStore } from './secure-store-service';
+import http from '@/lib/data/http';
+import { Outfit } from '@/lib/domain/models/outift';
 
-export async function createOutfit(dto: Record<string, any>): Promise<any | { error: string; status: number } | undefined> {
+export async function getOutfitSuggestions(): Promise<Outfit[]> {
   try {
-    const token = (await SecureStore.get('token')) ?? '';
-    const resp = await fetch(`${ApiUrl}/api/outfits`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(dto),
+    const resp = http.post<any>('outfits/generateSuggestions', {
+      body: JSON.stringify({ limit: 5 }),
     });
 
-    if (!resp.ok) {
-      let bodyText = '';
-      try {
-        bodyText = await resp.text();
-      } catch (e) {
-        /* ignore */
-      }
-      console.error('createOutfit failed', resp.status, resp.statusText, bodyText);
-      return { error: bodyText, status: resp.status };
-    }
-
-    const data = await resp.json();
-    return data;
+    return resp;
   } catch (e) {
-    console.error('createOutfit error', e);
-    return undefined;
+    return [];
+  }
+}
+
+export async function getOutfits(
+  offset?: number,
+  limit?: number,
+): Promise<Outfit[]> {
+  try {
+    const resp = http.post<Outfit[]>('outfits/filtered', {
+      body: JSON.stringify({ offset, limit }),
+    });
+    return resp;
+  } catch (e) {
+    return [];
   }
 }
