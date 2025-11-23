@@ -30,6 +30,7 @@ import pin.loocks.domain.dtos.ArticuloUploadRequestDTO;
 import pin.loocks.domain.enums.Estacion;
 import pin.loocks.domain.enums.Estilo;
 import pin.loocks.domain.enums.Zona;
+import pin.loocks.domain.enums.TipoArticulo;
 import pin.loocks.logic.converters.ColorPorcentajeListConverter;
 
 @Entity
@@ -107,6 +108,9 @@ public class Articulo {
   // @Enumerated(EnumType.STRING)
   // @Column(nullable = false)
   // private TipoArticulo tipo = TipoArticulo.TODOS;
+
+  @Enumerated(EnumType.STRING)
+  private TipoArticulo tipo = TipoArticulo.TODOS;
 
   public Articulo(ArticuloUploadRequestDTO dto) {
     this.nombre = dto.getNombre();

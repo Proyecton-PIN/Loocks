@@ -85,6 +85,11 @@ public class ArticuloService {
     return result.getContent();
   }
 
+    public List<Articulo> getArticulosByTipo(pin.loocks.domain.enums.TipoArticulo tipo, String userId) {
+      if (tipo == null) return List.of();
+      return articuloRepository.findByUserIdAndTipo(userId, tipo);
+    }
+
   private Specification<Articulo> getFilterSpecs(FilterRequestDTO filter, String userId) {
     return (Root<Articulo> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
       Predicate p = cb.conjunction();

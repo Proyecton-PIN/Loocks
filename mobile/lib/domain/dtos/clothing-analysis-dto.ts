@@ -1,5 +1,5 @@
 import { Estacion } from '../enums/estacion';
-import { TipoArticulo } from '../enums/tipo-accesorio';
+import { TipoArticulo } from '../enums/tipo-articulo';
 
 export interface ClothingAnalysisDTO {
   nombre: string;

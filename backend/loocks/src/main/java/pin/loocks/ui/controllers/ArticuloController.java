@@ -149,6 +149,27 @@ public class ArticuloController {
     return ResponseEntity.ok(articuloRepository.findByUserId(userDetails.getId()));
   }
 
+  @GetMapping("/tipo/{tipo}")
+  public ResponseEntity<List<Articulo>> getArticulosByTipo(@AuthenticationPrincipal CustomUserDetails userDetails,
+      @PathVariable("tipo") String tipoStr) {
+    try {
+      pin.loocks.domain.enums.TipoArticulo tipo = null;
+      if (tipoStr != null && !tipoStr.isBlank()) {
+        try {
+          tipo = pin.loocks.domain.enums.TipoArticulo.valueOf(tipoStr.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+          return ResponseEntity.badRequest().build();
+        }
+      }
+
+      List<Articulo> articulos = articuloService.getArticulosByTipo(tipo, userDetails.getId());
+      return ResponseEntity.ok(articulos);
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      return ResponseEntity.internalServerError().build();
+    }
+  }
+
   @GetMapping("/{id}/details") 
   public ResponseEntity<ArticuloDetailDTO> getArticuloDetails( @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails user) { 
     
