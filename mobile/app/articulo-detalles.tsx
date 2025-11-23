@@ -7,7 +7,7 @@ import { Colors } from '@/constants/theme';
 import { useArticulos } from '@/hooks/useArticulos';
 import { ColorInfo } from '@/lib/domain/dtos/clothing-analysis-dto';
 import { Estacion } from '@/lib/domain/enums/estacion';
-import { TipoArticulo } from '@/lib/domain/enums/tipo-accesorio';
+import { TipoArticulo } from '@/lib/domain/enums/tipo-articulo';
 import { Picker } from '@react-native-picker/picker';
 import { router, Stack } from 'expo-router';
 import React from 'react';
