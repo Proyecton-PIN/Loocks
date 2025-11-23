@@ -52,7 +52,7 @@ public class Articulo {
   private Date fechaCompra;
 
   // @JdbcTypeCode(SqlTypes.JSON)
-  @Column(columnDefinition = "jsonb")
+  @Column(columnDefinition = "text")
   @Convert(converter = ColorPorcentajeListConverter.class)
   private List<PorcentajeColor> colores;
 

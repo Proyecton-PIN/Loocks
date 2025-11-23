@@ -60,7 +60,7 @@ public class Outfit {
   // private List<Tag> tags;
 
   public Outfit(Articulo torso, Articulo pierna, Articulo pie) {
-    this.articulos.addAll(List.of(torso, pierna, pie));
+    this.articulos = List.of(torso, pierna, pie);
     this.estacion = torso.getEstacion();
     this.estilo = torso.getEstilo();
   }

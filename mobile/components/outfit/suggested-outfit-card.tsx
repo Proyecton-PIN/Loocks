@@ -15,7 +15,7 @@ export default function SuggestedOutfitCard({ data }: Props) {
       className="w-[210] rounded-xl p-[10]"
       style={{ backgroundColor: Colors.white }}
     >
-      <OutfitCard data={data} className="h-[260] w-[210]" />
+      <OutfitCard data={data} className="h-[260] w-full" />
       <View
         className="flex-row h-[50] justify-between 
         items-end rounded-xl overflow-clip"

@@ -24,7 +24,6 @@ import pin.loocks.domain.dtos.ArticuloUpdateDTO;
 import pin.loocks.domain.dtos.ArticuloUploadRequestDTO;
 import pin.loocks.domain.dtos.ClothingAnalysisDTO;
 import pin.loocks.domain.dtos.FilterRequestDTO;
-import pin.loocks.domain.enums.Estacion;
 import pin.loocks.domain.enums.Zona;
 import pin.loocks.domain.models.Armario;
 import pin.loocks.domain.models.Articulo;
@@ -51,7 +50,14 @@ public class ArticuloService {
     File imageWithouBackground = imageHelper.removeBackground(img);
     File compressedImage = ImageHelper.zip(imageWithouBackground);
   
-    ClothingAnalysisDTO analysis = llmApi.generateDetails(compressedImage);
+    ClothingAnalysisDTO analysis;
+
+    try {
+      analysis = llmApi.generateDetails(compressedImage);
+    } catch (Exception e) {
+      analysis = llmApi.generateDetails(compressedImage);
+    }
+
     analysis.setBase64Img(ImageHelper.convertToBase64(compressedImage));
 
     return analysis;

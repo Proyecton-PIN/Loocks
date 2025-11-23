@@ -10,16 +10,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import pin.loocks.data.repositories.ArticuloRepository;
@@ -43,6 +43,49 @@ public class ArticuloController {
 
   @Autowired
   private ArticuloService articuloService;
+
+  @PostMapping(value = "generateDetailsAndCreate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<List<Articulo>> generateDetailsAndCreate(
+      @AuthenticationPrincipal CustomUserDetails user,
+      @Parameter(description = "Image file", required = true) @RequestParam("files") List<MultipartFile> imgs)
+      throws IOException {
+    List<Articulo> results = List.of();
+
+    for (MultipartFile img : imgs) {
+      File tempFile = File.createTempFile("upload-", img.getOriginalFilename());
+
+      try {
+        if (img.isEmpty()) {
+          continue;
+        }
+
+        img.transferTo(tempFile);
+
+        ClothingAnalysisDTO analysis = articuloService.generateDetails(tempFile);
+        Articulo result = articuloService.createArticulo(new ArticuloUploadRequestDTO(
+            analysis.getNombre(),
+            analysis.getMarca(),
+            null,
+            analysis.getColores(),
+            analysis.getColorPrimario(),
+            analysis.getEstacion(),
+            analysis.getEstilo(),
+            analysis.getNivelDeAbrigo(),
+            analysis.getZonasCubiertas(),
+            analysis.getBase64Img(),
+            analysis.getPuedePonerseEncimaDeOtraPrenda(),
+            false), user.getId(), user.getArmario());
+
+        results.add(result);
+      } catch (Exception e) {
+        continue;
+      } finally {
+        tempFile.delete();
+      }
+    }
+
+    return ResponseEntity.ok().body(results);
+  }
 
   @PostMapping("create")
   public ResponseEntity<Articulo> createArticulo(

@@ -1,5 +1,6 @@
 package pin.loocks.logic.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class OutfitService {
         new FilterRequestDTO(List.of(Zona.PIES)),
         userId);
 
-    List<Outfit> outfits = List.of();
+    List<Outfit> outfits = new ArrayList<>();
 
     for (Articulo torso : torsos) {
       for (Articulo pierna : piernas) {
