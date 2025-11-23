@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pin.loocks.domain.enums.Estacion;
 import pin.loocks.domain.enums.Estilo;
+import pin.loocks.domain.enums.TipoArticulo;
 import pin.loocks.domain.enums.Zona;
 import pin.loocks.domain.models.PorcentajeColor;
 
@@ -32,6 +33,9 @@ public class ArticuloUploadRequestDTO {
 
   @NotNull
   private Estilo estilo;
+
+  @NotNull
+  private TipoArticulo tipo;
 
   private Double nivelDeAbrigo = 0.5;
 

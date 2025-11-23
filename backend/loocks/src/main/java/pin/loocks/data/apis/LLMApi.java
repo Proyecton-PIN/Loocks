@@ -23,6 +23,7 @@ import pin.loocks.domain.dtos.ClothingAnalysisDTO;
 import pin.loocks.domain.dtos.LLMResponseDTO;
 import pin.loocks.domain.enums.Estacion;
 import pin.loocks.domain.enums.Estilo;
+import pin.loocks.domain.enums.TipoArticulo;
 import pin.loocks.domain.enums.Zona;
 import pin.loocks.logic.helpers.ImageHelper;
 import pin.loocks.logic.helpers.StringHelper;
@@ -63,6 +64,7 @@ public class LLMApi {
         \"zonasCubiertas\": [\"something1\",\"something2\"],
         \"nivelDeAbrigo\": 0.5,
         \"puedePonerseEncimaDeOtraPrenda\": false,
+          \"tipo\": "TODOS",
       }
 
       If you don't know the value of any field, skip it.
@@ -71,6 +73,8 @@ public class LLMApi {
       The field \"estilo\" must be one of the next values or the last if not knwon:
         %s
       The field \"zonasCubiertas\" must be one of the next values or the last if not knwon:
+        %s
+      The field \"tipo\" must be one of the next values or the last if not known:
         %s
 
       The field \"nivelDeAbrigo\" must be between 0 and 1.ç
@@ -95,8 +99,11 @@ public class LLMApi {
       .map(Enum::name)
       .collect(Collectors.joining(", "));
 
+    String tiposArticulo = Arrays.stream(TipoArticulo.values())
+        .map(Enum::name)
+        .collect(Collectors.joining(", "));
     
-    String prompt = String.format(basePrompt, estaciones, estilos, zonasCubiertas);
+    String prompt = String.format(basePrompt, estaciones, estilos, zonasCubiertas, tiposArticulo);
 
     MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
     body.add("contents", List.of(

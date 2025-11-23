@@ -29,8 +29,8 @@ import lombok.Setter;
 import pin.loocks.domain.dtos.ArticuloUploadRequestDTO;
 import pin.loocks.domain.enums.Estacion;
 import pin.loocks.domain.enums.Estilo;
-import pin.loocks.domain.enums.Zona;
 import pin.loocks.domain.enums.TipoArticulo;
+import pin.loocks.domain.enums.Zona;
 import pin.loocks.logic.converters.ColorPorcentajeListConverter;
 
 @Entity
@@ -122,6 +122,7 @@ public class Articulo {
     this.estilo = dto.getEstilo();
     this.zonasCubiertas = dto.getZonasCubiertas();
     this.puedePonerseEncimaDeOtraPrenda = dto.getPuedePonerseEncimaDeOtraPrenda();
+    this.tipo = dto.getTipo();
   }
 
   @JsonIgnore

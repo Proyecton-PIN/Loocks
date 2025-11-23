@@ -70,6 +70,7 @@ public class ArticuloController {
             analysis.getColorPrimario(),
             analysis.getEstacion(),
             analysis.getEstilo(),
+            analysis.getTipo(),
             analysis.getNivelDeAbrigo(),
             analysis.getZonasCubiertas(),
             analysis.getBase64Img(),
