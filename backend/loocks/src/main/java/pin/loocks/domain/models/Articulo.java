@@ -120,4 +120,15 @@ public class Articulo {
     this.puedePonerseEncimaDeOtraPrenda = dto.getPuedePonerseEncimaDeOtraPrenda();
   }
 
+  @JsonIgnore
+  private String colorSecundario = null;
+
+  public String getColorSecundario() {
+    if (this.colores.size() > 1) {
+      this.colorSecundario = this.colores.get(1).getColor();
+    }
+
+    return this.colorSecundario;
+  }
+
 }

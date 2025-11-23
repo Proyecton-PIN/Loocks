@@ -1,7 +1,9 @@
 package pin.loocks.logic.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,13 +51,19 @@ public class OutfitService {
       GenerateOutfitSuggestionsRequestDTO request,
       String userId) {
 
+    FilterRequestDTO torsoFilter = new FilterRequestDTO(List.of(Zona.TORSO));
+    torsoFilter.setPuedePonerseEncimaDeOtraPrenda(false);
     List<Articulo> torsos = articuloService.getFilteredArticulos(
-        new FilterRequestDTO(List.of(Zona.TORSO)),
+        torsoFilter,
         userId);
 
-    List<Articulo> piernas = articuloService.getFilteredArticulos(
-        new FilterRequestDTO(List.of(Zona.PIERNAS)),
-        userId);
+    List<Articulo> piernas = articuloService
+        .getFilteredArticulos(
+            new FilterRequestDTO(List.of(Zona.PIERNAS)),
+            userId)
+        .stream()
+        .filter(e -> e.getZonasCubiertas().size() == 1)
+        .collect(Collectors.toList());
 
     List<Articulo> pies = articuloService.getFilteredArticulos(
         new FilterRequestDTO(List.of(Zona.PIES)),
@@ -64,24 +72,26 @@ public class OutfitService {
     List<Outfit> outfits = new ArrayList<>();
 
     for (Articulo torso : torsos) {
-      for (Articulo pierna : piernas) {
-        for (Articulo pie : pies) {
-          double colorScore = 0.8 * ColorHelper.distanciaColorHex(torso.getColorPrimario(), pierna.getColorPrimario()) +
-              0.2 * ColorHelper.distanciaColorHex(pierna.getColorPrimario(), pie.getColorPrimario());
-          /**
-           * TODO:
-           * usosScore
-           * isFavoritoScore
-           * estiloScore
-           * estacionScore
-           * 
-           * quitar request.getOutfitsBaneados()
-           */
+      if (torso.getZonasCubiertas().size() > 1) {
+        Articulo bestPie = selectBestPies(torso, null, pies);
+        if (bestPie != null) {
+          outfits.add(new Outfit(torso, null, bestPie));
+        }
+        continue;
+      }
 
-          if (colorScore < 0.6)
+      for (Articulo pierna : piernas) {
+        double torsoPiernaColorScore = ColorHelper.calculateColorAffinity(
+            torso,
+            pierna,
+            null);
+
+        if (torsoPiernaColorScore < 0.5)
             continue;
 
-          outfits.add(new Outfit(torso, pierna, pie));
+          Articulo bestPie = selectBestPies(torso, pierna, pies);
+          if (bestPie != null) {
+            outfits.add(new Outfit(torso, pierna, bestPie));
         }
       }
     }
@@ -96,6 +106,7 @@ public class OutfitService {
     if (outfits.size() < request.getLimit())
       limit = outfits.size();
 
+    Collections.shuffle(outfits);
     return outfits.subList(0, limit);
   }
 
@@ -120,6 +131,31 @@ public class OutfitService {
 
       return p;
     };
+  }
+
+  private Articulo selectBestPies(Articulo torso, Articulo piernas, List<Articulo> pies) {
+    Articulo bestArticulo = null;
+    double bestArticuloScore = 0;
+
+    for (Articulo pie : pies) {
+      double colorScore = ColorHelper.calculateColorAffinity(torso, piernas, pie);
+      /**
+       * TODO:
+       * usosScore
+       * isFavoritoScore
+       * estiloScore
+       * estacionScore
+       * 
+       * quitar request.getOutfitsBaneados()
+       */
+
+      if (colorScore > bestArticuloScore) {
+        bestArticulo = pie;
+        bestArticulo = pie;
+      }
+    }
+
+    return bestArticulo;
   }
 
   // @Autowired

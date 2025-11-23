@@ -26,21 +26,7 @@ const tabConfig: NavBarItem[] = [
 export default function TabLayout() {
   return (
     <Tabs
-      screenOptions={{
-        headerShown: false,
-        // header: ({ route }) => (
-        //   <View
-        //     className="pt-12 pb-5"
-        //     style={{ backgroundColor: Colors.background }}
-        //   >
-        //     <Text className="text-[26px] font-bold text-[#2A2343]">
-        //       {route.name === 'armario'
-        //         ? 'Armario'
-        //         : route.name.charAt(0).toUpperCase() + route.name.slice(1)}
-        //     </Text>
-        //   </View>
-        // ),
-      }}
+      screenOptions={{ headerShown: false }}
       tabBar={({ state, navigation }) => (
         <View
           className="flex-row pb-5 pt-4 px-5"

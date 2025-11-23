@@ -1,5 +1,6 @@
 package pin.loocks.domain.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -60,7 +61,11 @@ public class Outfit {
   // private List<Tag> tags;
 
   public Outfit(Articulo torso, Articulo pierna, Articulo pie) {
-    this.articulos = List.of(torso, pierna, pie);
+    this.articulos = new ArrayList<>(List.of(torso));
+    if (pierna != null)
+      this.articulos.add(pierna);
+    if (pie != null)
+      this.articulos.add(pie);
     this.estacion = torso.getEstacion();
     this.estilo = torso.getEstilo();
   }
