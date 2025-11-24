@@ -1,5 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
-import { FlatList, TouchableOpacity, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import PrendaCategoriaCard from '../../../components/prenda/prendaCategoriaCard';
 
 const categorias = [
@@ -29,13 +28,7 @@ export default function PrendasPage() {
         contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16 }}
       />
       <View className="absolute bottom-10 left-0 right-0 items-center pointer-events-none">
-        <TouchableOpacity
-          onPress={() => {}}
-          className="w-18 h-18 rounded-full bg-[#5639F8] items-center justify-center shadow-lg pointer-events-auto"
-          style={{ elevation: 8 }}
-        >
-          <Ionicons name="add" size={46} color="#fff" />
-        </TouchableOpacity>
+       
       </View>
     </View>
   );
