@@ -1,5 +1,6 @@
 package pin.loocks.logic.services;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,6 +51,12 @@ public class OutfitService {
 
   public OutfitLog createOutfit(CreateOutfitRequestDTO request, Perfil perfil) {
     Outfit newOutfit = new Outfit(request, perfil);
+    
+    newOutfit.getArticulos().forEach(a -> {
+      a.setUsos(a.getUsos() + 1);
+      a.setFechaUltimoUso(LocalDate.now());
+    });
+
     Outfit createdOutfit = outfitRepository.save(newOutfit);
 
     OutfitLog outfitLog = new OutfitLog(createdOutfit);

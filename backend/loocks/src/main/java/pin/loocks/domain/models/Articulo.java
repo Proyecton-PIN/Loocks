@@ -1,6 +1,7 @@
 package pin.loocks.domain.models;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -71,7 +72,7 @@ public class Articulo {
   private List<Zona> zonasCubiertas;
 
   @Temporal(TemporalType.DATE)
-  private Date fechaUltimoUso;
+  private LocalDate fechaUltimoUso;
 
   private Double nivelDeAbrigo = 0.5;
 
