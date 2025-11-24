@@ -1,5 +1,6 @@
 import { AddIcon, IAIcon } from '@/constants/icons';
 import { Colors } from '@/constants/theme';
+import { useOutfit } from '@/hooks/useOutfits';
 import { Outfit } from '@/lib/domain/models/outift';
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
@@ -10,6 +11,8 @@ interface Props {
 }
 
 export default function SuggestedOutfitCard({ data }: Props) {
+  const createOutfit = useOutfit((s) => s.createOutfit);
+
   return (
     <View
       className="w-[210] rounded-xl p-[10]"
@@ -18,9 +21,10 @@ export default function SuggestedOutfitCard({ data }: Props) {
       <OutfitCard data={data} className="h-[260] w-full" />
       <View
         className="flex-row h-[50] justify-between 
-        items-end rounded-xl overflow-clip"
+        items-end rounded-xl overflow-clip "
       >
         <Pressable
+          onPress={() => createOutfit(data)}
           className="rounded-xl flex-row items-center 
             justify-between gap-4 h-[36] w-[100]"
           style={{

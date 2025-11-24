@@ -18,9 +18,6 @@ export async function fetchArticulos(): Promise<Articulo[]> {
 export async function generateDetails(
   uri: string,
 ): Promise<ClothingAnalysisDTO | undefined> {
-  // Send the pho.
-  console.log(uri);
-
   const formData = new FormData();
   formData.append('file', {
     uri: uri,

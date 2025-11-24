@@ -16,7 +16,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -79,8 +78,8 @@ public class Articulo {
   @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
   private Integer usos = 0;
 
-  @ManyToMany
-  @JoinTable(name = "articulo_outfit")
+  @ManyToMany(mappedBy = "articulos")
+  @JsonIgnore // TODO: provisional
   private List<Outfit> outfits;
 
   @ManyToOne

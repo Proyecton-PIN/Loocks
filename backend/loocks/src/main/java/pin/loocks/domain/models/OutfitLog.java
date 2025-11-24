@@ -1,6 +1,6 @@
 package pin.loocks.domain.models;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,8 +11,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OutfitLog {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +28,10 @@ public class OutfitLog {
 
   @Column(nullable = false)
   @Temporal(TemporalType.DATE)
-  private Date fechaInicio;
+  private LocalDate fechaInicio;
   
   @Temporal(TemporalType.DATE)
-  private Date fechaFin;
+  private LocalDate fechaFin;
 
   @ManyToOne
   @JoinColumn(name = "planificacion_id")
@@ -32,4 +40,9 @@ public class OutfitLog {
   @ManyToOne
   @JoinColumn(name = "outfit_id", nullable = false)
   private Outfit outfit;
+
+  public OutfitLog(Outfit outfit) {
+    this.outfit = outfit;
+    this.fechaInicio = LocalDate.now();
+  }
 }

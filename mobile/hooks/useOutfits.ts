@@ -1,14 +1,17 @@
+import { OutfitLog } from '@/lib/domain/models/outfit-log';
 import { Outfit } from '@/lib/domain/models/outift';
 import {
-  getOutfits,
+  createOutfit,
+  getOutfitLogs,
   getOutfitSuggestions,
 } from '@/lib/logic/services/outfit-service';
 import { create } from 'zustand';
 
 interface State {
   suggested: Outfit[];
-  logs: Outfit[];
+  logs: OutfitLog[];
   loadOutfits(): Promise<void>;
+  createOutfit(outfit: Partial<Outfit>): Promise<void>;
 }
 
 export const useOutfit = create<State>((set, get) => ({
@@ -16,9 +19,23 @@ export const useOutfit = create<State>((set, get) => ({
   logs: [],
 
   async loadOutfits() {
+    const [suggested, logs] = await Promise.all([
+      await getOutfitSuggestions(),
+      await getOutfitLogs(),
+    ]);
+
     set({
-      suggested: await getOutfitSuggestions(),
-      logs: await getOutfits(0, 10),
+      suggested,
+      logs,
     });
+  },
+
+  async createOutfit(outfit: Partial<Outfit>) {
+    const createdOutfit = await createOutfit(outfit);
+    if (!createdOutfit) return;
+
+    set((s) => ({
+      logs: [createdOutfit, ...s.logs],
+    }));
   },
 }));

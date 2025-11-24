@@ -6,16 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import pin.loocks.domain.dtos.CreateOutfitRequestDTO;
 import pin.loocks.domain.dtos.FilterRequestDTO;
 import pin.loocks.domain.dtos.GenerateOutfitSuggestionsRequestDTO;
 import pin.loocks.domain.models.CustomUserDetails;
 import pin.loocks.domain.models.Outfit;
+import pin.loocks.domain.models.OutfitLog;
 import pin.loocks.logic.services.OutfitService;
+
 
 @RestController
 @RequestMapping("/api/outfits")
@@ -27,21 +31,28 @@ public class OutfitController {
 
     @PostMapping("/filtered")
     public ResponseEntity<List<Outfit>> getFilteredOutfits(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody FilterRequestDTO request) {
-        try {
-            List<Outfit> outfits = outfitService.getFilteredOutfits(request, userDetails.getPerfil());
-            return ResponseEntity.ok().body(outfits);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.internalServerError().build();
-        }
+        @AuthenticationPrincipal CustomUserDetails userDetails,
+        @RequestBody FilterRequestDTO request) {
+      try {
+        List<Outfit> outfits = outfitService.getFilteredOutfits(request, userDetails.getPerfil());
+        return ResponseEntity.ok().body(outfits);
+      } catch (Exception e) {
+        System.out.println(e.getMessage());
+        return ResponseEntity.internalServerError().build();
+      }
     }
 
     @PostMapping("create")
-    public ResponseEntity<Outfit> createOutfitEntity(@RequestBody String entity) {
-        // TODO: process POST request
-        return null;
+    public ResponseEntity<OutfitLog> createOutfitEntity(
+        @AuthenticationPrincipal CustomUserDetails user,
+        @RequestBody CreateOutfitRequestDTO request) {
+      try {
+        OutfitLog newOutfit = outfitService.createOutfit(request, user.getPerfil());
+        return ResponseEntity.ok().body(newOutfit);
+      } catch (Exception e) {
+        System.out.println(e.getMessage());
+        return ResponseEntity.internalServerError().build();
+      }
     }
 
     @PostMapping("generateSuggestions")
@@ -55,6 +66,18 @@ public class OutfitController {
             System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @GetMapping("logs")
+    public ResponseEntity<List<OutfitLog>> getOutfitLogs(
+        @AuthenticationPrincipal CustomUserDetails user) {
+      try {
+        List<OutfitLog> logs = outfitService.getOutfitLogs(user.getPerfil());
+        return ResponseEntity.ok().body(logs);
+      } catch (Exception e) {
+        System.out.println(e.getMessage());
+        return ResponseEntity.internalServerError().build();
+      }
     }
 
     // @Autowired

@@ -14,12 +14,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pin.loocks.domain.dtos.CreateOutfitRequestDTO;
 import pin.loocks.domain.enums.Estacion;
 import pin.loocks.domain.enums.Estilo;
 
@@ -45,7 +47,8 @@ public class Outfit {
   @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
   private boolean isFavorito;
 
-  @ManyToMany(mappedBy = "outfits")
+  @ManyToMany
+  @JoinTable(name = "articulo_outfit")
   private List<Articulo> articulos;
 
   @ManyToOne
@@ -54,6 +57,7 @@ public class Outfit {
   private Perfil perfil;
 
   @OneToMany(mappedBy = "outfit", cascade = CascadeType.ALL)
+  @JsonIgnore
   private List<OutfitLog> logs;
 
   // @ManyToMany
@@ -68,5 +72,12 @@ public class Outfit {
       this.articulos.add(pie);
     this.estacion = torso.getEstacion();
     this.estilo = torso.getEstilo();
+  }
+
+  public Outfit(CreateOutfitRequestDTO dto, Perfil perfil) {
+    this.articulos = dto.getArticulos();
+    this.estacion = dto.getEstacion();
+    this.estilo = dto.getEstilo();
+    this.perfil = perfil;
   }
 }

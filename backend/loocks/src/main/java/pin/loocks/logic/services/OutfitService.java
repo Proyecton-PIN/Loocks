@@ -16,12 +16,15 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import pin.loocks.data.repositories.OutfitLogRepository;
 import pin.loocks.data.repositories.OutfitRepository;
+import pin.loocks.domain.dtos.CreateOutfitRequestDTO;
 import pin.loocks.domain.dtos.FilterRequestDTO;
 import pin.loocks.domain.dtos.GenerateOutfitSuggestionsRequestDTO;
 import pin.loocks.domain.enums.Zona;
 import pin.loocks.domain.models.Articulo;
 import pin.loocks.domain.models.Outfit;
+import pin.loocks.domain.models.OutfitLog;
 import pin.loocks.domain.models.Perfil;
 import pin.loocks.logic.helpers.ColorHelper;
 
@@ -29,6 +32,9 @@ import pin.loocks.logic.helpers.ColorHelper;
 public class OutfitService {
   @Autowired
   private OutfitRepository outfitRepository;
+
+  @Autowired
+  private OutfitLogRepository outfitLogRepository;
 
   @Autowired
   private ArticuloService articuloService;
@@ -42,9 +48,16 @@ public class OutfitService {
     return result.getContent();
   }
 
-  public Outfit createOutfit() {
-    // TODO:
-    return null;
+  public OutfitLog createOutfit(CreateOutfitRequestDTO request, Perfil perfil) {
+    Outfit newOutfit = new Outfit(request, perfil);
+    Outfit createdOutfit = outfitRepository.save(newOutfit);
+
+    OutfitLog outfitLog = new OutfitLog(createdOutfit);
+    return outfitLogRepository.save(outfitLog);
+  }
+
+  public List<OutfitLog> getOutfitLogs(Perfil perfil) {
+    return outfitLogRepository.findAllByPerfilId(perfil.getId());
   }
 
   public List<Outfit> generateSuggestions(

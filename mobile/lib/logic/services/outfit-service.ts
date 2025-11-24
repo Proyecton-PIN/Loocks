@@ -1,4 +1,5 @@
 import http from '@/lib/data/http';
+import { OutfitLog } from '@/lib/domain/models/outfit-log';
 import { Outfit } from '@/lib/domain/models/outift';
 
 export async function getOutfitSuggestions(): Promise<Outfit[]> {
@@ -13,16 +14,30 @@ export async function getOutfitSuggestions(): Promise<Outfit[]> {
   }
 }
 
-export async function getOutfits(
-  offset?: number,
-  limit?: number,
-): Promise<Outfit[]> {
+export async function getOutfitLogs(): Promise<OutfitLog[]> {
   try {
-    const resp = http.post<Outfit[]>('outfits/filtered', {
-      body: JSON.stringify({ offset, limit }),
-    });
-    return resp;
+    const resp = await http.get<OutfitLog[]>('outfits/logs');
+    return resp.map((e) => ({
+      ...e,
+      fechaInicio: new Date(e.fechaInicio),
+    }));
   } catch (e) {
     return [];
+  }
+}
+
+export async function createOutfit(
+  outfit: Partial<OutfitLog>,
+): Promise<OutfitLog | undefined> {
+  try {
+    const resp = await http.post<OutfitLog>('outfits/create', {
+      body: JSON.stringify(outfit),
+    });
+    return {
+      ...resp,
+      fechaInicio: new Date(resp.fechaInicio),
+    };
+  } catch {
+    return undefined;
   }
 }
