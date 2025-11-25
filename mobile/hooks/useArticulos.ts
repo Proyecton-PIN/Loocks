@@ -1,11 +1,10 @@
-import { ClothingAnalysisDTO } from '@/lib/domain/dtos/clothing-analysis-dto';
 import { Articulo } from '@/lib/domain/models/articulo';
 import {
   createArticulo,
+  deleteArticulo as deleteArticuloService,
   fetchArticulos,
   generateDetails,
-  updateArticulo,
-  deleteArticulo,
+  updateArticulo as updateArticuloService,
 } from '@/lib/logic/services/articulos-service';
 import { router } from 'expo-router';
 import { create } from 'zustand';
@@ -21,6 +20,8 @@ interface State {
   updateSelectedArticulo(data: Partial<Articulo>): void;
   saveArticulo(): Promise<void>;
   removeArticulo(): Promise<void>;
+  updateArticulo(id: number, data: Partial<Record<string, any>>): Promise<any | undefined>;
+  deleteArticulo(id: number): Promise<boolean>;
 }
 
 export const useArticulos = create<State>((set, get) => ({
@@ -72,7 +73,7 @@ export const useArticulos = create<State>((set, get) => ({
 
     set({ isLoading: true }); 
     if (current.id) {
-      const updated = await updateArticulo(current.id, current);
+      const updated = await updateArticuloService(current.id, current as any);
 
       if (updated) {
         set(state => ({
@@ -97,7 +98,7 @@ export const useArticulos = create<State>((set, get) => ({
       if (!current || !current.id) return; 
       set({ isLoading: true });
       
-      const success = await deleteArticulo(current.id);
+      const success = await deleteArticuloService(current.id);
       
       if (success) {
           set(state => ({
@@ -106,5 +107,30 @@ export const useArticulos = create<State>((set, get) => ({
           router.back();
       }
       set({ isLoading: false });
+  },
+  async updateArticulo(id: number, data: Partial<Record<string, any>>) {
+    try {
+      const resp = await updateArticuloService(id, data as any);
+      if (resp) {
+        set((s) => ({ articulos: s.articulos.map((a) => (a.id === id ? { ...a, ...resp } : a)), selectedArticulo: resp }));
+      }
+      return resp;
+    } catch (e) {
+      console.error('store.updateArticulo error', e);
+      return undefined;
+    }
+  },
+
+  async deleteArticulo(id: number) {
+    try {
+      const ok = await deleteArticuloService(id);
+      if (ok) {
+        set((s) => ({ articulos: s.articulos.filter((a) => a.id !== id), selectedArticulo: undefined }));
+      }
+      return ok;
+    } catch (e) {
+      console.error('store.deleteArticulo error', e);
+      return false;
+    }
   },
 }));

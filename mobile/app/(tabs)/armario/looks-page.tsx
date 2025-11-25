@@ -19,7 +19,7 @@ export default function LooksPage() {
       <FlatList
         key="outfits"
         data={outfits}
-        renderItem={(item) => <OutfitCard />}
+        renderItem={({ item }) => <OutfitCard data={item} />}
         numColumns={1}
         contentContainerStyle={{ paddingBottom: 120 }}
         ListEmptyComponent={
