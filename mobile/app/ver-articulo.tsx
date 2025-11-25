@@ -28,7 +28,7 @@ export default function ArticuloDetalles() {
         <Pressable onPress={router.back} className="p-2 bg-gray-50 rounded-full">
           <LeftArrowIcon color="black" />
         </Pressable>
-        
+        {/*EDITAR ARTICULO*/}
         <Pressable 
             className="bg-orange-100 p-3 rounded-full"
             onPress={() => router.push('/editar-crear-articulo')} 
