@@ -90,14 +90,14 @@ export async function updateArticulo(
     });
 
     if (!resp.ok) {
-      console.error('updateArticulo failed', resp.status, resp.statusText);
+      console.error('Error al editar el articulo', resp.status, resp.statusText);
       return undefined;
     }
 
     const data = await resp.json();
     return data;
   } catch (e) {
-    console.error('updateArticulo error', e);
+    console.error('No se ha podido editar el articulo', e);
     return undefined;
   }
 }
@@ -117,16 +117,17 @@ export async function deleteArticulo(id: number): Promise<boolean> {
       try {
         bodyText = await resp.text();
       } catch (e) {
-        /* ignore */
+       
       }
-      console.error('deleteArticulo failed', resp.status, resp.statusText, bodyText);
+      console.error('Fallo al eliminar el articulo', resp.status, resp.statusText, bodyText);
       return false;
     }
-
     return true;
   } catch (e) {
-    console.error('deleteArticulo error', e);
+    console.error('No se ha podido eliminar el articulo', e);
     return false;
   }
+
+
 }
 

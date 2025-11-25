@@ -4,6 +4,8 @@ import {
   createArticulo,
   fetchArticulos,
   generateDetails,
+  updateArticulo,
+  deleteArticulo,
 } from '@/lib/logic/services/articulos-service';
 import { router } from 'expo-router';
 import { create } from 'zustand';
@@ -16,8 +18,9 @@ interface State {
   fetchPrendas(): Promise<void>;
   generateDetails(uri?: string): Promise<void>;
   unselectArticulo(): void;
-  addArticulo(): Promise<void>;
   updateSelectedArticulo(data: Partial<Articulo>): void;
+  saveArticulo(): Promise<void>;
+  removeArticulo(): Promise<void>;
 }
 
 export const useArticulos = create<State>((set, get) => ({
@@ -41,33 +44,67 @@ export const useArticulos = create<State>((set, get) => ({
     }
 
     set({
-      selectedArticulo: resp,
+      selectedArticulo: resp as Articulo,
       isLoading: false,
     });
-    router.push('/articulo-detalles');
+    router.push('/editar-crear-articulo');
   },
 
   unselectArticulo() {
     set({ selectedArticulo: undefined });
   },
 
-  async addArticulo() {
-    if (!get().selectedArticulo) return;
-
-    const newArticulo = await createArticulo(get().selectedArticulo!);
-    if (!newArticulo) return;
-
-    set((s) => ({ articulos: [...s.articulos, newArticulo] }));
-    router.back();
-  },
-
   updateSelectedArticulo(data: Partial<Articulo>) {
-    let newData = get().selectedArticulo;
-    newData = {
-      ...newData,
+    let current = get().selectedArticulo;
+    if(!current) return;
+
+    const newData = {
+      ...current,
       ...data,
-    } as ClothingAnalysisDTO;
+    } as Articulo;
 
     set({ selectedArticulo: newData });
+  },
+
+  async saveArticulo() {
+    const current = get().selectedArticulo;
+    if (!current) return;
+
+    set({ isLoading: true }); 
+    if (current.id) {
+      const updated = await updateArticulo(current.id, current);
+
+      if (updated) {
+        set(state => ({
+                articulos: state.articulos.map(a => a.id === updated.id ? updated : a)
+            }));
+            router.back();
+          }
+    } else {
+      const newArticulo = await createArticulo(current);
+
+      if (newArticulo) {
+        set((s) => ({ articulos: [...s.articulos, newArticulo] }));
+        router.back();
+      }
+    }
+    set({ isLoading: false }); 
+    router.back(); 
+  },
+ async removeArticulo() {
+      const current = get().selectedArticulo;
+
+      if (!current || !current.id) return; 
+      set({ isLoading: true });
+      
+      const success = await deleteArticulo(current.id);
+      
+      if (success) {
+          set(state => ({
+              articulos: state.articulos.filter(a => a.id !== current.id)
+          }));
+          router.back();
+      }
+      set({ isLoading: false });
   },
 }));

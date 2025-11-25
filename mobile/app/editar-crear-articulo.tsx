@@ -17,8 +17,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function ArticuloDetalles() {
   const selectedArticulo = useArticulos((s) => s.selectedArticulo);
   const updateSelectedArticulo = useArticulos((s) => s.updateSelectedArticulo);
-  const addArticulo = useArticulos((s) => s.addArticulo);
+  const saveArticulo = useArticulos((s) => s.saveArticulo);
   const screenDetails = useSafeAreaInsets();
+  const removeArticulo = useArticulos((s) => s.removeArticulo); 
+  const isLoading = useArticulos((s) => s.isLoading);     
 
   return (
     <ScrollView className="flex-1 px-5">
@@ -106,8 +108,6 @@ export default function ArticuloDetalles() {
           value={selectedArticulo?.fechaCompra ?? new Date()}
         />
 
-        <TagsEditor tags={selectedArticulo?.tags} />
-
         <ColorPicker
           label="Colores"
           colors={selectedArticulo?.colores ?? []}
@@ -125,14 +125,27 @@ export default function ArticuloDetalles() {
       <Pressable
         className="rounded-xl py-3 justify-center items-center
           mt-10 mb-20"
-        onPress={() => addArticulo()}
+        onPress={() => saveArticulo()}
         style={{ backgroundColor: Colors.primary }}
       >
-        <Text className="text-white font-bold text-lg">Guardar prenda</Text>
+        <Text className="text-white font-bold text-lg">Guardar</Text>
       </Pressable>
+
+      {selectedArticulo?.id && (
+        <Pressable
+          className="rounded-xl py-3 justify-center items-center mb-20 border border-red-500 bg-red-50"
+          onPress={() => removeArticulo()} 
+          disabled={isLoading}
+        >
+          <Text className="text-red-500 font-bold text-lg">Eliminar</Text>
+        </Pressable>
+      )}
+
     </ScrollView>
   );
 }
+
+
 
 function TagsEditor(props: { tags?: string[] }) {
   return (
