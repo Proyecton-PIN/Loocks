@@ -2,6 +2,7 @@ import http from '@/lib/data/http';
 import { createOutfit as createOutfitService } from '@/lib/logic/services/outfit-service';
 import { SecureStore } from '@/lib/logic/services/secure-store-service';
 import { Ionicons } from '@expo/vector-icons';
+import { Picker } from '@react-native-picker/picker';
 import { Stack } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -14,7 +15,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  ViewToken,
+  ViewToken
 } from 'react-native';
 
 type Articulo = {
@@ -27,6 +28,16 @@ export default function CrearOutfit() {
   const [articulos, setArticulos] = useState<Articulo[]>([]);
   const [slots, setSlots] = useState<Array<number | null>>([null, null, null]);
   const [mood, setMood] = useState('');
+  const [nombre, setNombre] = useState<string>('');
+  const [estacion, setEstacion] = useState('PRIMAVERA');
+  const [estilo, setEstilo] = useState('CASUAL');
+  
+  // enums
+  // import dynamically to derive options
+  const { Estacion: EstacionEnum } = require('@/lib/domain/enums/estacion');
+  const { Estilo: EstiloEnum } = require('@/lib/domain/enums/estilo');
+  const estacionOptions: string[] = Object.values(EstacionEnum);
+  const estiloOptions: string[] = Object.keys(EstiloEnum).filter((k) => isNaN(Number(k)));
   const [satisfaccion, setSatisfaccion] = useState<string | null>(null);
   const [isFavorito, setIsFavorito] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -115,8 +126,9 @@ export default function CrearOutfit() {
 
       // Build payload matching the /api/outfits/create contract
       const dto = {
-        estacion: 'PRIMAVERA',
-        estilo: 'CASUAL',
+        nombre: nombre ?? undefined,
+        estacion: estacion ?? 'PRIMAVERA',
+        estilo: estilo ?? 'CASUAL',
         articulos: selectedIds.map((id) => {
           const a = articulos.find((x) => x.id === id) as any;
           return {
@@ -180,16 +192,17 @@ export default function CrearOutfit() {
 
       <View style={{ flex: 1, justifyContent: 'space-between' }}>
         <View>
-          <Text style={{ color: '#222222', marginBottom: 6, fontSize: 13 }}>Categoría (mood)</Text>
-          <TextInput
-            value={mood}
-            onChangeText={setMood}
-            placeholder="Ej: Casual, Elegante..."
-            placeholderTextColor="#888"
-            style={{ backgroundColor: '#DFDFDF', color: '#222222', padding: 8, borderRadius: 8, marginBottom: 8, fontSize: 13 }}
-          />
 
           <Text style={{ color: '#222222', fontSize: 13, marginBottom: 6 }}>Slides: desliza para seleccionar la prenda visible</Text>
+
+          <Text style={{ color: '#222222', marginTop: 8, marginBottom: 6, fontSize: 13 }}>Nombre del outfit</Text>
+          <TextInput
+            value={nombre}
+            onChangeText={setNombre}
+            placeholder="Ej: Look de oficina"
+            placeholderTextColor="#888"
+            style={{ backgroundColor: '#FFFFFF', color: '#222222', padding: 8, borderRadius: 8, marginBottom: 8, fontSize: 13 }}
+          />
 
           {[0, 1, 2].map((slotIndex) => {
           const looped = getLoopedData(articulos);
@@ -309,17 +322,37 @@ export default function CrearOutfit() {
             </View>
           );
         })}
+        
+          {/* Inputs moved below the slides */}
+          <Text style={{ color: '#222222', marginBottom: 6, fontSize: 13 }}>Estación</Text>
+          <View style={{ backgroundColor: '#DFDFDF', borderRadius: 8, marginBottom: 8 }}>
+            <Picker
+              selectedValue={estacion}
+              onValueChange={(v) => setEstacion(String(v))}
+              style={{ color: '#222222' }}
+            >
+              {estacionOptions.map((e) => (
+                <Picker.Item key={e} label={e} value={e} />
+              ))}
+            </Picker>
+          </View>
+
+          <Text style={{ color: '#222222', marginBottom: 6, fontSize: 13 }}>Estilo</Text>
+          <View style={{ backgroundColor: '#DFDFDF', borderRadius: 8, marginBottom: 8 }}>
+            <Picker
+              selectedValue={estilo}
+              onValueChange={(v) => setEstilo(String(v))}
+              style={{ color: '#222222' }}
+            >
+              {estiloOptions.map((k) => (
+                <Picker.Item key={k} label={k} value={k} />
+              ))}
+            </Picker>
+          </View>
+
         </View>
 
         <View style={{ paddingTop: 6 }}>
-          <Text style={{ color: '#222222', marginBottom: 4, fontSize: 13 }}>Satisfacción (opcional)</Text>
-          <TextInput
-            value={satisfaccion ?? ''}
-            onChangeText={setSatisfaccion}
-            placeholder="p.ej. 8/10"
-            placeholderTextColor="#888"
-            style={{ backgroundColor: '#DFDFDF', color: '#222222', padding: 8, borderRadius: 8, marginBottom: 8, fontSize: 13 }}
-          />
 
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
             <TouchableOpacity onPress={() => setIsFavorito((s) => !s)} style={{ marginRight: 8 }}>
