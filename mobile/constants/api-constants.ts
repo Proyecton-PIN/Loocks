@@ -1,3 +1,4 @@
+import Constants from 'expo-constants';
 
 export const ApiUrl =
-'http://10.185.251.179:8080';
+  Constants.expoConfig?.extra?.apiUrl ?? 'http://10.185.251.179:8080';
