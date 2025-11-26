@@ -42,11 +42,12 @@ public class ImageHelper {
             .height(800) // Reducir a 800px de alto
             .crop("limit") // Mantener proporción
             .quality(60) // Reducir calidad (30-80 según necesites)
+            .fetchFormat("jpg") // Usar JPG en vez de PNG (mucho más liviano)
             .chain().effect("background_removal"))
         .format("png")
         .generate(publicId);
     
-    System.out.println("URL sin fondo: " + transformedUrl);
+    System.out.println("UzRL de imagen transformada: " + transformedUrl);
     
     File downloadedFile = new File(image.getParent(), "fondo_quitado" + fileName);
     

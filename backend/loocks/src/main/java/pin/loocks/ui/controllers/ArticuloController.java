@@ -2,6 +2,7 @@ package pin.loocks.ui.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpStatus;
@@ -50,7 +51,7 @@ public class ArticuloController {
       @AuthenticationPrincipal CustomUserDetails user,
       @Parameter(description = "Image file", required = true) @RequestParam("files") List<MultipartFile> imgs)
       throws IOException {
-    List<Articulo> results = List.of();
+    List<Articulo> results = new ArrayList<>(List.of());
 
     for (MultipartFile img : imgs) {
       File tempFile = File.createTempFile("upload-", img.getOriginalFilename());

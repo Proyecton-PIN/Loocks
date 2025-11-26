@@ -77,7 +77,7 @@ public class LLMApi {
 
     ChatGPTResponseDTO response = (ChatGPTResponseDTO) query.executeAndGetBody();
 
-    return response.getData().get(0).getB64_Json();
+    return response.getData().get(0).getB64_json();
   }
 
   private static String buildGenerateDetailsPrompt() {

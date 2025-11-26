@@ -7,14 +7,14 @@ import lombok.Data;
 @Data
 public class ChatGPTResponseDTO {
   private Long created;
-  private List<ChatGPTData> data;
   private String background;
+  private List<ChatGPTData> data;
   private String size;
   private String quality;
 
   @Data
   public static class ChatGPTData {
-    private String b64_Json;
+    private String b64_json;
   }
 
   @Data
