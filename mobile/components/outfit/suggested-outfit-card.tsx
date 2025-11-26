@@ -4,6 +4,7 @@ import { useOutfit } from '@/hooks/useOutfits';
 import { Outfit } from '@/lib/domain/models/outift';
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
+import CustomCamera from '../camera/custom-camera';
 import OutfitCard from './outfit-card';
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 
 export default function SuggestedOutfitCard({ data }: Props) {
   const createOutfit = useOutfit((s) => s.createOutfit);
+  const probarEnAvatar = useOutfit((s) => s.probarEnAvatar);
 
   return (
     <View
@@ -36,7 +38,18 @@ export default function SuggestedOutfitCard({ data }: Props) {
           <Text style={{ color: Colors.muted }}>Añadir</Text>
           <AddIcon size={13} color={Colors.muted} />
         </Pressable>
-        <IAIcon />
+        <CustomCamera
+          onTakeImage={(uri) => {
+            if (!uri) return;
+            if (!data.articulos || data.articulos.length === 0) return;
+            probarEnAvatar(uri, data.articulos);
+          }}
+          trigger={(solicitarPermisos) => (
+            <Pressable onPress={solicitarPermisos}>
+              <IAIcon />
+            </Pressable>
+          )}
+        />
       </View>
     </View>
   );

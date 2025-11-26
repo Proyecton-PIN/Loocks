@@ -1,9 +1,11 @@
+import { Articulo } from '@/lib/domain/models/articulo';
 import { OutfitLog } from '@/lib/domain/models/outfit-log';
 import { Outfit } from '@/lib/domain/models/outift';
 import {
   createOutfit,
   getOutfitLogs,
   getOutfitSuggestions,
+  probarOutfitEnAvatar,
   removeOutfit,
 } from '@/lib/logic/services/outfit-service';
 import { router } from 'expo-router';
@@ -13,16 +15,22 @@ interface State {
   suggested: Outfit[];
   logs: OutfitLog[];
   selectedOutfit?: OutfitLog;
+  outfitProbadoImg?: string;
+  isOpenProbadorOutfit: boolean;
+
   loadOutfits(): Promise<void>;
   createOutfit(outfit: Partial<Outfit>): Promise<void>;
   removeOutfit(id: number): Promise<boolean>;
   selectOutfit?(o?: OutfitLog): void;
   addOutfitLog(log: OutfitLog): void;
+  unSelectProbarEnAvatar(): void;
+  probarEnAvatar(uri: string, articulos: Articulo[]): Promise<void>;
 }
 
 export const useOutfit = create<State>((set, get) => ({
   suggested: [],
   logs: [],
+  isOpenProbadorOutfit: false,
 
   async loadOutfits() {
     const [suggested, logs] = await Promise.all([
@@ -64,5 +72,16 @@ export const useOutfit = create<State>((set, get) => ({
     router.back();
 
     return true;
+  },
+
+  async probarEnAvatar(uri: string, articulos: Articulo[]): Promise<void> {
+    const base64Img = await probarOutfitEnAvatar(uri, articulos);
+    if (!base64Img) return;
+
+    set({ outfitProbadoImg: base64Img, isOpenProbadorOutfit: true });
+  },
+
+  unSelectProbarEnAvatar() {
+    set({ isOpenProbadorOutfit: false });
   },
 }));

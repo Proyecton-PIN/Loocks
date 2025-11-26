@@ -1,6 +1,6 @@
 import CustomCamera from '@/components/camera/custom-camera';
 import ImageAnalyzingModal from '@/components/camera/image-analyzing-modal';
-import { IconProps } from '@/constants/icons';
+import { AddIcon, IconProps } from '@/constants/icons';
 import { Colors } from '@/constants/theme';
 import { useArticulos } from '@/hooks/useArticulos';
 import { Tabs } from 'expo-router';
@@ -85,7 +85,15 @@ export default function ArmarioLayout() {
             setIsLoading(false);
           });
         }}
-        className="absolute bottom-5 right-5"
+        trigger={(solicitarPermisos) => (
+          <Pressable
+            onPress={solicitarPermisos}
+            className="aspect-square rounded-full w-[58] items-center justify-center absolute bottom-5 right-5"
+            style={{ backgroundColor: Colors.primary }}
+          >
+            <AddIcon />
+          </Pressable>
+        )}
       />
       <ImageAnalyzingModal show={isLoading} />
     </View>

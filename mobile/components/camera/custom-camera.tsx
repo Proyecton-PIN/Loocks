@@ -1,21 +1,17 @@
-import {
-  AddIcon,
-  CameraFlashIcon,
-  CloseIcon,
-  LeftArrowIcon,
-} from '@/constants/icons';
-import { Colors } from '@/constants/theme';
-import clsx from 'clsx';
+import { CameraFlashIcon, CloseIcon, LeftArrowIcon } from '@/constants/icons';
 import { Camera, CameraView, FlashMode } from 'expo-camera';
-import { useRef, useState } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import { Alert, Modal, Pressable, View } from 'react-native';
 
 interface Props {
   onTakeImage(uri?: string): void;
-  className?: string;
+  trigger?(solicitarPermisos: () => Promise<void>): ReactNode;
 }
 
-export default function CustomCamera({ onTakeImage, className }: Props) {
+export default function CustomCamera({
+  onTakeImage,
+  trigger,
+}: Props) {
   const [mostrarCamara, setMostrarCamara] = useState(false);
   const camaraRef = useRef<CameraView | null>(null);
   const [flashNumber, setFlashNumber] = useState(0);
@@ -69,16 +65,7 @@ export default function CustomCamera({ onTakeImage, className }: Props) {
 
   return (
     <View>
-      <Pressable
-        onPress={solicitarPermisos}
-        className={clsx(
-          'aspect-square rounded-full w-[58] items-center justify-center',
-          className,
-        )}
-        style={{ backgroundColor: Colors.primary }}
-      >
-        <AddIcon />
-      </Pressable>
+      {trigger?.(solicitarPermisos)}
 
       <Modal visible={mostrarCamara} animationType="slide">
         <View className="flex-1">
