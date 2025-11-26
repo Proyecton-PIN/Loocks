@@ -13,7 +13,7 @@ class Http {
   }
 
   private async query<T>(
-    method: 'GET' | 'POST',
+    method: 'GET' | 'POST' | 'DELETE',
     url: string,
     extra?: RequestInit,
   ): Promise<T> {
@@ -49,6 +49,10 @@ class Http {
 
   public async post<T>(url: string, extra?: RequestInit): Promise<T> {
     return this.query<T>('POST', url, extra);
+  }
+
+  public async delete<T>(url: string, extra?: RequestInit): Promise<T> {
+    return this.query<T>('DELETE', url, extra);
   }
 
   public async postForm<T>(url: string, form: FormData): Promise<T> {

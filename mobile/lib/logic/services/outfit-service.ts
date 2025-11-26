@@ -41,3 +41,12 @@ export async function createOutfit(
     return undefined;
   }
 }
+
+export async function removeOutfit(id: number): Promise<boolean> {
+  try {
+    await http.delete<void>(`outfits/${id}`);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

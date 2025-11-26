@@ -1,10 +1,12 @@
 import { OutfitLog } from '@/lib/domain/models/outfit-log';
 import { Outfit } from '@/lib/domain/models/outift';
 import {
-    createOutfit,
-    getOutfitLogs,
-    getOutfitSuggestions,
+  createOutfit,
+  getOutfitLogs,
+  getOutfitSuggestions,
+  removeOutfit,
 } from '@/lib/logic/services/outfit-service';
+import { router } from 'expo-router';
 import { create } from 'zustand';
 
 interface State {
@@ -13,6 +15,7 @@ interface State {
   selectedOutfit?: OutfitLog;
   loadOutfits(): Promise<void>;
   createOutfit(outfit: Partial<Outfit>): Promise<void>;
+  removeOutfit(id: number): Promise<boolean>;
   selectOutfit?(o?: OutfitLog): void;
 }
 
@@ -42,5 +45,17 @@ export const useOutfit = create<State>((set, get) => ({
   },
   selectOutfit(o?: OutfitLog) {
     set({ selectedOutfit: o });
+  },
+  async removeOutfit(id: number) {
+    const ok = await removeOutfit(id);
+    if (!ok) return false;
+
+    set((s) => ({
+      logs: s.logs.filter((l) => l.outfit.id !== id),
+      selectedOutfit: undefined,
+    }));
+    router.back();
+
+    return true;
   },
 }));
