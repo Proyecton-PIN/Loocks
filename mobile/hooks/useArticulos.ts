@@ -13,10 +13,12 @@ interface State {
   isLoading: boolean;
   articulos: Articulo[];
   selectedArticulo?: Articulo;
+  selectArticulo(articulo: Articulo): void;
 
   fetchPrendas(): Promise<void>;
   generateDetails(uri?: string): Promise<void>;
   unselectArticulo(): void;
+  
   updateSelectedArticulo(data: Partial<Articulo>): void;
   saveArticulo(): Promise<void>;
   removeArticulo(): Promise<void>;
@@ -65,6 +67,10 @@ export const useArticulos = create<State>((set, get) => ({
     } as Articulo;
 
     set({ selectedArticulo: newData });
+  },
+
+  selectArticulo(articulo: Articulo) {
+    set({ selectedArticulo: articulo });
   },
 
   async saveArticulo() {
