@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 interface Props {
   children?: ReactNode;
@@ -7,9 +7,16 @@ interface Props {
 }
 
 export default function ColorPickerTrigger({ children, onSelectColor }: Props) {
+  const renderChild = () => {
+    if (typeof children === 'string') return <Text>{children}</Text>;
+    return children;
+  };
+
   return (
     <View>
-      <Pressable onPress={() => {}}>{children}</Pressable>;
+      <Pressable onPress={() => { /* debes pasar el hex adecuado aquí */ }}>
+        {renderChild()}
+      </Pressable>
     </View>
   );
 }

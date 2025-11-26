@@ -1,4 +1,5 @@
 import { ApiUrl } from '@/constants/api-constants';
+import { useArticulos } from '@/hooks/useArticulos';
 import http from '@/lib/data/http';
 import { Articulo } from '@/lib/domain/models/articulo';
 import clsx from 'clsx';
@@ -111,9 +112,17 @@ export default function PrendaCategoriaCard({
                 : item.base64Img
                   ? `data:image/jpeg;base64,${item.base64Img}`
                   : '';
-              return (
+                return (
                 <Pressable
-                  onPress={() => router.push({ pathname: '/ver-articulo', params: { articulo: JSON.stringify(item) } })}
+                  onPress={() => {
+                    // set selected articulo in store then navigate
+                    try {
+                      useArticulos.getState().selectArticulo(item);
+                    } catch (e) {
+                      console.warn('Could not select articulo in store', e);
+                    }
+                    router.push('/ver-articulo');
+                  }}
                 >
                   {imgUri ? (
                     <Image

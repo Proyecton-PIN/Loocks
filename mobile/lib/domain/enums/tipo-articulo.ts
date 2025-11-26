@@ -4,7 +4,6 @@ export enum TipoArticulo {
   GORRAS = 'GORRAS',
   VESTIDOS = 'VESTIDOS',
   SUDADERAS = 'SUDADERAS',
-  TOPS = 'TOPS',
   ZAPATOS = 'ZAPATOS',
   CHAQUETAS = 'CHAQUETAS',
   FALDAS = 'FALDAS',
