@@ -1,6 +1,5 @@
 import {
   BellIcon,
-  IconProps,
   LogoutIcon,
   PersonalIcon,
   SettingsIcon,
@@ -20,7 +19,7 @@ const ChevronIcon = () => (
 );
 
 interface MenuSectionItem {
-  icon: (props: IconProps) => React.JSX.Element;
+  icon: (props: any) => React.JSX.Element;
   label: string;
   badge?: string;
   hasBadge: boolean;
@@ -30,9 +29,15 @@ interface MenuSectionItem {
 export default function ProfileSettingsScreen() {
   const userData = {
     profileImage: require('@/assets/images/imagen.png'),
-    username: '_andreea',
+    username: 'andrea_rf',
     fullName: 'Andrea Rufo',
   };
+
+  const stats = [
+    { value: 14, label: 'prendas' },
+    { value: 8, label: 'outfits' },
+    { value: 10, label: 'looks' },
+  ];
 
   const menuSections: MenuSectionItem[][] = [
     [
@@ -146,16 +151,65 @@ export default function ProfileSettingsScreen() {
           >
             {userData.username}
           </Text>
-
           {/* Full Name */}
           <Text
             style={{
               color: Colors.muted,
               fontSize: 14,
+              marginBottom: 2,
             }}
           >
             {userData.fullName}
           </Text>
+        </View>
+
+        {/* Panel de estadísticas */}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 20,
+            marginBottom: 24,
+          }}
+        >
+          {stats.map((stat) => (
+            <View
+              key={stat.label}
+              style={{
+                minWidth: 70,
+                marginHorizontal: -5,
+                alignItems: 'center',
+                backgroundColor: Colors.white,
+                borderRadius: 12,
+                paddingVertical: 10,
+                paddingHorizontal: 25,
+                shadowColor: Colors.primary,
+                shadowOpacity: 0.04,
+                shadowRadius: 2,
+                elevation: 1,
+              }}
+            >
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 25,
+                  color: Colors.primary,
+                }}
+              >
+                {stat.value}
+              </Text>
+              <Text
+                style={{
+                  color: Colors.primary,
+                  fontSize: 12,
+                  fontWeight: 'bold',
+                }}
+              >
+                {stat.label}
+              </Text>
+            </View>
+          ))}
         </View>
 
         {/* Menu Items */}
@@ -188,12 +242,14 @@ export default function ProfileSettingsScreen() {
                       >
                         <Icon />
                         <Text
-                          style={{ color: Colors.black, fontWeight: '500' }}
+                          style={{
+                            color: Colors.black,
+                            fontWeight: '500',
+                          }}
                         >
                           {item.label}
                         </Text>
                       </View>
-
                       <View
                         style={{
                           flexDirection: 'row',
@@ -228,7 +284,6 @@ export default function ProfileSettingsScreen() {
             </View>
           ))}
         </View>
-
         {/* Espaciado inferior */}
         <View style={{ height: 16 }} />
       </View>
