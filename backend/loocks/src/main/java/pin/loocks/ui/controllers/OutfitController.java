@@ -9,10 +9,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -103,7 +103,7 @@ public class OutfitController {
         String base64Image = outfitService.tryOnAvatar(user.getPerfil(), tempFile, articuloIds);
         return ResponseEntity.ok().body(base64Image);
       } catch (Exception e) {
-        System.out.println(e);
+        System.out.println(e.getMessage());
         return ResponseEntity.internalServerError().build();
       } finally {
         tempFile.delete();

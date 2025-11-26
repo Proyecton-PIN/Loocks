@@ -54,13 +54,21 @@ const categorias = [
   {
     id: 7,
     nombre: 'Zapatos',
-    color: '#fca5a5',
+    color: '#a6d0f0',
     icon: '👞',
     cantidad: 8,
     tipo: 'ZAPATOS',
   },
   {
     id: 8,
+    nombre: 'Chaqueta',
+    color: '#f8e0ac',
+    icon: '👞',
+    cantidad: 8,
+    tipo: 'CHAQUETAS',
+  },
+  {
+    id: 9,
     nombre: 'Todas',
     color: '#fff',
     icon: '⭐',

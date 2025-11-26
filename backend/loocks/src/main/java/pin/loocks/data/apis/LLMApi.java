@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import pin.loocks.domain.dtos.ChatGPTResponseDTO;
 import pin.loocks.domain.dtos.ClothingAnalysisDTO;
 import pin.loocks.domain.dtos.GeminiResponseDTO;
 import pin.loocks.domain.enums.Estacion;
@@ -63,9 +62,9 @@ public class LLMApi {
   }
 
   public String tryOutfitOnAvatar(List<File> imgs) {
-    RestApi<ChatGPTResponseDTO> query = new RestApi<>(
+    RestApi<String> query = new RestApi<>(
         "https://api.openai.com/v1/images/edits",
-        ChatGPTResponseDTO.class);
+        String.class);
 
     query
         .addHeader("Authorization", "Bearer " + chatGPTApiKey)
@@ -75,9 +74,10 @@ public class LLMApi {
         .addFormParam("prompt",
             "Generate an image with the person on the first image wearing the clothes of the rest of images.");
 
-    ChatGPTResponseDTO response = (ChatGPTResponseDTO) query.executeAndGetBody();
+    String response = (String) query.executeAndGetBody();
 
-    return response.getData().get(0).getB64_json();
+    // return response.getData().get(0).getB64_json();
+    return response;
   }
 
   private static String buildGenerateDetailsPrompt() {

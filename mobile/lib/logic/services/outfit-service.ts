@@ -14,13 +14,22 @@ export async function probarOutfitEnAvatar(
     name: 'photo.jpg',
   } as any);
 
-  formData.append('data', JSON.stringify(articulos.map((a) => a.id)));
+  articulos.forEach((e) => {
+    formData.append('data', String(e.id));
+  });
+  // formData.append('data', JSON.stringify(articulos.map((a) => a.id)));
 
   try {
-    const resp = await http.postForm<string>('outfits/tryOnAvatar', formData);
+    const resp = await http.postForm<{
+      data: { b64_json: string }[];
+    }>('outfits/tryOnAvatar', formData);
 
-    return resp;
-  } catch {
+    const img = resp.data[0].b64_json;
+    console.log(img);
+
+    return img;
+  } catch (e) {
+    console.log(e);
     alert('Intentalo más tarde');
   }
 }

@@ -57,8 +57,8 @@ export default function PrendaCategoriaCard({
       <Pressable
         onPress={onPress}
         className={clsx(
-          'rounded-2xl px-6 pt-5 pb-[30px] mb-[-20px] shadow-[0_-10px_20px_rgba(0,0,0,1.7)] bg-[#FFFFFF] flex-row items-center',
-          expanded && 'border-blue-400'
+          'rounded-t-2xl px-6 pt-5 pb-[30px] mb-[-30px] shadow-[0_-10px_20px_rgba(0,0,0,1.7)] bg-[#FFFFFF] flex-row items-center',
+          expanded && 'border-blue-400',
         )}
         style={{ backgroundColor: color }}
       >
@@ -71,7 +71,10 @@ export default function PrendaCategoriaCard({
         <Text className="ml-4 text-gray-400 text-base">{cantidad} prendas</Text>
       </Pressable>
       <Collapsible collapsed={!expanded} duration={300}>
-        <View className="px-6 py-4 mt-4 rounded-2xl" style={{ backgroundColor: color }}>
+        <View
+          className="px-6 py-4 mt-4 rounded-2xl"
+          style={{ backgroundColor: color }}
+        >
           <Text className="text-xs mb-1">Nombre</Text>
           <TextInput
             value={name}
@@ -81,7 +84,11 @@ export default function PrendaCategoriaCard({
           <Text className="text-xs mb-1">Icono</Text>
           <View className="flex-row mb-2">
             {ICONS.map((ic) => (
-              <Pressable key={ic} onPress={() => setIcon(ic)} style={{ marginRight: 8 }}>
+              <Pressable
+                key={ic}
+                onPress={() => setIcon(ic)}
+                style={{ marginRight: 8 }}
+              >
                 <Text style={{ fontSize: 24 }}>{ic}</Text>
               </Pressable>
             ))}
@@ -89,19 +96,35 @@ export default function PrendaCategoriaCard({
           <Text className="text-xs mb-1">Color</Text>
           <View className="flex-row mb-4">
             {COLORS.map((c) => (
-              <Pressable key={c} onPress={() => setColor(c)} style={{
-                width: 28, height: 28, borderRadius: 14, backgroundColor: c, marginRight: 8, borderWidth: color === c ? 2 : 0, borderColor: '#333'
-              }} />
+              <Pressable
+                key={c}
+                onPress={() => setColor(c)}
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 14,
+                  backgroundColor: c,
+                  marginRight: 8,
+                  borderWidth: color === c ? 2 : 0,
+                  borderColor: '#333',
+                }}
+              />
             ))}
           </View>
           <Text className="font-bold mb-2 text-lg">Artículos</Text>
           {loading && (
-            <ActivityIndicator size="small" color="#3B82F6" style={{ marginBottom: 8 }} />
+            <ActivityIndicator
+              size="small"
+              color="#3B82F6"
+              style={{ marginBottom: 8 }}
+            />
           )}
           <FlatList
             data={articulos}
             horizontal
-            keyExtractor={(item, index) => item?.id ? item.id.toString() : String(index)}
+            keyExtractor={(item, index) =>
+              item?.id ? item.id.toString() : String(index)
+            }
             renderItem={({ item }) => {
               const imgUri = item.imageUrl
                 ? item.imageUrl.startsWith('http')
@@ -112,7 +135,7 @@ export default function PrendaCategoriaCard({
                 : item.base64Img
                   ? `data:image/jpeg;base64,${item.base64Img}`
                   : '';
-                return (
+              return (
                 <Pressable
                   onPress={() => {
                     // set selected articulo in store then navigate
@@ -127,11 +150,26 @@ export default function PrendaCategoriaCard({
                   {imgUri ? (
                     <Image
                       source={{ uri: imgUri }}
-                      style={{ width: 90, height: 120, borderRadius: 16, marginRight: 8 }}
+                      style={{
+                        width: 90,
+                        height: 120,
+                        borderRadius: 16,
+                        marginRight: 8,
+                      }}
                       resizeMode="cover"
                     />
                   ) : (
-                    <View style={{ width: 90, height: 120, borderRadius: 16, marginRight: 8, backgroundColor: '#F4F4F4', alignItems: 'center', justifyContent: 'center' }}>
+                    <View
+                      style={{
+                        width: 90,
+                        height: 120,
+                        borderRadius: 16,
+                        marginRight: 8,
+                        backgroundColor: '#F4F4F4',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
                       <Text style={{ color: '#999' }}>No image</Text>
                     </View>
                   )}
