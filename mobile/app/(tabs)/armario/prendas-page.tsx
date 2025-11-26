@@ -42,6 +42,10 @@ export default function PrendasPage() {
         ItemSeparatorComponent={() => <View style={{ height: 0 }} />}
         contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 6 }}
         extraData={expandedIndex}
+        getItemLayout={(_data, index) => {
+          const estimatedHeight = 180; // must match the visual card height approximation
+          return { length: estimatedHeight, offset: estimatedHeight * index, index };
+        }}
         onScrollToIndexFailed={(info) => {
           // If scrollToIndex fails (item not measured yet), fall back to a sensible offset
           const idx = info.index ?? 0;

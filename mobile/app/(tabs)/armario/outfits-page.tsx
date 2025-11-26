@@ -2,8 +2,9 @@ import OutfitCard from '@/components/outfit/outfit-card';
 import SuggestedOutfitsRow from '@/components/outfit/suggested-outfits-row';
 import { useOutfit } from '@/hooks/useOutfits';
 import clsx from 'clsx';
+import { router } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
-import { FlatList, Text, View, Pressable, ScrollView } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 
 export default function OutfitsPage() {
   const logs = useOutfit((s) => s.logs);
@@ -96,16 +97,18 @@ export default function OutfitsPage() {
       nestedScrollEnabled
       ItemSeparatorComponent={(_) => <View className="h-10" />}
       renderItem={(e) => (
-        <View className="flex-1">
-          <OutfitCard
-            data={e.item.outfit}
-            className={clsx(
-              'flex-1 h-[260]',
-              e.index % 1 === 1 ? 'ml-[5]' : 'mr-[5]',
-            )}
-          />
-          <Text className="py-2">{e.item.fechaInicio.toDateString()}</Text>
-        </View>
+        <Pressable onPress={() => { useOutfit.getState().selectOutfit?.(e.item); router.push('/ver-outfit' as any); }} style={{ flex: 1 }}>
+          <View className="flex-1">
+            <OutfitCard
+              data={e.item.outfit}
+              className={clsx(
+                'flex-1 h-[260]',
+                e.index % 1 === 1 ? 'ml-[5]' : 'mr-[5]',
+              )}
+            />
+            <Text className="py-2">{e.item.fechaInicio.toDateString()}</Text>
+          </View>
+        </Pressable>
       )}
     />
   );

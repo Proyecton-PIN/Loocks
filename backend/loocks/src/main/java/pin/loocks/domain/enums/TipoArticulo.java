@@ -6,7 +6,7 @@ public enum TipoArticulo {
   GORRAS,
   VESTIDOS,
   SUDADERAS,
-  TOPS,
+  PANTALONES,
   ZAPATOS,
   CHAQUETAS,
   FALDAS,

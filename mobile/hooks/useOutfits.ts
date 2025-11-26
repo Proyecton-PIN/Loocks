@@ -1,17 +1,19 @@
 import { OutfitLog } from '@/lib/domain/models/outfit-log';
 import { Outfit } from '@/lib/domain/models/outift';
 import {
-  createOutfit,
-  getOutfitLogs,
-  getOutfitSuggestions,
+    createOutfit,
+    getOutfitLogs,
+    getOutfitSuggestions,
 } from '@/lib/logic/services/outfit-service';
 import { create } from 'zustand';
 
 interface State {
   suggested: Outfit[];
   logs: OutfitLog[];
+  selectedOutfit?: OutfitLog;
   loadOutfits(): Promise<void>;
   createOutfit(outfit: Partial<Outfit>): Promise<void>;
+  selectOutfit?(o?: OutfitLog): void;
 }
 
 export const useOutfit = create<State>((set, get) => ({
@@ -37,5 +39,8 @@ export const useOutfit = create<State>((set, get) => ({
     set((s) => ({
       logs: [createdOutfit, ...s.logs],
     }));
+  },
+  selectOutfit(o?: OutfitLog) {
+    set({ selectedOutfit: o });
   },
 }));
