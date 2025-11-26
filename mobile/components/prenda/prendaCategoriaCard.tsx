@@ -46,11 +46,21 @@ export default function PrendaCategoriaCard({
       }
     }
     load();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [expanded, tipo]);
 
   const ICONS = ['👕', '🧢', '👗', '👜', '⭐', '🧥'];
-  const COLORS = ['#FFF', '#FDE68A', '#BFDBFE', '#FECACA', '#DBEAFE', '#C7D2FE'];
+  z;
+  const COLORS = [
+    '#FFF',
+    '#FDE68A',
+    '#BFDBFE',
+    '#FECACA',
+    '#DBEAFE',
+    '#C7D2FE',
+  ];
 
   return (
     <View>
