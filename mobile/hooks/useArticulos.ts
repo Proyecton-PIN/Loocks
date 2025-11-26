@@ -79,14 +79,38 @@ export const useArticulos = create<State>((set, get) => ({
 
     set({ isLoading: true }); 
     if (current.id) {
-      const updated = await updateArticuloService(current.id, current as any);
+      // Build payload matching backend contract for PUT /api/articulos/{id}
+      const colorPrimario = (current as any).colorPrimario ?? (Array.isArray(current.colores) && current.colores.length > 0 ? current.colores[0].color : undefined);
+      const coloresSecundarios = Array.isArray(current.colores)
+        ? current.colores
+            .map((c: any) => c.color)
+            .filter((c: string) => c !== colorPrimario)
+        : [];
+
+      const dto: any = {
+        nombre: current.nombre,
+        marca: current.marca ?? '',
+        colorPrimario: colorPrimario ?? '',
+        coloresSecundarios,
+        estacion: current.estacion,
+        fechaUltimoUso: current.fechaUltimoUso
+          ? (current.fechaUltimoUso instanceof Date ? current.fechaUltimoUso.toISOString() : String(current.fechaUltimoUso))
+          : undefined,
+        usos: typeof current.usos === 'number' ? current.usos : 0,
+        armarioId: (current as any).armarioId ?? 0,
+        tagsIds: Array.isArray((current as any).tags) ? (current as any).tags.map((t: any) => (typeof t === 'number' ? t : Number(t))) : [],
+        imageUrl: current.imageUrl ?? undefined,
+        tipo: current.tipo,
+      };
+
+      const updated = await updateArticuloService(current.id, dto);
 
       if (updated) {
-        set(state => ({
-                articulos: state.articulos.map(a => a.id === updated.id ? updated : a)
-            }));
-            router.back();
-          }
+        set((state) => ({
+          articulos: state.articulos.map((a) => (a.id === updated.id ? updated : a)),
+        }));
+        router.back();
+      }
     } else {
       const newArticulo = await createArticulo(current);
 
