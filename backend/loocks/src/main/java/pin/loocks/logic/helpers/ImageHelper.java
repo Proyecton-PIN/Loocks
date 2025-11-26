@@ -33,7 +33,6 @@ public class ImageHelper {
     String fileName = image.getName();
 
     Map uploadImage = cloudinary.uploader().upload(image, ObjectUtils.emptyMap());
-    System.out.println("Resultado de la subida: " + uploadImage);
 
     String publicId = (String) uploadImage.get("public_id");
 
@@ -43,12 +42,11 @@ public class ImageHelper {
             .height(800) // Reducir a 800px de alto
             .crop("limit") // Mantener proporción
             .quality(60) // Reducir calidad (30-80 según necesites)
-            .fetchFormat("jpg") // Usar JPG en vez de PNG (mucho más liviano)
             .chain().effect("background_removal"))
         .format("png")
         .generate(publicId);
     
-    System.out.println("URL de imagen transformada: " + transformedUrl);
+    System.out.println("URL sin fondo: " + transformedUrl);
     
     File downloadedFile = new File(image.getParent(), "fondo_quitado" + fileName);
     
@@ -98,12 +96,13 @@ public class ImageHelper {
     }
   }
 
-  private static void downloadFileFromURL(String urlStr, File archivo) throws IOException, InterruptedException {
+  public static void downloadFileFromURL(String urlStr, File archivo) throws IOException, InterruptedException {
     HttpClient client = HttpClient.newHttpClient();
 
     HttpRequest request = HttpRequest.newBuilder()
         .uri(URI.create(urlStr))
         .header("User-Agent", "Java HttpClient") // Agregar user-agent para evitar bloqueos por servidor
+        .header("Accept", "image/png")
         .build();
 
     HttpResponse<Path> response = client.send(request, HttpResponse.BodyHandlers.ofFile(Path.of(archivo.getPath())));

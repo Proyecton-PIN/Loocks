@@ -7,20 +7,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import pin.loocks.domain.dtos.ChatGPTResponseDTO;
 import pin.loocks.domain.dtos.ClothingAnalysisDTO;
-import pin.loocks.domain.dtos.LLMResponseDTO;
+import pin.loocks.domain.dtos.GeminiResponseDTO;
 import pin.loocks.domain.enums.Estacion;
 import pin.loocks.domain.enums.Estilo;
 import pin.loocks.domain.enums.TipoArticulo;
@@ -30,18 +25,62 @@ import pin.loocks.logic.helpers.StringHelper;
 
 @Component
 public class LLMApi {
-  @Value("${llm.api.key}")
-  private String apiKey;
-  private final String baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
-  private final RestTemplate restTemplate = new RestTemplate();
+  @Value("${gemini.api.key}")
+  private String geminiApiKey;
+
+  @Value("${chatgpt.api.key}")
+  private String chatGPTApiKey;
 
   public ClothingAnalysisDTO generateDetails(File img) throws Exception{
+    RestApi<GeminiResponseDTO> query = new RestApi<>(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        GeminiResponseDTO.class);
+
     String base64Img = ImageHelper.convertToBase64(img);
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.set("x-goog-api-key", apiKey);
+    query
+        .addHeader("x-goog-api-key", geminiApiKey)
+        .setContentType(MediaType.APPLICATION_JSON)
+        .addBodyParam("contents", List.of(
+            Map.of("parts", List.of(
+                Map.of(
+                    "inline_data", Map.of(
+                        "mime_type", "image/png",
+                        "data", base64Img)),
+                Map.of(
+                    "text", buildGenerateDetailsPrompt())))));
 
+    GeminiResponseDTO response = (GeminiResponseDTO) query.executeAndGetBody();
+
+    String rawText = response.getText();
+    String cleanJson = StringHelper.cleanMarkdown(rawText);
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(
+        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+        false);
+    return objectMapper.readValue(cleanJson, ClothingAnalysisDTO.class);
+  }
+
+  public String tryOutfitOnAvatar(List<File> imgs) {
+    RestApi<ChatGPTResponseDTO> query = new RestApi<>(
+        "https://api.openai.com/v1/images/edits",
+        ChatGPTResponseDTO.class);
+
+    query
+        .addHeader("Authorization", "Bearer " + chatGPTApiKey)
+        .asMultipart()
+        .addFormParam("model", "gpt-image-1")
+        .addFormFiles("image[]", imgs)
+        .addFormParam("prompt",
+            "Generate an image with the person on the first image wearing the clothes of the rest of images.");
+
+    ChatGPTResponseDTO response = (ChatGPTResponseDTO) query.executeAndGetBody();
+
+    return response.getData().get(0).getB64_Json();
+  }
+
+  private static String buildGenerateDetailsPrompt() {
     String basePrompt = """
       Analyze the first item of clothing you see and provide the details in the next format:
 
@@ -103,34 +142,6 @@ public class LLMApi {
         .map(Enum::name)
         .collect(Collectors.joining(", "));
     
-    String prompt = String.format(basePrompt, estaciones, estilos, zonasCubiertas, tiposArticulo);
-
-    MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-    body.add("contents", List.of(
-      Map.of("parts", List.of(
-        Map.of(
-          "inline_data", Map.of(
-            "mime_type", "image/jpeg",
-            "data", base64Img
-          )
-        ),
-        Map.of(
-          "text", prompt
-        )
-      )))
-    );
-
-    HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-    ResponseEntity<LLMResponseDTO> response = restTemplate.postForEntity(
-      baseUrl, 
-      requestEntity, 
-      LLMResponseDTO.class);
-
-    String rawText = response.getBody().getText();
-    String cleanJson = StringHelper.cleanMarkdown(rawText);
-
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    return objectMapper.readValue(cleanJson, ClothingAnalysisDTO.class);
+    return String.format(basePrompt, estaciones, estilos, zonasCubiertas, tiposArticulo);
   }
 }

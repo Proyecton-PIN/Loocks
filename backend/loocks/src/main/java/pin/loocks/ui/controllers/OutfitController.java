@@ -1,8 +1,11 @@
 package pin.loocks.ui.controllers;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,8 +15,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import pin.loocks.domain.dtos.CreateOutfitRequestDTO;
 import pin.loocks.domain.dtos.FilterRequestDTO;
 import pin.loocks.domain.dtos.GenerateOutfitSuggestionsRequestDTO;
@@ -79,6 +85,29 @@ public class OutfitController {
             System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @PostMapping(value = "tryOnAvatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> postMethodName(
+        @AuthenticationPrincipal CustomUserDetails user,
+        @Parameter(description = "Image file", required = true) @RequestParam("data") List<Long> articuloIds,
+        @Parameter(description = "Image file", required = true) @RequestParam("file") MultipartFile img)
+        throws IOException {
+      File tempFile = File.createTempFile("upload-", img.getOriginalFilename());
+      img.transferTo(tempFile);
+
+      if (img.isEmpty())
+        return ResponseEntity.badRequest().build();
+
+      try {
+        String base64Image = outfitService.tryOnAvatar(user.getPerfil(), tempFile, articuloIds);
+        return ResponseEntity.ok().body(base64Image);
+      } catch (Exception e) {
+        System.out.println(e);
+        return ResponseEntity.internalServerError().build();
+      } finally {
+        tempFile.delete();
+      }
     }
 
     @GetMapping("logs")

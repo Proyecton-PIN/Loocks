@@ -60,6 +60,9 @@ public class ArticuloService {
 
     analysis.setBase64Img(ImageHelper.convertToBase64(compressedImage));
 
+    imageWithouBackground.delete();
+    compressedImage.delete();
+
     return analysis;
   }
 

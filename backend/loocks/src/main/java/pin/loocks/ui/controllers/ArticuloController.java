@@ -12,10 +12,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -63,6 +63,7 @@ public class ArticuloController {
         img.transferTo(tempFile);
 
         ClothingAnalysisDTO analysis = articuloService.generateDetails(tempFile);
+        System.out.println("Detalles generados para: " + img.getName());
         Articulo result = articuloService.createArticulo(new ArticuloUploadRequestDTO(
             analysis.getNombre(),
             analysis.getMarca(),
@@ -77,9 +78,11 @@ public class ArticuloController {
             analysis.getBase64Img(),
             analysis.getPuedePonerseEncimaDeOtraPrenda(),
             false), user.getId(), user.getArmario());
+        System.out.println("Articulo subido: " + result.getId());
 
         results.add(result);
       } catch (Exception e) {
+        System.out.println(e);
         continue;
       } finally {
         tempFile.delete();

@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class LLMResponseDTO {
+public class GeminiResponseDTO {
   private List<Candidate> candidates;
 
   @Data

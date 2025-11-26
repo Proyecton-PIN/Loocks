@@ -32,7 +32,6 @@ public class ColorPorcentajeListConverter implements AttributeConverter<List<Por
             if (value == null || value.isBlank()) {
                 return List.of();
             }
-            System.out.println(value);
             return mapper.readValue(value, new TypeReference<List<PorcentajeColor>>() {
             });
         } catch (Exception e) {
