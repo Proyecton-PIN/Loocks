@@ -1,32 +1,29 @@
-// PrendasPage.tsx
-import { useRef, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { FlatList, View } from 'react-native';
 import PrendaCategoriaCard from '../../../components/prenda/prendaCategoriaCard';
 
 const categorias = [
-  { id: 1, nombre: 'Accesorios', color: 'white', icon: '👜', cantidad: 8 },
-  { id: 2, nombre: 'Camisetas', color: 'white', icon: '👕', cantidad: 10 },
-  { id: 3, nombre: 'Gorras', color: 'white', icon: '🧢', cantidad: 10 },
-  { id: 4, nombre: 'Vestidos', color: 'white', icon: '👗', cantidad: 8 },
-  { id: 5, nombre: 'Sudaderas', color: 'white', icon: '🧥', cantidad: 10 },
-  { id: 6, nombre: 'Todas', color: 'white', icon: '⭐', cantidad: 27 },
+  { id: 1, nombre: 'Accesorios', color: '#818cf8', icon: '👜', cantidad: 4, tipo: 'ACCESORIOS' },
+  { id: 2, nombre: 'Gorras', color: '#60a5fa', icon: '🧢', cantidad: 8, tipo: 'GORRAS' },
+  { id: 3, nombre: 'Vestidos', color: '#d1d5db', icon: '👗', cantidad: 6, tipo: 'VESTIDOS' },
+  { id: 4, nombre: 'Pantalones', color: '#fde68a', icon: '👖', cantidad: 7, tipo: 'PANTALONES' },
+  { id: 5, nombre: 'Camisetas', color: '#fdba74', icon: '👕', cantidad: 4, tipo: 'CAMISETAS' },
+  { id: 6, nombre: 'Sudaderas', color: '#fca5a5', icon: '🧥', cantidad: 8, tipo: 'SUADADERAS' },
+  { id: 7, nombre: 'Todas', color: '#fff', icon: '⭐', cantidad: 14, tipo: 'TODAS' },
 ];
 
 export default function PrendasPage() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const flatListRef = useRef<FlatList<any> | null>(null);
 
-  const handlePress = (index: number) => {
-    setExpandedIndex(index === expandedIndex ? null : index);
-    if (index !== expandedIndex) {
-      setTimeout(() => {
-        flatListRef.current?.scrollToIndex({ index, viewPosition: 0.5 });
-      }, 300);
+  useEffect(() => {
+    if (expandedIndex !== null) {
+      flatListRef.current?.scrollToIndex({ index: expandedIndex, viewPosition: 0.5, animated: true });
     }
-  };
+  }, [expandedIndex]);
 
   return (
-    <View className="flex-1 bg-[#F6F6F6] pt-2">
+    <View style={{ flex: 1, backgroundColor: '#F6F6F6', paddingTop: 8 }}>
       <FlatList
         ref={flatListRef}
         data={categorias}
@@ -37,15 +34,13 @@ export default function PrendasPage() {
             initialColor={item.color}
             initialIcon={item.icon}
             cantidad={item.cantidad}
+            tipo={item.tipo}
             expanded={expandedIndex === index}
-            onPress={() => handlePress(index)}
-          >
-
-            <Text>Contenido personalizado para {item.nombre}</Text>
-          </PrendaCategoriaCard>
+            onPress={() => setExpandedIndex(index === expandedIndex ? null : index)}
+          />
         )}
-        ItemSeparatorComponent={() => <View className="h-4" />}
-        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 0 }}
+        ItemSeparatorComponent={() => <View style={{ height: 0 }} />}
+        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 6 }}
         extraData={expandedIndex}
       />
     </View>
