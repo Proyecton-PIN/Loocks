@@ -113,12 +113,31 @@ export default function CrearOutfit() {
         return;
       }
 
+      // Build payload matching the /api/outfits/create contract
       const dto = {
-        mood: mood ?? null,
-        articulosIds: selectedIds,
-        perfilId: String(perfilId),
-        satisfaccion: satisfaccion ?? null,
-        isFavorito: Boolean(isFavorito),
+        estacion: 'PRIMAVERA',
+        estilo: 'CASUAL',
+        articulos: selectedIds.map((id) => {
+          const a = articulos.find((x) => x.id === id) as any;
+          return {
+            id: a?.id ?? id,
+            nombre: a?.nombre ?? `#${id}`,
+            marca: a?.marca ?? '',
+            fechaCompra: a?.fechaCompra ? new Date(a.fechaCompra).toISOString() : new Date().toISOString(),
+            colores: a?.colores ?? [{ color: a?.colorPrimario ?? 'unknown', porcentaje: 1 }],
+            puedePonerseEncimaDeOtraPrenda: a?.puedePonerseEncimaDeOtraPrenda ?? false,
+            colorPrimario: a?.colorPrimario ?? (a?.colores && a.colores[0]?.color) ?? '',
+            estacion: a?.estacion ?? 'PRIMAVERA',
+            estilo: a?.estilo ?? 'CASUAL',
+            zonasCubiertas: a?.zonasCubiertas ?? ['TORSO'],
+            fechaUltimoUso: a?.fechaUltimoUso ?? new Date().toISOString().split('T')[0],
+            nivelDeAbrigo: a?.nivelDeAbrigo ?? 0,
+            usos: a?.usos ?? 0,
+            isFavorito: a?.isFavorito ?? Boolean(isFavorito),
+            imageUrl: a?.imageUrl ?? '',
+            tipo: a?.tipo ?? 'TODAS',
+          };
+        }),
       } as any;
 
       console.log('createOutfit dto', dto);
