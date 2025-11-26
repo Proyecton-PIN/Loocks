@@ -52,7 +52,6 @@ export default function PrendaCategoriaCard({
   }, [expanded, tipo]);
 
   const ICONS = ['👕', '🧢', '👗', '👜', '⭐', '🧥'];
-  z;
   const COLORS = [
     '#FFF',
     '#FDE68A',
