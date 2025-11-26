@@ -124,11 +124,16 @@ export default function CrearOutfit() {
         return;
       }
 
-      // Build payload matching the /api/outfits/create contract
+      // Build payload including both ids and full articulos so backend accepts previous contract
       const dto = {
         nombre: nombre ?? undefined,
+        mood: mood ?? null,
         estacion: estacion ?? 'PRIMAVERA',
         estilo: estilo ?? 'CASUAL',
+        articulosIds: selectedIds,
+        perfilId: String(perfilId),
+        satisfaccion: satisfaccion ?? null,
+        isFavorito: Boolean(isFavorito),
         articulos: selectedIds.map((id) => {
           const a = articulos.find((x) => x.id === id) as any;
           return {
