@@ -17,6 +17,7 @@ interface State {
   createOutfit(outfit: Partial<Outfit>): Promise<void>;
   removeOutfit(id: number): Promise<boolean>;
   selectOutfit?(o?: OutfitLog): void;
+  addOutfitLog(log: OutfitLog): void;
 }
 
 export const useOutfit = create<State>((set, get) => ({
@@ -43,9 +44,15 @@ export const useOutfit = create<State>((set, get) => ({
       logs: [createdOutfit, ...s.logs],
     }));
   },
-  selectOutfit(o?: OutfitLog) {
+
+  addOutfitLog(log: OutfitLog) {
+    set((s) => ({ logs: [...s.logs, log] }));
+  },
+
+  selectOutfit(o?: OutfitLog): void {
     set({ selectedOutfit: o });
   },
+
   async removeOutfit(id: number) {
     const ok = await removeOutfit(id);
     if (!ok) return false;

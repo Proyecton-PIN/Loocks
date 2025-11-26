@@ -3,13 +3,70 @@ import { FlatList, View } from 'react-native';
 import PrendaCategoriaCard from '../../../components/prenda/prendaCategoriaCard';
 
 const categorias = [
-  { id: 1, nombre: 'Accesorios', color: '#818cf8', icon: '👜', cantidad: 4, tipo: 'ACCESORIOS' },
-  { id: 2, nombre: 'Gorras', color: '#60a5fa', icon: '🧢', cantidad: 8, tipo: 'GORRAS' },
-  { id: 3, nombre: 'Vestidos', color: '#d1d5db', icon: '👗', cantidad: 6, tipo: 'VESTIDOS' },
-  { id: 4, nombre: 'Pantalones', color: '#fde68a', icon: '👖', cantidad: 7, tipo: 'PANTALONES' },
-  { id: 5, nombre: 'Camisetas', color: '#fdba74', icon: '👕', cantidad: 4, tipo: 'CAMISETAS' },
-  { id: 6, nombre: 'Sudaderas', color: '#fca5a5', icon: '🧥', cantidad: 8, tipo: 'SUADADERAS' },
-  { id: 7, nombre: 'Todas', color: '#fff', icon: '⭐', cantidad: 14, tipo: 'TODAS' },
+  {
+    id: 1,
+    nombre: 'Accesorios',
+    color: '#818cf8',
+    icon: '👜',
+    cantidad: 4,
+    tipo: 'ACCESORIOS',
+  },
+  {
+    id: 2,
+    nombre: 'Gorras',
+    color: '#60a5fa',
+    icon: '🧢',
+    cantidad: 8,
+    tipo: 'GORRAS',
+  },
+  {
+    id: 3,
+    nombre: 'Vestidos',
+    color: '#d1d5db',
+    icon: '👗',
+    cantidad: 6,
+    tipo: 'VESTIDOS',
+  },
+  {
+    id: 4,
+    nombre: 'Pantalones',
+    color: '#fde68a',
+    icon: '👖',
+    cantidad: 7,
+    tipo: 'PANTALONES',
+  },
+  {
+    id: 5,
+    nombre: 'Camisetas',
+    color: '#fdba74',
+    icon: '👕',
+    cantidad: 4,
+    tipo: 'CAMISETAS',
+  },
+  {
+    id: 6,
+    nombre: 'Sudaderas',
+    color: '#fca5a5',
+    icon: '🧥',
+    cantidad: 8,
+    tipo: 'SUADADERAS',
+  },
+  {
+    id: 7,
+    nombre: 'Zapatos',
+    color: '#fca5a5',
+    icon: '👞',
+    cantidad: 8,
+    tipo: 'ZAPATOS',
+  },
+  {
+    id: 8,
+    nombre: 'Todas',
+    color: '#fff',
+    icon: '⭐',
+    cantidad: 14,
+    tipo: 'TODAS',
+  },
 ];
 
 export default function PrendasPage() {
