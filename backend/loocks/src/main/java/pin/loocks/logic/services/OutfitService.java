@@ -67,6 +67,17 @@ public class OutfitService {
     return outfitLogRepository.findAllByPerfilId(perfil.getId());
   }
 
+  public void deleteOutfitById(Long id, Perfil perfil) {
+    Outfit outfit = outfitRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Outfit no encontrado"));
+
+    if (!outfit.getPerfil().getId().equals(perfil.getId())) {
+      throw new RuntimeException("No tienes permisos para eliminar este outfit");
+    }
+
+    outfitRepository.delete(outfit);
+  }
+
   public List<Outfit> generateSuggestions(
       GenerateOutfitSuggestionsRequestDTO request,
       String userId) {
