@@ -40,23 +40,23 @@ export default function PrendaCategoriaCard({
       <Pressable
         onPress={onPress}
         className={clsx(
-          "rounded-2xl px-6 py-5 mx-2 shadow-md bg-[#FFFFFF] border border-gray-200 flex-row items-center",
+          "rounded-2xl px-6 pt-5 pb-[20px] mb-[-30px] shadow-[0_-10px_20px_rgba(0,0,0,1.7)] bg-[#FFFFFF]  flex-row items-center",
           expanded && "border-blue-400"
         )}
         style={{ backgroundColor: initialColor || '#FFF' }}
       >
-        <Text className="text-2xl mr-4">{initialIcon}</Text>
+        <Text className="text-4xl mr-4">{initialIcon}</Text>
         <TextInput
           value={initialName}
           editable={false}
-          className="flex-1 text-lg font-semibold text-gray-900"
+          className="flex-1 text-lg text-[26px] text-gray-900"
         />
         <Text className="ml-4 text-gray-400 text-base">{cantidad} prendas</Text>
       </Pressable>
       {/* Panel desplegable */}
       <Animated.View style={{ height: panelHeight, overflow: 'hidden' }}>
         {expanded && (
-          <View className="px-6 py-4">
+          <View className="px-6 py-4 mt-4" style={{ backgroundColor: initialColor || '#FFF' }}>
             {children}
           </View>
         )}

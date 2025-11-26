@@ -45,7 +45,7 @@ export default function PrendasPage() {
           </PrendaCategoriaCard>
         )}
         ItemSeparatorComponent={() => <View className="h-4" />}
-        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16 }}
+        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 0 }}
         extraData={expandedIndex}
       />
     </View>
