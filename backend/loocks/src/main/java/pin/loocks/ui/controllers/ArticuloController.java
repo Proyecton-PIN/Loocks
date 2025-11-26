@@ -154,6 +154,11 @@ public class ArticuloController {
   public ResponseEntity<List<Articulo>> getArticulosByTipo(@AuthenticationPrincipal CustomUserDetails userDetails,
       @PathVariable("tipo") String tipoStr) {
     try {
+      // If user requests all types using "TODAS" or "TODOS", return all user's articulos
+      if (tipoStr != null && (tipoStr.equalsIgnoreCase("todas") || tipoStr.equalsIgnoreCase("todos"))) {
+        return ResponseEntity.ok(articuloRepository.findByUserId(userDetails.getId()));
+      }
+
       pin.loocks.domain.enums.TipoArticulo tipo = null;
       if (tipoStr != null && !tipoStr.isBlank()) {
         try {
