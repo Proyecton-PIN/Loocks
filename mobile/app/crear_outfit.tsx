@@ -235,6 +235,8 @@ export default function CrearOutfit() {
                 pagingEnabled
                 snapToAlignment="center"
                 decelerationRate="fast"
+                // Provide getItemLayout so scrollToIndex can calculate positions of offscreen items
+                getItemLayout={(_data, index) => ({ length: cardWidth + 8, offset: (cardWidth + 8) * index, index })}
                 keyExtractor={(i: any, idx: number) => `${i.id}-${idx}`}
                 renderItem={({ item }) => {
                   const isSel = slots[slotIndex] === item.id;
@@ -275,6 +277,15 @@ export default function CrearOutfit() {
                 ref={(el) => { flatlistRefs.current[slotIndex] = el; }}
                 onViewableItemsChanged={onViewableItemsChanged}
                 viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
+                onScrollToIndexFailed={(info) => {
+                  // fallback: scroll to nearest measured index using offset calculation
+                  const attempted = info.index ?? 0;
+                  try {
+                    flatlistRefs.current[slotIndex]?.scrollToOffset({ offset: (cardWidth + 8) * attempted, animated: false });
+                  } catch (e) {
+                    // ignore failures
+                  }
+                }}
               />
             </View>
           );
