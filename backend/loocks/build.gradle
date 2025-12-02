@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.5.6'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id "io.freefair.lombok" version "9.0.0"
+	id 'jacoco'
 }
 
 group = 'pin'
@@ -44,7 +45,6 @@ dependencies {
 	testImplementation 'org.mockito:mockito-core:5.20.0'
 	testImplementation 'org.mockito:mockito-junit-jupiter:5.20.0'
 
-	implementation 'org.jacoco:jacoco-maven-plugin:0.8.14'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
@@ -53,4 +53,33 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+
+jacoco {
+	toolVersion = "0.8.14"
+}
+
+tasks.named('jacocoTestReport') {
+	dependsOn test // Asegura que los tests se ejecuten antes de generar el informe
+
+	reports {
+		xml.required = true   // Necesario para herramientas de CI/integración
+		html.required = true  // Formato fácil de leer
+		html.outputLocation = layout.buildDirectory.dir('reports/jacoco/test/html')
+	}
+
+	classDirectories.setFrom(fileTree(dir: "${buildDir}/classes/java/main", exclude: [
+		'**/LoocksApplication.class',       // Clase principal de Spring Boot
+		'**/config/**',                     // Clases de configuración (p.ej., OpenApiConfig, WebSecurityConfig)
+		'**/ui/controllers/**',             // Controladores
+		'**/domain/dtos/**',                // DTOs/Clases de transferencia de datos
+		'**/domain/enums/**',               // Enums
+		'**/domain/models/**',              // Modelos de datos (si son solo getters/setters)
+		'**/data/repositories/**',          // Interfaces de Repositorio
+		'**/ui/security/**',
+		'**/ui/loggers/**',
+		'**/data/apis/**',
+		'**/logic/helpers/**'
+	]))
 }
