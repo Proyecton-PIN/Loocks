@@ -32,14 +32,14 @@ public class AuthService implements UserDetailsService {
 
     Perfil newPerfil = new Perfil(request);
 
-  Armario armario = new Armario();
-  String defaultNombre = "Armario de " + (request.getNombreUsuario() != null ? request.getNombreUsuario() : request.getNombre());
-  armario.setNombre(defaultNombre);
-  armario.setPerfil(newPerfil);
-  newPerfil.setArmario(armario);
+    Armario armario = new Armario();
+    String defaultNombre = "Armario de " + (request.getNombreUsuario() != null ? request.getNombreUsuario() : request.getNombre());
+    armario.setNombre(defaultNombre);
+    armario.setPerfil(newPerfil);
+    newPerfil.setArmario(armario);
 
-  perfilRepository.save(newPerfil);
-  return newPerfil;
+    perfilRepository.save(newPerfil);
+    return newPerfil;
   }
 
   public Perfil loginUser(LoginRequestDTO request) {
