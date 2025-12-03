@@ -39,6 +39,7 @@ class ArticuloFilterServiceIntegrationTest {
   private PerfilRepository perfilRepository;
 
   private Perfil p;
+  private final String whiteColor = "#FFFFFF";
 
   @BeforeEach
   void setUp() {
@@ -59,13 +60,14 @@ class ArticuloFilterServiceIntegrationTest {
     a1.setUserId(p.getId());
     a1.setEstilo(Estilo.CASUAL);
     a1.setEstacion(Estacion.VERANO);
-    a1.setColorPrimario("#FFFFFF");
-    a1.setColores(List.of(new PorcentajeColor("#FFFFFF", 100)));
+    a1.setColorPrimario(whiteColor);
+    a1.setColores(List.of(new PorcentajeColor(whiteColor, 100)));
     a1.setIsFavorito(true);
     a1.setZonasCubiertas(List.of(Zona.TORSO));
     a1.setNivelDeAbrigo(0.2); // Nota: asumo que el nombre en entidad es nivelDeAbrig como en el servicio
     a1.setPuedePonerseEncimaDeOtraPrenda(false);
     a1.setArmario(p.getArmario());
+    a1.setIsFavorito(true);
     a1.setImageUrl("defualt-image-url");
 
     Articulo a2 = new Articulo();
@@ -76,8 +78,8 @@ class ArticuloFilterServiceIntegrationTest {
     a2.setZonasCubiertas(List.of(Zona.PIERNAS));
     a2.setArmario(p.getArmario());
     a2.setImageUrl("defualt-image-url");
-    a2.setColorPrimario("#FFFFFF");
-    a1.setColores(List.of(new PorcentajeColor("#FFFFFF", 100)));
+    a2.setColorPrimario(whiteColor);
+    a1.setColores(List.of(new PorcentajeColor(whiteColor, 100)));
 
     articuloRepository.saveAll(List.of(a1, a2));
   }
@@ -114,5 +116,35 @@ class ArticuloFilterServiceIntegrationTest {
 
     assertThat(result).hasSize(1);
     assertThat(result.get(0).getZonasCubiertas()).contains(Zona.PIERNAS);
+  }
+
+  @Test
+  void shouldFilterByColor() {
+    FilterRequestDTO filter = new FilterRequestDTO();
+    filter.setPrimaryColor(whiteColor);
+
+    List<Articulo> result = articuloFilterService.getFilteredArticulos(filter, p.getId());
+    assertThat(result).hasSize(2);
+    assertThat(result.get(0).getColorPrimario()).isEqualTo(whiteColor);
+  }
+
+  @Test
+  void shouldFilterByFavorito() {
+    FilterRequestDTO filter = new FilterRequestDTO();
+    filter.setIsFavorito(true);
+
+    List<Articulo> result = articuloFilterService.getFilteredArticulos(filter, p.getId());
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getZonasCubiertas().get(0)).isEqualTo(Zona.TORSO);
+  }
+
+  @Test
+  void withEmptyFields_shouldReturnAll() {
+    FilterRequestDTO filter = new FilterRequestDTO();
+    filter.setPrimaryColor("");
+    filter.setZonasCubiertas(List.of());
+
+    List<Articulo> result = articuloFilterService.getFilteredArticulos(filter, p.getId());
+    assertThat(result).hasSize(2);
   }
 }
