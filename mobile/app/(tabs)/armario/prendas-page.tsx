@@ -1,3 +1,4 @@
+import { AccesoriosIcon, CamisetasIcon, GorrasIcon, PantalonesIcon, SudaderasIcon, VestidosIcon } from '@/constants/icons';
 import { useEffect, useRef, useState } from 'react';
 import { FlatList, View } from 'react-native';
 import PrendaCategoriaCard from '../../../components/prenda/prendaCategoriaCard';
@@ -7,7 +8,7 @@ const categorias = [
     id: 1,
     nombre: 'Accesorios',
     color: '#818cf8',
-    icon: '👜',
+    icon: AccesoriosIcon,
     cantidad: 4,
     tipo: 'ACCESORIOS',
   },
@@ -15,7 +16,7 @@ const categorias = [
     id: 2,
     nombre: 'Gorras',
     color: '#60a5fa',
-    icon: '🧢',
+    icon: GorrasIcon,
     cantidad: 8,
     tipo: 'GORRAS',
   },
@@ -23,7 +24,7 @@ const categorias = [
     id: 3,
     nombre: 'Vestidos',
     color: '#d1d5db',
-    icon: '👗',
+    icon: VestidosIcon,
     cantidad: 6,
     tipo: 'VESTIDOS',
   },
@@ -31,7 +32,7 @@ const categorias = [
     id: 4,
     nombre: 'Pantalones',
     color: '#fde68a',
-    icon: '👖',
+    icon: PantalonesIcon,
     cantidad: 7,
     tipo: 'PANTALONES',
   },
@@ -39,7 +40,7 @@ const categorias = [
     id: 5,
     nombre: 'Camisetas',
     color: '#fdba74',
-    icon: '👕',
+    icon: CamisetasIcon,
     cantidad: 4,
     tipo: 'CAMISETAS',
   },
@@ -47,7 +48,7 @@ const categorias = [
     id: 6,
     nombre: 'Sudaderas',
     color: '#fca5a5',
-    icon: '🧥',
+    icon: SudaderasIcon,
     cantidad: 8,
     tipo: 'SUADADERAS',
   },
