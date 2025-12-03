@@ -38,18 +38,18 @@ dependencies {
 
 
 	// Tests
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:6.1.0-M1'
-	testImplementation 'org.junit.jupiter:junit-jupiter-engine:6.1.0-M1'
+	// testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	// testImplementation 'org.junit.jupiter:junit-jupiter-api:6.1.0-M1'
+	// testImplementation 'org.junit.jupiter:junit-jupiter-engine:6.1.0-M1'
 
 	testImplementation 'org.mockito:mockito-core:5.20.0'
 	testImplementation 'org.mockito:mockito-junit-jupiter:5.20.0'
 
-
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	testImplementation 'com.h2database:h2:2.4.240'
+	testRuntimeOnly 'com.h2database:h2'
 } 
+
 
 tasks.named('test') {
 	useJUnitPlatform()
