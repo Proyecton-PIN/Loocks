@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -18,7 +19,9 @@ import pin.loocks.domain.dtos.FilterRequestDTO;
 import pin.loocks.domain.enums.Zona;
 import pin.loocks.domain.models.Articulo;
 
+@Service
 public class ArticuloFilterService {
+
   @Autowired
   private ArticuloRepository articuloRepository;
 
@@ -65,7 +68,7 @@ public class ArticuloFilterService {
 
       if (filter.getNivelDeAbrigo() != null) {
         // Ejemplo: filtro por nivelDeAbrig >= nivelDeAbrigo deseado
-        p = cb.and(p, cb.greaterThanOrEqualTo(root.get("nivelDeAbrig"), filter.getNivelDeAbrigo()));
+        p = cb.and(p, cb.greaterThanOrEqualTo(root.get("nivelDeAbrigo"), filter.getNivelDeAbrigo()));
       }
 
       // Filtrar por zonasCubiertas (ManyToMany)

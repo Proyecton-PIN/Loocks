@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import pin.loocks.domain.dtos.FilterRequestDTO;
 import pin.loocks.domain.dtos.GenerateOutfitSuggestionsRequestDTO;
@@ -14,7 +15,9 @@ import pin.loocks.domain.models.Articulo;
 import pin.loocks.domain.models.Outfit;
 import pin.loocks.logic.helpers.ColorHelper;
 
+@Service
 public class OutfitSuggestionService {
+
   @Autowired
   private ArticuloFilterService articuloFilterService;
 
