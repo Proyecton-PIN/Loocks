@@ -53,23 +53,37 @@ public class OutfitSuggestionService {
     List<Articulo> abrigos = getAbrigos(userId);
     double nivelDeAbrigo = getNivelOfAbrigo(request.getTemperatura(), request.getEstacion());
 
+    List<Outfit> finalResults = new ArrayList<>(List.of());
     for (Outfit o : outfits) {
-      if (o.getArticulos().get(0).getNivelDeAbrigo() < nivelDeAbrigo) {
+      if (o.getNivelDeAbrigo(null) < nivelDeAbrigo) {
+        Articulo abrigo = null;
+
         for (Articulo a : abrigos) {
           double colorScore = ColorHelper.getAfinidad(
               o.getArticulos().get(0).getColorPrimario(),
               a.getColorPrimario());
 
-          if (colorScore > 0.4) {
-            o.addArticulo(a);
+          if (colorScore > 0.4 && o.getNivelDeAbrigo(a) >= nivelDeAbrigo) {
+            abrigo = a;
             break;
           }
         }
+
+        if (abrigo == null) {
+          continue;
+        }
+
+        o.addArticulo(abrigo);
       }
+      finalResults.add(o);
     }
 
-    Collections.shuffle(outfits);
-    return outfits.subList(0, request.getLimit());
+    Collections.shuffle(finalResults);
+    return finalResults.subList(
+        0,
+        request.getLimit() > finalResults.size()
+            ? finalResults.size()
+            : request.getLimit());
   }
 
   private void processOutfit(List<Outfit> outfits, Articulo torso, Articulo pierna, Articulo pie) {
@@ -93,36 +107,26 @@ public class OutfitSuggestionService {
   };
 
   private double getEstiloScore(Articulo torso, Articulo pierna, Articulo pie) {
-    int totalPrendas = 0;
-    Integer t = null, p = null, f = null;
+    int totalPrendas = 2;
+    Integer p = null;
+    int t = torso.getEstilo().ordinal();
+    int f = pie.getEstilo().ordinal();
 
-    if (torso != null) {
+    if (pierna != null) {
       totalPrendas++;
-      t = torso.getEstilo().ordinal();
-    }
-
-    if (torso != null) {
-      totalPrendas++;
-      p = torso.getEstilo().ordinal();
-    }
-
-    if (torso != null) {
-      totalPrendas++;
-      f = torso.getEstilo().ordinal();
+      p = pierna.getEstilo().ordinal();
     }
 
     double scoreTorsoPiernas = 0;
     double scorePiernasPies = 0;
     double scoreTorsoPies = 0;
 
-    if (t != null && p != null)
+    if (p != null) {
       scoreTorsoPiernas = MATRIZ_COMPATIBILIDAD[t][p];
-
-    if (f != null && p != null)
       scorePiernasPies = MATRIZ_COMPATIBILIDAD[p][f];
+    }
 
-    if (t != null && f != null)
-      scoreTorsoPies = MATRIZ_COMPATIBILIDAD[t][f];
+    scoreTorsoPies = MATRIZ_COMPATIBILIDAD[t][f];
 
     return (scoreTorsoPiernas + scorePiernasPies + scoreTorsoPies) / totalPrendas;
   }
@@ -205,93 +209,4 @@ public class OutfitSuggestionService {
 
     return Math.max(0.0, Math.min(1.0, nivelFinal));
   }
-
-  // public List<Outfit> generateSuggestions(
-  // GenerateOutfitSuggestionsRequestDTO request,
-  // String userId) {
-
-  // FilterRequestDTO torsoFilter = new FilterRequestDTO(List.of(Zona.TORSO));
-  // torsoFilter.setPuedePonerseEncimaDeOtraPrenda(false);
-  // List<Articulo> torsos = articuloFilterService.getFilteredArticulos(
-  // torsoFilter,
-  // userId);
-
-  // List<Articulo> piernas = articuloFilterService
-  // .getFilteredArticulos(
-  // new FilterRequestDTO(List.of(Zona.PIERNAS)),
-  // userId)
-  // .stream()
-  // .filter(e -> e.getZonasCubiertas().size() == 1)
-  // .collect(Collectors.toList());
-
-  // List<Articulo> pies = articuloFilterService.getFilteredArticulos(
-  // new FilterRequestDTO(List.of(Zona.PIES)),
-  // userId);
-
-  // List<Outfit> outfits = new ArrayList<>();
-
-  // for (Articulo torso : torsos) {
-  // if (torso.getZonasCubiertas().size() > 1) {
-  // Articulo bestPie = selectBestPies(torso, null, pies);
-  // if (bestPie != null) {
-  // outfits.add(new Outfit(torso, null, bestPie));
-  // }
-  // continue;
-  // }
-
-  // for (Articulo pierna : piernas) {
-  // double torsoPiernaColorScore = ColorHelper.calculateColorAffinity(
-  // torso,
-  // pierna,
-  // null);
-
-  // if (torsoPiernaColorScore < 0.5)
-  // continue;
-
-  // Articulo bestPie = selectBestPies(torso, pierna, pies);
-  // if (bestPie != null) {
-  // outfits.add(new Outfit(torso, pierna, bestPie));
-  // }
-  // }
-  // }
-
-  // // TODO: Añadir abrigo, si es necesario
-  // // TODO: Añadir extra suggestions
-
-  // if (outfits.isEmpty())
-  // return List.of();
-
-  // int limit = request.getLimit();
-  // if (outfits.size() < request.getLimit())
-  // limit = outfits.size();
-
-  // Collections.shuffle(outfits);
-  // return outfits.subList(0, limit);
-  // }
-
-  // private Articulo selectBestPies(Articulo torso, Articulo piernas,
-  // List<Articulo> pies) {
-  // Articulo bestArticulo = null;
-  // double bestArticuloScore = 0;
-
-  // for (Articulo pie : pies) {
-  // double colorScore = ColorHelper.calculateColorAffinity(torso, piernas, pie);
-  // /**
-  // * TODO:
-  // * usosScore
-  // * isFavoritoScore
-  // * estiloScore
-  // * estacionScore
-  // *
-  // * quitar request.getOutfitsBaneados()
-  // */
-
-  // if (colorScore > bestArticuloScore) {
-  // bestArticulo = pie;
-  // bestArticulo = pie;
-  // }
-  // }
-
-  // return bestArticulo;
-  // }
 }
