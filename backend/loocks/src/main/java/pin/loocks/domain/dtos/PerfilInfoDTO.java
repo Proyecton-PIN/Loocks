@@ -13,6 +13,8 @@ public class PerfilInfoDTO {
   private String fotoPerfilUrl;
   private Date fechaNacimiento;
   private String nombreUsuario;
+  private long numeroPrendas = 0;
+  private long numeroOutfits = 0;
 
   public PerfilInfoDTO(Perfil p) {
     if (p == null) return;
@@ -22,5 +24,10 @@ public class PerfilInfoDTO {
     this.fotoPerfilUrl = p.getFotoPerfilUrl();
     this.fechaNacimiento = p.getFechaNacimiento();
     this.nombreUsuario = p.getNombreUsuario();
+  }
+
+  public void setCounts(long prendas, long outfits) {
+    this.numeroPrendas = prendas;
+    this.numeroOutfits = outfits;
   }
 }

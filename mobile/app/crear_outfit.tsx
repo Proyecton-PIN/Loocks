@@ -114,16 +114,13 @@ export default function CrearOutfit() {
     try {
       let perfilId = await SecureStore.get('userId');
       if (!perfilId) {
-        // best-effort, recommend a cross-platform modal in future
         try {
-          // @ts-ignore
           Alert.prompt?.(
             'Perfil faltante',
             'Introduce el id de perfil a usar (userId):',
             (t: string) => (perfilId = t),
           );
         } catch (e) {
-          // ignore
         }
       }
 
@@ -133,7 +130,6 @@ export default function CrearOutfit() {
         return;
       }
 
-      // Build payload including both ids and full articulos so backend accepts previous contract
       const dto = {
         nombre: nombre ?? undefined,
         mood: mood ?? null,
@@ -205,14 +201,12 @@ export default function CrearOutfit() {
   const cardWidth = Math.min(screenWidth - 80, 260);
   const ITEM_SPACING = 6;
 
-  // Reserve vertical space for inputs and buttons so the three slots fit
-  // without scrolling on typical devices. Tweak constants as needed.
-  const TOP_RESERVED = 120; // mood label + input + small spacing
-  const BOTTOM_RESERVED = 180; // satisfaction input + favorite + button area
+  const TOP_RESERVED = 120;
+  const BOTTOM_RESERVED = 180; 
   const availableForSlots = Math.max(
     0,
     screenHeight - TOP_RESERVED - BOTTOM_RESERVED - 32,
-  ); // account padding
+  ); 
   const cardHeight = Math.min(cardWidth, Math.floor(availableForSlots / 3));
 
   return (

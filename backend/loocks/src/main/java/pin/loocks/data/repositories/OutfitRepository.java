@@ -9,4 +9,5 @@ import pin.loocks.domain.models.Outfit;
 
 public interface OutfitRepository extends JpaRepository<Outfit, Long>, JpaSpecificationExecutor<Outfit> {
     List<Outfit> findByPerfilId(String perfilId);
+    long countByPerfilId(String perfilId);
 }

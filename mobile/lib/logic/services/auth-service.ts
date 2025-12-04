@@ -48,3 +48,14 @@ export async function checkAuth(): Promise<boolean> {
 
   return authenticated;
 }
+
+import { ProfileInfoDto } from '@/lib/domain/dtos/profile-info-dto';
+
+export async function getInformacion(): Promise<ProfileInfoDto | undefined> {
+  try {
+    const info = await http.get<ProfileInfoDto>('auth/info');
+    return info;
+  } catch (e) {
+    return undefined;
+  }
+}

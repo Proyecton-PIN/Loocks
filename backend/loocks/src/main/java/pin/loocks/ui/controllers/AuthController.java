@@ -35,6 +35,10 @@ public class AuthController {
   private JwtUtil jwtUtil;
   @Autowired
   private AuthService perfilService;
+  @Autowired
+  private pin.loocks.data.repositories.ArticuloRepository articuloRepository;
+  @Autowired
+  private pin.loocks.data.repositories.OutfitRepository outfitRepository;
 
   @PostMapping("/login")
   public ResponseEntity<TokenResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
@@ -69,6 +73,9 @@ public class AuthController {
   public ResponseEntity<PerfilInfoDTO> getUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
     Perfil perfil = perfilService.loadUserByEmail(userDetails.getEmail()).getPerfil();
     PerfilInfoDTO dto = new PerfilInfoDTO(perfil);
+    long prendas = articuloRepository.countByUserId(perfil.getId());
+    long outfits = outfitRepository.countByPerfilId(perfil.getId());
+    dto.setCounts(prendas, outfits);
     return ResponseEntity.ok(dto);
   }
 }

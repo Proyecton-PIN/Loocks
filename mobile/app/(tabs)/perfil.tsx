@@ -7,9 +7,10 @@ import {
   TranslateIcon,
 } from '@/constants/icons';
 import { Colors } from '@/constants/theme';
+import { useAuth } from '@/hooks/useAuth';
 import { SecureStore } from '@/lib/logic/services/secure-store-service';
 import { router } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 const ChevronIcon = () => (
@@ -17,6 +18,7 @@ const ChevronIcon = () => (
     <Text style={{ color: '#686868', fontSize: 16 }}>›</Text>
   </View>
 );
+
 
 interface MenuSectionItem {
   icon: (props: any) => React.JSX.Element;
@@ -27,16 +29,25 @@ interface MenuSectionItem {
 }
 
 export default function ProfileSettingsScreen() {
+  const profile = useAuth((s) => s.profile);
+  const fetchProfile = useAuth((s) => s.fetchProfile);
+
+  useEffect(() => {
+    if (!profile) {
+      void fetchProfile();
+    }
+  }, []);
+
   const userData = {
-    profileImage: require('@/assets/images/imagen.png'),
-    username: 'andrea_rf',
-    fullName: 'Andrea Rufo',
+    profileImage: profile?.fotoPerfilUrl ? { uri: profile.fotoPerfilUrl } : require('@/assets/images/imagen.png'),
+    username: profile?.nombreUsuario ?? 'usuario',
+    fullName: profile ? `${profile.nombre} ${profile.apellidos}` : '',
   };
 
   const stats = [
-    { value: 14, label: 'prendas' },
-    { value: 8, label: 'outfits' },
-    { value: 10, label: 'looks' },
+    { value: profile?.numeroPrendas ?? 0, label: 'prendas' },
+    { value: profile?.numeroOutfits ?? 0, label: 'outfits' },
+    { value: 0, label: 'looks' },
   ];
 
   const menuSections: MenuSectionItem[][] = [
