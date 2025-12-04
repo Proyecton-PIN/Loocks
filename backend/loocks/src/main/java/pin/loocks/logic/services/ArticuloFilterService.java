@@ -71,6 +71,10 @@ public class ArticuloFilterService {
         p = cb.and(p, cb.greaterThanOrEqualTo(root.get("nivelDeAbrigo"), filter.getNivelDeAbrigo()));
       }
 
+      if (filter.getTipoToAvoid() != null) {
+        p = cb.and(p, cb.notEqual(root.get("tipo"), filter.getTipoToAvoid()));
+      }
+
       // Filtrar por zonasCubiertas (ManyToMany)
       List<Zona> zonas = filter.getZonasCubiertas();
       if (zonas != null && !zonas.isEmpty()) {

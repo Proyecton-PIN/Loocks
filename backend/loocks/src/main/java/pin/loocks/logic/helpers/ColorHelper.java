@@ -42,7 +42,7 @@ public class ColorHelper {
     return (Math.round(afinidad) * 100.0) / 100.0;
   }
 
-  private static double getAfinidad(String hex1, String hex2) {
+  public static double getAfinidad(String hex1, String hex2) {
     if (hex1 == null || hex2 == null)
       return 0.5; // Neutro si falta datos
 

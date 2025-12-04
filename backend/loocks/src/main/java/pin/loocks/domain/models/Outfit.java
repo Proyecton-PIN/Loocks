@@ -80,4 +80,8 @@ public class Outfit {
     this.estilo = dto.getEstilo();
     this.perfil = perfil;
   }
+
+  public void addArticulo(Articulo a) {
+    this.articulos.add(a);
+  }
 }
