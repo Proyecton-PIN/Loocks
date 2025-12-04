@@ -7,7 +7,6 @@ import { Picker } from '@react-native-picker/picker';
 import { Stack } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
   Alert,
   Dimensions,
   FlatList,
@@ -15,9 +14,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  ViewToken,
+  View
 } from 'react-native';
+import EmblaCarousel from './../components/outfit/EnableCarousel';
+
+const OPTIONS = { loop: true } as const;
 
 type Articulo = {
   id: number;
@@ -32,9 +33,6 @@ export default function CrearOutfit() {
   const [nombre, setNombre] = useState<string>('');
   const [estacion, setEstacion] = useState('PRIMAVERA');
   const [estilo, setEstilo] = useState('CASUAL');
-
-  // enums
-  // import dynamically to derive options
   const { Estacion: EstacionEnum } = require('@/lib/domain/enums/estacion');
   const { Estilo: EstiloEnum } = require('@/lib/domain/enums/estilo');
   const estacionOptions: string[] = Object.values(EstacionEnum);
@@ -45,7 +43,6 @@ export default function CrearOutfit() {
   const [isFavorito, setIsFavorito] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // refs to FlatLists so we can programmatically jump for circular behavior
   const flatlistRefs = useRef<Array<FlatList<Articulo> | null>>([]);
 
   useEffect(() => {
@@ -69,23 +66,20 @@ export default function CrearOutfit() {
     }
   }
 
-  // initialize slots when articulos load
   useEffect(() => {
     if (articulos.length === 0) return;
     setSlots((prev) => prev.map((s) => (s === null ? articulos[0].id : s)));
-    // scroll each flatlist to the first real item after a short delay
     setTimeout(() => {
       for (let i = 0; i < 3; i++) {
         try {
           if (flatlistRefs.current[i] && articulos.length > 1) {
-            // looped data uses index 1 as the first real item
             flatlistRefs.current[i]?.scrollToIndex({
               index: 1,
               animated: false,
             });
           }
         } catch (e) {
-          // ignore if scroll fails
+          console.error('scrollToIndex error', e);
         }
       }
     }, 80);
@@ -209,6 +203,7 @@ export default function CrearOutfit() {
   const screenWidth = Dimensions.get('window').width;
   const screenHeight = Dimensions.get('window').height;
   const cardWidth = Math.min(screenWidth - 80, 260);
+  const ITEM_SPACING = 6;
 
   // Reserve vertical space for inputs and buttons so the three slots fit
   // without scrolling on typical devices. Tweak constants as needed.
@@ -221,7 +216,7 @@ export default function CrearOutfit() {
   const cardHeight = Math.min(cardWidth, Math.floor(availableForSlots / 3));
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F3F3F3', padding: 16 }}>
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF', padding: 16 }}>
       <Stack.Screen options={{ title: 'Crear Outfit' }} />
 
       <View style={{ flex: 1, justifyContent: 'space-between' }}>
@@ -232,7 +227,7 @@ export default function CrearOutfit() {
 
           <Text
             style={{
-              color: '#222222',
+              color: '#6B7280',
               marginTop: 8,
               marginBottom: 6,
               fontSize: 13,
@@ -246,7 +241,7 @@ export default function CrearOutfit() {
             placeholder="Ej: Look de oficina"
             placeholderTextColor="#888"
             style={{
-              backgroundColor: '#FFFFFF',
+              backgroundColor: '#ebeaeaff',
               color: '#222222',
               padding: 8,
               borderRadius: 8,
@@ -256,174 +251,41 @@ export default function CrearOutfit() {
           />
 
           {[0, 1, 2].map((slotIndex) => {
-            const looped = getLoopedData(articulos);
-
-            const onViewableItemsChanged = ({
-              viewableItems,
-            }: {
-              viewableItems: ViewToken[];
-            }) => {
-              if (!viewableItems || viewableItems.length === 0) return;
-              const vi = viewableItems[0];
-              const idx = typeof vi.index === 'number' ? vi.index : -1;
-              const n = articulos.length;
-              if (n === 0) return;
-              if (n === 1) {
-                setSlots((prev) => {
-                  const copy = [...prev];
-                  copy[slotIndex] = articulos[0].id;
-                  return copy;
-                });
-                return;
-              }
-
-              // looped: [last, ...originals, first] length = n + 2
-              if (idx === 0) {
-                // show duplicated last -> jump to real last (index n)
-                setTimeout(() => {
-                  flatlistRefs.current[slotIndex]?.scrollToIndex({
-                    index: n,
-                    animated: false,
-                  });
-                }, 60);
-                setSlots((prev) => {
-                  const copy = [...prev];
-                  copy[slotIndex] = articulos[n - 1].id;
-                  return copy;
-                });
-                return;
-              }
-
-              if (idx === n + 1) {
-                // show duplicated first -> jump to real first (index 1)
-                setTimeout(() => {
-                  flatlistRefs.current[slotIndex]?.scrollToIndex({
-                    index: 1,
-                    animated: false,
-                  });
-                }, 60);
-                setSlots((prev) => {
-                  const copy = [...prev];
-                  copy[slotIndex] = articulos[0].id;
-                  return copy;
-                });
-                return;
-              }
-
-              if (idx >= 1 && idx <= n) {
-                const logicalIndex = idx - 1;
-                setSlots((prev) => {
-                  const copy = [...prev];
-                  copy[slotIndex] = articulos[logicalIndex].id;
-                  return copy;
-                });
-              }
-            };
-
             return (
               <View key={slotIndex} style={{ marginBottom: 6 }}>
-                <FlatList
-                  data={looped}
-                  horizontal
-                  pagingEnabled
-                  snapToAlignment="center"
-                  decelerationRate="fast"
-                  // Provide getItemLayout so scrollToIndex can calculate positions of offscreen items
-                  getItemLayout={(_data, index) => ({
-                    length: cardWidth + 8,
-                    offset: (cardWidth + 8) * index,
-                    index,
-                  })}
-                  keyExtractor={(i: any, idx: number) => `${i.id}-${idx}`}
-                  renderItem={({ item }) => {
-                    const isSel = slots[slotIndex] === item.id;
-                    return (
-                      <View
-                        style={{
-                          width: cardWidth,
-                          paddingRight: 8,
-                          alignItems: 'center',
-                        }}
-                      >
-                        <TouchableOpacity
-                          activeOpacity={0.9}
-                          onPress={() => selectForSlot(slotIndex, item.id)}
-                          style={{
-                            width: '100%',
-                            height: cardHeight,
-                            backgroundColor: '#111',
-                            borderRadius: 10,
-                            overflow: 'hidden',
-                            borderWidth: isSel ? 3 : 0,
-                            borderColor: isSel ? '#CFF018' : 'transparent',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            opacity: isSel ? 1 : 0.45,
-                            transform: [{ scale: isSel ? 1 : 0.94 }],
-                          }}
-                        >
-                          {item.imageUrl ? (
-                            <Image
-                              source={{ uri: item.imageUrl }}
-                              style={{ width: '100%', height: '100%' }}
-                              resizeMode="cover"
-                            />
-                          ) : (
-                            <View
-                              style={{
-                                flex: 1,
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                              }}
-                            >
-                              <Ionicons
-                                name="shirt-outline"
-                                size={48}
-                                color="#555"
-                              />
-                              <Text style={{ color: '#222222', marginTop: 6 }}>
-                                {item.nombre ?? `#${item.id}`}
-                              </Text>
-                            </View>
-                          )}
-                        </TouchableOpacity>
-                      </View>
-                    );
+                <EmblaCarousel
+                  slides={articulos}
+                  options={{ loop: true, spacing: 6, itemWidth: cardWidth }}
+                  initialIndex={0}
+                  onSelect={(logicalIndex, item) => {
+                    if (!item) return;
+                    // set the slot to the selected item's id
+                    setSlots((prev) => {
+                      const copy = [...prev];
+                      copy[slotIndex] = item.id;
+                      return copy;
+                    });
                   }}
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={{
-                    paddingBottom: 2,
-                    paddingHorizontal: 8,
-                    alignItems: 'center',
-                  }}
-                  ListEmptyComponent={
-                    loading ? (
-                      <ActivityIndicator
-                        size="large"
-                        color="#999"
-                        style={{ marginTop: 30 }}
-                      />
-                    ) : (
-                      <Text style={{ color: '#222222' }}>No hay prendas</Text>
-                    )
-                  }
-                  ref={(el) => {
-                    flatlistRefs.current[slotIndex] = el;
-                  }}
-                  onViewableItemsChanged={onViewableItemsChanged}
-                  viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
-                  onScrollToIndexFailed={(info) => {
-                    // fallback: scroll to nearest measured index using offset calculation
-                    const attempted = info.index ?? 0;
-                    try {
-                      flatlistRefs.current[slotIndex]?.scrollToOffset({
-                        offset: (cardWidth + 8) * attempted,
-                        animated: false,
-                      });
-                    } catch (e) {
-                      // ignore failures
-                    }
-                  }}
+                  renderSlide={(item) => (
+                    <TouchableOpacity
+                      activeOpacity={0.95}
+                      onPress={() => setSlots((prev) => {
+                        const copy = [...prev];
+                        copy[slotIndex] = item.id;
+                        return copy;
+                      })}
+                      style={{ width: '100%', height: cardHeight, alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      {item.imageUrl ? (
+                        <Image source={{ uri: item.imageUrl }} style={{ width: '100%', height: '100%', backgroundColor: '#FFFFFF' }} resizeMode="contain" />
+                      ) : (
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                          <Ionicons name="shirt-outline" size={48} color="#555" />
+                          <Text style={{ color: '#222222', marginTop: 6 }}>{item.nombre ?? `#${item.id}`}</Text>
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                  )}
                 />
               </View>
             );
@@ -464,7 +326,6 @@ export default function CrearOutfit() {
             <Picker
               selectedValue={estilo}
               onValueChange={(v) => setEstilo(String(v))}
-              style={{ color: '#222222' }}
             >
               {estiloOptions.map((k) => (
                 <Picker.Item key={k} label={k} value={k} />
