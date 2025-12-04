@@ -63,8 +63,6 @@ export default function ProfileSettingsScreen() {
         label: 'Datos Personales',
         hasBadge: false,
       },
-    ],
-    [
       {
         icon: TranslateIcon,
         label: 'Idioma',
@@ -106,20 +104,6 @@ export default function ProfileSettingsScreen() {
         paddingVertical: 16,
       }}
     >
-      <View
-        style={{
-          backgroundColor: Colors.background,
-          borderRadius: 16,
-          width: '100%',
-          maxWidth: 400,
-          shadowColor: '#000',
-          shadowOpacity: 0.1,
-          shadowRadius: 8,
-          elevation: 5,
-          overflow: 'hidden',
-        }}
-      >
-        {/* Perfil Header */}
         <View
           style={{
             backgroundColor: Colors.background,
@@ -133,11 +117,12 @@ export default function ProfileSettingsScreen() {
           <View
             style={{
               borderColor: Colors.background,
-              width: 96,
-              height: 96,
-              borderRadius: 48,
+              width: 130,
+              height: 130,
+              borderRadius: 65,
               borderWidth: 4,
-              marginBottom: 16,
+              marginBottom: 6,
+              marginTop: 10,
               overflow: 'hidden',
               shadowColor: '#000',
               shadowOpacity: 0.1,
@@ -155,9 +140,8 @@ export default function ProfileSettingsScreen() {
           <Text
             style={{
               color: Colors.primary,
-              fontSize: 20,
+              fontSize: 28,
               fontWeight: '600',
-              marginBottom: 4,
             }}
           >
             {userData.username}
@@ -167,7 +151,7 @@ export default function ProfileSettingsScreen() {
             style={{
               color: Colors.muted,
               fontSize: 14,
-              marginBottom: 2,
+              marginBottom: 16,
             }}
           >
             {userData.fullName}
@@ -181,14 +165,14 @@ export default function ProfileSettingsScreen() {
             justifyContent: 'center',
             alignItems: 'center',
             gap: 20,
-            marginBottom: 24,
+            marginBottom: 50,
           }}
         >
           {stats.map((stat) => (
             <View
               key={stat.label}
               style={{
-                minWidth: 70,
+                width: 100,
                 marginHorizontal: -5,
                 alignItems: 'center',
                 backgroundColor: Colors.white,
@@ -224,21 +208,22 @@ export default function ProfileSettingsScreen() {
         </View>
 
         {/* Menu Items */}
-        <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+        <View style={{ marginHorizontal: 50, borderWidth:0, borderRadius: 30,overflow: 'hidden', width: 350 }}>
           {menuSections.map((section, sectionIndex) => (
             <View key={sectionIndex}>
               {section.map((item, itemIndex) => {
                 const Icon = item.icon;
                 return (
-                  <View key={itemIndex} style={{ marginBottom: 8 }}>
+                  <View key={itemIndex} style={{ borderRadius: 9,}}>
                     <TouchableOpacity
                       style={{
                         backgroundColor: Colors.white,
                         paddingHorizontal: 16,
                         paddingVertical: 16,
-                        borderRadius: 8,
                         flexDirection: 'row',
                         justifyContent: 'space-between',
+                        borderColor: Colors.background,
+                        borderTopWidth: 2,
                         alignItems: 'center',
                       }}
                       onPress={item.onPress}
@@ -295,9 +280,7 @@ export default function ProfileSettingsScreen() {
             </View>
           ))}
         </View>
-        {/* Espaciado inferior */}
         <View style={{ height: 16 }} />
-      </View>
     </ScrollView>
   );
 }
