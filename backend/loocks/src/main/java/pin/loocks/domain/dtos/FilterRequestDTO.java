@@ -1,5 +1,6 @@
 package pin.loocks.domain.dtos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class FilterRequestDTO {
 
   private Estilo estilo;
   private Estacion estacion;
-  private List<Zona> zonasCubiertas;
+  private List<Zona> zonasCubiertas = new ArrayList<>(List.of());
   private Boolean isFavorito;
   private String primaryColor;
   private Double nivelDeAbrigo;

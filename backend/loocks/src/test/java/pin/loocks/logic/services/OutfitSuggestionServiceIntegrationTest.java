@@ -15,6 +15,7 @@ import pin.loocks.data.repositories.ArticuloRepository;
 import pin.loocks.data.repositories.PerfilRepository;
 import pin.loocks.domain.dtos.GenerateOutfitSuggestionsRequestDTO;
 import pin.loocks.domain.dtos.RegisterRequestDTO;
+import pin.loocks.domain.enums.Estilo;
 import pin.loocks.domain.enums.Zona;
 import pin.loocks.domain.models.Armario;
 import pin.loocks.domain.models.Articulo;
@@ -83,6 +84,7 @@ class OutfitSuggestionServiceIntegrationTest {
     a.setNivelDeAbrigo(0.5);
     a.setImageUrl("default-image-url");
     a.setArmario(p.getArmario());
+    a.setEstilo(Estilo.CASUAL);
     return a;
   }
 }
