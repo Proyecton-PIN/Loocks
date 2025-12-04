@@ -11,8 +11,7 @@ export default function VerOutfit() {
   const removeOutfit = useOutfit((s) => s.removeOutfit);
 
   React.useEffect(() => {
-    if (!selected) {
-      // Navigate back after render to avoid setState during render errors
+    if (!selected) {    
       router.back();
     }
   }, [selected]);

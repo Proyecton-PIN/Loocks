@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import pin.loocks.domain.dtos.LoginRequestDTO;
 import pin.loocks.domain.dtos.RegisterRequestDTO;
 import pin.loocks.domain.dtos.TokenResponseDTO;
+import pin.loocks.domain.dtos.PerfilInfoDTO;
 import pin.loocks.domain.models.CustomUserDetails;
 import pin.loocks.domain.models.Perfil;
 import pin.loocks.logic.services.AuthService;
@@ -62,5 +63,12 @@ public class AuthController {
   @GetMapping("/check")
   public ResponseEntity<Boolean> checkAuth(@AuthenticationPrincipal CustomUserDetails userDetails) {
     return ResponseEntity.ok(true);
+  }
+
+  @GetMapping("/info")
+  public ResponseEntity<PerfilInfoDTO> getUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    Perfil perfil = perfilService.loadUserByEmail(userDetails.getEmail()).getPerfil();
+    PerfilInfoDTO dto = new PerfilInfoDTO(perfil);
+    return ResponseEntity.ok(dto);
   }
 }
