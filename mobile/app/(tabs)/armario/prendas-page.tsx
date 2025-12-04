@@ -62,7 +62,7 @@ const categorias = [
   },
   {
     id: 8,
-    nombre: 'Chaqueta',
+    nombre: 'Chaquetas',
     color: '#f8e0ac',
     icon: '👞',
     cantidad: 8,
