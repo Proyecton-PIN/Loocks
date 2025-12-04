@@ -8,16 +8,16 @@ import { Picker } from '@react-native-picker/picker';
 import { Stack } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    Alert,
-    Dimensions,
-    FlatList,
-    Image,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  Dimensions,
+  FlatList,
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
-import EmblaCarousel from './../components/outfit/EnableCarousel';
+import EmblaCarousel from './../../components/outfit/EnableCarousel';
 
 const OPTIONS = { loop: true } as const;
 
@@ -296,7 +296,7 @@ export default function CrearOutfit() {
             }}
           >
             <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>
-              {loading ? 'Cargando...' : 'Crear Outfit'}
+              {loading ? 'Creando...' : 'Crear Outfit'}
             </Text>
           </TouchableOpacity>
         </View>
