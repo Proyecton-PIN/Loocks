@@ -286,3 +286,76 @@ export function IAIcon(props: IconProps) {
     </Svg>
   );
 }
+
+export function AccesoriosIcon(props: IconProps) {
+  return (
+    <Svg width="26" height="14" viewBox="0 0 26 14" fill="none" >
+    <Path d="M5.51123 0.5V6.95226V12.5" stroke="#222222" stroke-linecaP="round"/>
+    <Path d="M0.859375 2.55957H10" stroke="#222222" stroke-linecaP="round"/>
+    <Path d="M19.0039 2.55957H25.0039" stroke="#222222" stroke-linecaP="round"/>
+    <Path d="M0.859375 10.5596H10.5" stroke="#222222" stroke-linecaP="round"/>
+    <Path d="M19.0039 10.5596H25.0039" stroke="#222222" stroke-linecaP="round"/>
+    <Path d="M18.5078 1.53711L10.5039 1.55278V11.5504L18.5 11.5279L18.5078 1.53711Z" stroke="#222222" stroke-linecaP="round" stroke-linejoin="round"/>
+    <Path d="M18.5 6.52344H13.8594" stroke="#222222" stroke-linecap="round"/>
+    </Svg>
+  )
+}
+
+export function GorrasIcon(props: IconProps) { 
+  return (
+    <Svg width="19" height="16" viewBox="0 0 19 16" fill="none">
+    <Path d="M13 8.5C13 6 12.0001 4 9.5 0.5" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    <Path d="M6 8.5C6 6 6.99989 4 9.5 0.5" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    <Path d="M0.5 9.5C0.5 7.11305 1.44821 4.32387 3.13604 2.63604C4.82387 0.948212 7.11305 0.5 9.5 0.5C11.8869 0.5 14.1761 0.948211 15.864 2.63604C17.5518 4.32387 18.5 7.11305 18.5 9.5" stroke="#222222"/>
+    <Path d="M18.5 9.5V14.2982C18.5 14.3566 18.4906 14.4146 18.4672 14.468C18.2599 14.9426 17.6321 15.732 16.5 15.4349C15 15.0413 13.5 13.4549 9.5 13.4549" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    <Path d="M0.5 9.5V14.2982C0.5 14.3566 0.509404 14.4146 0.532768 14.468C0.740104 14.9426 1.36786 15.732 2.5 15.4349C4 15.0413 5.5 13.4549 9.5 13.4549" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    <Path d="M18.5 11.5C16.5 10.5 13.5 8.5 9.5 8.5C5.5 8.5 2.5 10.5 0.5 11.5" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    </Svg>
+  ) 
+}
+
+export function VestidosIcon(props: IconProps) {
+  return (
+    <Svg width="16" height="21" viewBox="0 0 16 21" fill="none">
+    <Path d="M5.5 0.5V3.5" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    <Path d="M10.5 0.5V3.5" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    <Path d="M5.49946 3.5L3.20881 6.24879C3.08164 6.40139 3.05687 6.61481 3.14571 6.79248L4.89331 10.2877C4.96049 10.422 4.9637 10.5795 4.90207 10.7165L0.817285 19.7948C0.668412 20.1257 0.910436 20.5 1.27325 20.5H14.7267C15.0895 20.5 15.3315 20.1257 15.1826 19.7948L11.0969 10.7165C11.0352 10.5795 11.0384 10.422 11.1056 10.2877L12.8532 6.79248C12.9421 6.61481 12.9173 6.40139 12.7901 6.24879L10.4995 3.5" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    <Path d="M5 10.5L11 10.5" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    <Path d="M5.5 3.5C5.5 3.5 6 5.5 8 5.5C10 5.5 10.5 3.5 10.5 3.5" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    </Svg>
+  )
+}
+
+export function PantalonesIcon(props: IconProps) {
+  return (
+    <Svg width="18" height="20" viewBox="0 0 18 20" fill="none">
+    <Path d="M2.67455 3.5L2.95385 0.5H15.0071L15.274 3.5M2.67455 3.5L1 19.5H5.98683L9 8.5L11.9888 19.5H16.98L15.274 3.5M2.67455 3.5H15.274" stroke="#222222" stroke-linejoin="round"/>
+    </Svg>
+  )
+}
+
+export function CamisetasIcon(props: IconProps) {
+  return (
+    <Svg width="23" height="17" viewBox="0 0 23 17" fill="none">
+    <Path d="M17.5 8.5C17.8727 8.5 18.4191 8.5 19.7054 8.5C19.887 8.5 20.0547 8.40155 20.1429 8.24282L22.2811 4.39398C22.4055 4.17009 22.3406 3.88842 22.1308 3.74154L17.5 0.5" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    <Path d="M5.49969 8.5C5.12697 8.5 4.58087 8.5 3.29457 8.5C3.11299 8.5 2.94531 8.40155 2.85712 8.24282L0.718878 4.39398C0.594496 4.17009 0.659405 3.88842 0.869225 3.74154L5.5 0.5" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    <Path d="M17.5 1V15.9999C17.5 16.276 17.2761 16.4999 17 16.4999H6C5.72386 16.4999 5.5 16.276 5.5 15.9999V1" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    <Path d="M17.5 0.5H14" stroke="#222222" stroke-linejoin="round"/>
+    <Path d="M9.00014 0.499983L5.50024 0.5" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    <Path d="M9 0.5C9 1.16304 9.26339 1.79893 9.73223 2.26777C10.2011 2.73661 10.837 3 11.5 3C12.163 3 12.7989 2.73661 13.2678 2.26777C13.7366 1.79893 14 1.16304 14 0.5" stroke="#222222" stroke-linecap="round"/>
+    </Svg>
+  )
+}
+
+export function SudaderasIcon(props: IconProps) {
+  return (
+    <Svg width="23" height="19" viewBox="0 0 23 19" fill="none">
+    <Path d="M15.5122 0.5C15.6794 0.5 15.8355 0.583557 15.9282 0.722656L21.9282 9.72266C22.0063 9.8398 22.0316 9.98449 21.9976 10.1211L19.9976 18.1211C19.9419 18.3437 19.7416 18.5 19.5122 18.5H15.0122C14.7361 18.5 14.5122 18.2761 14.5122 18V14.5H8.51221V18C8.51221 18.2761 8.28835 18.5 8.01221 18.5H4.01221C3.79357 18.5 3.59995 18.3581 3.53467 18.1494L1.03467 10.1494C0.989633 10.0053 1.01244 9.84828 1.09619 9.72266L7.09619 0.722656L7.13428 0.672852C7.22856 0.563913 7.3661 0.5 7.51221 0.5H15.5122Z" stroke="#222222" stroke-linejoin="round"/>
+    <Path d="M6.51221 2.50003L11.5102 5.50386L16.5122 2.35413" stroke="#222222" stroke-linejoin="round"/>
+    <Path d="M13.0122 10.6912C13.0122 10.9673 13.2361 11.1912 13.5122 11.1912C13.7884 11.1912 14.0122 10.9673 14.0122 10.6912L13.5122 10.6912L13.0122 10.6912ZM13.5122 4.06787L13.0122 4.06787L13.0122 10.6912L13.5122 10.6912L14.0122 10.6912L14.0122 4.06787L13.5122 4.06787Z" fill="#222222"/>
+    <Path d="M9.51223 4.34399L9.51223 12.5641" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+    <Path d="M17 3C17 2.72386 16.7761 2.5 16.5 2.5C16.2239 2.5 16 2.72386 16 3H16.5H17ZM16.5 14.5019V15.0019C16.7761 15.0019 17 14.778 17 14.5019H16.5ZM6.5 14.5019H6C6 14.778 6.22386 15.0019 6.5 15.0019V14.5019ZM7 3V2.5H6V3H6.5H7ZM16.5 3H16V14.5019H16.5H17V3H16.5ZM16.5 14.5019V14.0019H6.5V14.5019V15.0019H16.5V14.5019ZM6.5 14.5019H7V3H6.5H6V14.5019H6.5Z" fill="#222222"/>
+    </Svg>
+      )
+}
+
