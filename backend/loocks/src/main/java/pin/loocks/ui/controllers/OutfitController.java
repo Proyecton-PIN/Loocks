@@ -27,6 +27,7 @@ import pin.loocks.domain.models.CustomUserDetails;
 import pin.loocks.domain.models.Outfit;
 import pin.loocks.domain.models.OutfitLog;
 import pin.loocks.logic.services.OutfitService;
+import pin.loocks.logic.services.OutfitSuggestionService;
 
 
 @RestController
@@ -36,6 +37,9 @@ public class OutfitController {
 
     @Autowired
     private OutfitService outfitService;
+
+    @Autowired
+    private OutfitSuggestionService outfitSuggestionService;
 
     @PostMapping("/filtered")
     public ResponseEntity<List<Outfit>> getFilteredOutfits(
@@ -79,7 +83,7 @@ public class OutfitController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody GenerateOutfitSuggestionsRequestDTO request) {
         try {
-            List<Outfit> outfits = outfitService.generateSuggestions(request, userDetails.getId());
+          List<Outfit> outfits = outfitSuggestionService.generateSuggestions(request, userDetails.getId());
             return ResponseEntity.ok().body(outfits);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -122,43 +126,4 @@ public class OutfitController {
       }
     }
 
-    // @Autowired
-    // private OutfitService outfitService;
-
-    // /**
-    // * Crea un outfit usando el DTO `OutfitCreateDTO`.
-    // * La información mínima debe incluir mood y articulosIds; el DTO puede
-    // incluir
-    // * perfilId, satisfaccion e isFavorito si se desea especificar.
-    // */
-    // @PostMapping
-    // public ResponseEntity<Outfit> createOutfit(@RequestBody OutfitCreateDTO dto)
-    // {
-    // // Normalizar valores por defecto
-    // String mood = dto.getMood() != null ? dto.getMood() : "Sin categoría";
-    // String satisfaccion = dto.getSatisfaccion();
-    // boolean isFavorito = dto.getIsFavorito() != null && dto.getIsFavorito();
-    // String perfilId = dto.getPerfilId();
-
-    // List<Long> articuloIds = dto.getArticulosIds() != null ?
-    // dto.getArticulosIds() : List.of();
-
-    // Outfit created = outfitService.createOutfit(dto);
-
-    // URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-    // .path("/{id}")
-    // .buildAndExpand(created.getId())
-    // .toUri();
-
-    // return ResponseEntity.created(location).body(created);
-    // }
-
-    // @GetMapping
-    // public ResponseEntity<List<Outfit>> listOutfits(@RequestParam(required =
-    // false) String perfilId) {
-    // if (perfilId != null) {
-    // return ResponseEntity.ok(outfitService.getOutfitsByPerfil(perfilId));
-    // }
-    // return ResponseEntity.ok(outfitService.getAllOutfits());
-    // }
 }

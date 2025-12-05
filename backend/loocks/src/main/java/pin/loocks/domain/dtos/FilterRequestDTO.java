@@ -1,5 +1,6 @@
 package pin.loocks.domain.dtos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pin.loocks.domain.enums.Estacion;
 import pin.loocks.domain.enums.Estilo;
+import pin.loocks.domain.enums.TipoArticulo;
 import pin.loocks.domain.enums.Zona;
 
 @Data
@@ -18,11 +20,12 @@ public class FilterRequestDTO {
 
   private Estilo estilo;
   private Estacion estacion;
-  private List<Zona> zonasCubiertas;
+  private List<Zona> zonasCubiertas = new ArrayList<>(List.of());
   private Boolean isFavorito;
   private String primaryColor;
   private Double nivelDeAbrigo;
   private Boolean puedePonerseEncimaDeOtraPrenda;
+  private TipoArticulo tipoToAvoid;
 
   public FilterRequestDTO(GenerateOutfitSuggestionsRequestDTO request) {
     this.estilo = request.getEstilo();
