@@ -25,7 +25,6 @@ export default function ArmarioLayout() {
 
   return (
     <View className="flex-1">
-      {/* <Stack.Screen options={{ headerShown: false }} /> */}
 
       <Tabs
         screenOptions={{
@@ -56,7 +55,6 @@ export default function ArmarioLayout() {
                   }}
                 >
                   <Text
-                    // className={`text-md ${isFocused ? 'text-[#5639F8] font-bold' : 'text-[#91919F]'}`}
                     className="text-md font-normal"
                     style={{
                       color: isFocused ? Colors.white : Colors.black,
