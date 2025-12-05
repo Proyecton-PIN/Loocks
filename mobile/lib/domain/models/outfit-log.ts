@@ -1,4 +1,4 @@
-import { Outfit } from './outift';
+import { Outfit } from './outfits';
 
 export interface OutfitLog {
   id?: number;

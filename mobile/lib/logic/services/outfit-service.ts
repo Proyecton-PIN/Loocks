@@ -1,7 +1,7 @@
 import http from '@/lib/data/http';
 import { Articulo } from '@/lib/domain/models/articulo';
 import { OutfitLog } from '@/lib/domain/models/outfit-log';
-import { Outfit } from '@/lib/domain/models/outift';
+import { Outfit } from '@/lib/domain/models/outfits';
 
 export async function probarOutfitEnAvatar(
   uri: string,
@@ -34,7 +34,7 @@ export async function probarOutfitEnAvatar(
   }
 }
 
-export async function getOutfitSuggestions(): Promise<Outfit[]> {
+export async function getOutfitSuggestions(params: any = {}): Promise<Outfit[]> {
   try {
     const resp = http.post<any>('outfits/generateSuggestions', {
       body: JSON.stringify({ limit: 5 }),

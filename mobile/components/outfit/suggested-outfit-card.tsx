@@ -1,7 +1,7 @@
 import { AddIcon, IAIcon } from '@/constants/icons';
 import { Colors } from '@/constants/theme';
 import { useOutfit } from '@/hooks/useOutfits';
-import { Outfit } from '@/lib/domain/models/outift';
+import { Outfit } from '@/lib/domain/models/outfits';
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import CustomCamera from '../camera/custom-camera';
