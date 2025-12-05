@@ -1,5 +1,4 @@
-import { LeftArrowIcon, TrashIcon } from '@/constants/icons'; 
-import { Colors } from '@/constants/theme';
+import { LeftArrowIcon } from '@/constants/icons';
 import { useArticulos } from '@/hooks/useArticulos';
 import { router, Stack } from 'expo-router';
 import React from 'react';
@@ -43,7 +42,7 @@ export default function ArticuloDetalles() {
         <Image
           source={{ uri: selectedArticulo.imageUrl ?? `data:image/png;base64,${selectedArticulo.base64Img}` }}
           className="w-full aspect-[3/4] rounded-3xl bg-gray-100 mb-6 mt-4"
-          resizeMode="cover"
+          resizeMode="contain"
         />
 
         {/*DATOS PRINCIPALES */}
