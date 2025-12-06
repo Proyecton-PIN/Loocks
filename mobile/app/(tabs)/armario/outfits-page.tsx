@@ -4,7 +4,7 @@ import SuggestedOutfitsRow from '@/components/outfit/suggested-outfits-row';
 import { useOutfit } from '@/hooks/useOutfits';
 import clsx from 'clsx';
 import { router } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
 export default function OutfitsPage() {
@@ -39,9 +39,6 @@ export default function OutfitsPage() {
     return arr;
   }, [logs, selectedEstacion, selectedEstilo, sortNewest]);
 
-  useEffect(() => {
-    loadOutfits();
-  }, []);
 
   return (
     <View className="flex-1">

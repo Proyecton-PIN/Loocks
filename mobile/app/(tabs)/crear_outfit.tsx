@@ -47,20 +47,18 @@ export default function CrearOutfit() {
   const fetchProfile = useAuth((s) => s.fetchProfile);
 
   const flatlistRefs = useRef<Array<FlatList<Articulo> | null>>([]);
+  const loadOutfits = useOutfit((s) => s.loadOutfits);
   
- useEffect(() => {
-      if (!profile) {
-        void fetchProfile();
-      }
-    }, []);
-
   useEffect(() => {
-    void fetchArticulos();
+    if (!profile) {
+      void fetchProfile();
+    }
+    fetchArticulos().then(_ => loadOutfits());
   }, []);
 
-    const userData = {
-      username: profile?.nombreUsuario ?? 'usuario',
-    };
+  const userData = {
+    username: profile?.nombreUsuario ?? 'usuario',
+  };
 
   async function fetchArticulos() {
     try {
