@@ -209,7 +209,7 @@ export default function CrearOutfit() {
 
   const screenWidth = Dimensions.get('window').width;
   const screenHeight = Dimensions.get('window').height;
-  const cardWidth = Math.min(screenWidth - 80, 260);
+  const cardWidth = Math.min(screenWidth - 180, 170);
   const ITEM_SPACING = 6;
 
   const TOP_RESERVED = 120;
@@ -227,10 +227,10 @@ export default function CrearOutfit() {
 
       <View style={{ flex: 1, justifyContent: 'space-between' }}>
         <View>
-          <Text style={{ color: '#222222', fontSize: 13, marginBottom: 6 }}>
+          <Text style={{ color: '#222222', fontSize: 16, marginTop: 10, marginBottom: 6 }}>
             ¡Hola {userData.username}!
           </Text>
-          <Text style={{ color: '#222222', fontSize: 20, fontWeight: 'bold', marginBottom: 6 }}>
+          <Text style={{ color: '#222222', fontSize: 20, fontWeight: 'bold', marginBottom: 55 }}>
             Tu outfit para hoy
           </Text>
 
