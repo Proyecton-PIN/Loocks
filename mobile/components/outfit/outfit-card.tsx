@@ -33,7 +33,6 @@ export default function OutfitCard({ data, className }: Props) {
               resizeMode: 'contain',
             }}
             height={115}
-            resizeMode="contain"
           />
         )}
       />
