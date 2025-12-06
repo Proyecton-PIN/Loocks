@@ -23,7 +23,7 @@ public class Planificacion {
  
   @Column(nullable = false)
   @Temporal(TemporalType.DATE)
-  private Date fecahInicio;
+  private Date fechaInicio;
  
   @Column(nullable = false)
   @Temporal(TemporalType.DATE)
@@ -31,6 +31,12 @@ public class Planificacion {
 
   @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
   private boolean isMaleta;
+
+  private String titulo;
+
+  private String ubicacion;
+  
+  private Double temperaturaMedia;
 
   @OneToMany(mappedBy = "planificacion", cascade = CascadeType.REFRESH)
   private List<OutfitLog> outfitLogs;

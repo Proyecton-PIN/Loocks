@@ -204,6 +204,18 @@ export default function OutfitsPage() {
         )}
       />
       <ProbadorOutfitModal />
+
+      <Pressable
+        className="absolute bottom-5 left-5 w-14 h-14 rounded-full justify-center items-center shadow-lg shadow-indigo-300"
+        style={{ backgroundColor: '#5639F8' }}
+        onPress={() => {
+            // Navegamos a la pantalla del generador
+            router.push('/generador-outfit'); 
+        }}
+      >
+      </Pressable>
+      {/* ------------------------------------------- */}
+
     </View>
   );
 }

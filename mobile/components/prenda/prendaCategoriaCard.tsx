@@ -4,9 +4,10 @@ import http from '@/lib/data/http';
 import { Articulo } from '@/lib/domain/models/articulo';
 import clsx from 'clsx';
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Pressable, Text, TextInput, View } from 'react-native';
 import Collapsible from 'react-native-collapsible';
+
 
 export default function PrendaCategoriaCard({
   initialName,
@@ -30,6 +31,8 @@ export default function PrendaCategoriaCard({
   const [color, setColor] = useState(initialColor || '#FFF');
   const [articulos, setArticulos] = useState<Articulo[]>([]);
   const [loading, setLoading] = useState(false);
+  const itemMargin = 8;
+  const numColumns = 2;
 
   useEffect(() => {
     let mounted = true;
@@ -51,15 +54,66 @@ export default function PrendaCategoriaCard({
     };
   }, [expanded, tipo]);
 
-  const ICONS = ['👕', '🧢', '👗', '👜', '⭐', '🧥'];
-  const COLORS = [
-    '#FFF',
-    '#FDE68A',
-    '#BFDBFE',
-    '#FECACA',
-    '#DBEAFE',
-    '#C7D2FE',
-  ];
+  const gridArticulos = useMemo(() => {
+    // Si el número es impar, excluimos el último elemento de la lista principal
+    if (articulos.length % numColumns !== 0) {
+      return articulos.slice(0, -1); // Excluye el último
+    }
+    return articulos; // Si es par, usamos todos
+  }, [articulos, numColumns]);
+
+  const renderFooter = () => {
+    if (articulos.length % 2 !== 0) {
+      const ultimoArticulo = articulos[articulos.length - 1];
+      const imgUri = ultimoArticulo.imageUrl
+        ? ultimoArticulo.imageUrl.startsWith('http')
+          ? ultimoArticulo.imageUrl
+          : ultimoArticulo.imageUrl.startsWith('/')
+            ? ApiUrl + ultimoArticulo.imageUrl
+            : ApiUrl + '/' + ultimoArticulo.imageUrl
+        : ultimoArticulo.base64Img
+          ? `data:image/jpeg;base64,${ultimoArticulo.base64Img}`
+          : '';
+
+      return (
+        // Contenedor que centra el Pressable
+        <View style={{ width: '100%', alignItems: 'center' }}>
+          <Pressable
+            onPress={() => {
+              try {
+                useArticulos.getState().selectArticulo(ultimoArticulo);
+              } catch (e) {
+                console.warn('Could not select articulo in store', e);
+              }
+              router.push('/ver-articulo');
+            }}
+            style={{
+              width: '50%', 
+              backgroundColor: 'white',
+              borderRadius: 12,
+              overflow: 'hidden',
+              padding: 8,
+              aspectRatio: 1 / 1.5,
+              margin: itemMargin / 2, // Mantenemos el margen del grid
+            }}
+          >
+            {imgUri ? (
+              <Image
+                source={{ uri: imgUri }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: 8,
+                }}
+                resizeMode="contain"
+              />
+            ) : null}
+          </Pressable>
+        </View>
+      );
+    }
+    return null;
+  };
 
   return (
     <View>
@@ -84,53 +138,17 @@ export default function PrendaCategoriaCard({
           className="px-6 py-4 mt-4 rounded-2xl"
           style={{ backgroundColor: color }}
         >
-          <Text className="text-xs mb-1">Nombre</Text>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            className="border-b border-gray-300 mb-2 text-lg font-bold"
-          />
-          <Text className="text-xs mb-1">Icono</Text>
-          <View className="flex-row mb-2">
-            {ICONS.map((ic) => (
-              <Pressable
-                key={ic}
-                onPress={() => setIcon(ic)}
-                style={{ marginRight: 8 }}
-              >
-                <Text style={{ fontSize: 24 }}>{ic}</Text>
-              </Pressable>
-            ))}
-          </View>
-          <Text className="text-xs mb-1">Color</Text>
-          <View className="flex-row mb-4">
-            {COLORS.map((c) => (
-              <Pressable
-                key={c}
-                onPress={() => setColor(c)}
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 14,
-                  backgroundColor: c,
-                  marginRight: 8,
-                  borderWidth: color === c ? 2 : 0,
-                  borderColor: '#333',
-                }}
-              />
-            ))}
-          </View>
           <Text className="font-bold mb-2 text-lg">Artículos</Text>
           {loading && (
             <ActivityIndicator
-              size="small"
+              size="large"
               color="#3B82F6"
               style={{ marginBottom: 8 }}
             />
           )}
           <FlatList
-            data={articulos}
-            horizontal
+            data={gridArticulos}
+            numColumns={2}
             keyExtractor={(item, index) =>
               item?.id ? item.id.toString() : String(index)
             }
@@ -155,25 +173,34 @@ export default function PrendaCategoriaCard({
                     }
                     router.push('/ver-articulo');
                   }}
+                  style={{
+                    flex: 1,
+                    margin: itemMargin / 2,
+                    backgroundColor: 'white',
+                    borderRadius: 12,
+                    overflow: 'hidden',
+                    padding: 10,
+                    aspectRatio: 1 / 1.5,
+                  }}
                 >
                   {imgUri ? (
                     <Image
                       source={{ uri: imgUri }}
                       style={{
-                        width: 90,
-                        height: 120,
-                        borderRadius: 16,
-                        marginRight: 8,
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 8,
                       }}
-                      resizeMode="cover"
+                      resizeMode="contain"
                     />
                   ) : (
                     <View
                       style={{
-                        width: 90,
-                        height: 120,
-                        borderRadius: 16,
-                        marginRight: 8,
+                        flex: 1,
+                        margin: imgUri.length / 2,
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 8,
                         backgroundColor: '#F4F4F4',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -186,7 +213,8 @@ export default function PrendaCategoriaCard({
               );
             }}
             showsHorizontalScrollIndicator={false}
-            style={{ marginBottom: 8 }}
+            style={{ marginBottom: 8, marginHorizontal: -itemMargin / 2 }}
+            ListFooterComponent={renderFooter}
           />
         </View>
       </Collapsible>
