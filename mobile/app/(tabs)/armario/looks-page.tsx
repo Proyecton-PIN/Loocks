@@ -76,7 +76,7 @@ const LoockItem: React.FC<LoockItemProps> = ({ loock, index, isFavorite, onToggl
       
       {/* Botón de Acción/Favorito (+) */}
       <Pressable 
-        className="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-purple-500 justify-center items-center"
+        className="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-[#5639F8] justify-center items-center"
         onPress={() => onToggleFavorite(loock.id)} // Llama a la función de toggle
       >
         <Ionicons 
@@ -154,7 +154,7 @@ export default function LooksPage() {
 
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-[#F3F3F3]">
       {/* La navegación superior se ha eliminado. */}
       
       <FlatList
@@ -202,7 +202,7 @@ export default function LooksPage() {
                         />
                         {/* Botón de toggle en la fila de favoritos */}
                         <Pressable 
-                            className="absolute top-1 right-1 w-6 h-6 rounded-full bg-purple-500 justify-center items-center"
+                            className="absolute top-1 right-1 w-6 h-6 rounded-full bg-[#5639F8] justify-center items-center"
                             onPress={() => toggleFavorite(item.id)}
                         >
                             <Ionicons name="star" size={14} color="white" />
@@ -229,7 +229,7 @@ export default function LooksPage() {
               className="mb-4"
             >
               {/* Botón "Filtrar por" */}
-              <View className="bg-purple-500 py-2 px-3 rounded-full mr-2 mb-2">
+              <View className="bg-[#5639F8] py-2 px-3 rounded-full mr-2 mb-2">
                 <Text className="text-white font-semibold text-sm">
                   Filtrar por
                 </Text>
@@ -278,7 +278,7 @@ export default function LooksPage() {
                 onPress={() => setSortNewest((s) => !s)}
                 className={clsx(
                   'py-2 px-3 rounded-full mr-2 mb-2 border',
-                  sortNewest ? 'bg-purple-500 border-purple-500' : 'bg-white border-gray-300'
+                  sortNewest ? 'bg-[#5639F8] border-[#5639F8]' : 'bg-white border-gray-300'
                 )}
               >
                 <Text className={clsx('text-sm', sortNewest ? 'text-white' : 'text-gray-700')}>

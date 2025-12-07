@@ -134,7 +134,7 @@ export default function OutfitsPage() {
               <Pressable
                 onPress={() => setSortNewest((s) => !s)}
                 style={{
-                  backgroundColor: sortNewest ? '#7C3AED' : '#FFFFFF',
+                  backgroundColor: sortNewest ? '#5639F8' : '#FFFFFF',
                   paddingVertical: 7,
                   paddingHorizontal: 12,
                   borderRadius: 20,
