@@ -3,13 +3,19 @@ import ProbadorOutfitModal from '@/components/outfit/probador-outfit-modal';
 import SuggestedOutfitsRow from '@/components/outfit/suggested-outfits-row';
 import { useOutfit } from '@/hooks/useOutfits';
 import clsx from 'clsx';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
 export default function OutfitsPage() {
   const logs = useOutfit((s) => s.logs);
   const loadOutfits = useOutfit((s) => s.loadOutfits);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadOutfits();
+    }, [loadOutfits])
+  );
 
   // Filter state
   const [selectedEstacion, setSelectedEstacion] = useState<string | null>(null);
@@ -129,7 +135,7 @@ export default function OutfitsPage() {
                 onPress={() => setSortNewest((s) => !s)}
                 style={{
                   backgroundColor: sortNewest ? '#7C3AED' : '#FFFFFF',
-                  paddingVertical: 6,
+                  paddingVertical: 7,
                   paddingHorizontal: 12,
                   borderRadius: 20,
                   marginRight: 8,

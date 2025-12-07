@@ -99,7 +99,12 @@ export const useOutfit = create<State>((set, get) => ({
       logs: s.logs.filter((l) => l.outfit.id !== id),
       selectedOutfit: undefined,
     }));
-    router.back();
+    
+    // Navigate back to outfits page
+    router.push('/(tabs)/armario/outfits-page');
+    
+    // Reload outfits to ensure fresh data
+    await get().loadOutfits();
 
     return true;
   },

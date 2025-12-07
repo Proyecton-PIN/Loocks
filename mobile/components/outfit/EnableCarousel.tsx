@@ -18,7 +18,7 @@ type PropType = {
 
 const EmblaCarousel: React.FC<PropType> = ({ slides, options, renderSlide, onSelect, initialIndex = 0 }) => {
   const screenWidth = Dimensions.get('window').width
-  const spacing = options?.spacing ?? 8
+  const spacing = options?.spacing ?? 9
   const itemWidth = Math.round((options?.itemWidth ?? Math.min(screenWidth - 80, 260)))
   const loop = options?.loop ?? true
 

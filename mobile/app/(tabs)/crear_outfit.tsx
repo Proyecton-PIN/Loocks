@@ -226,7 +226,6 @@ export default function CrearOutfit() {
   const cardHeight = Math.min(cardWidth, Math.floor(availableForSlots / 3));
   const [modalVisible, setModalVisible] = useState(false);
 
-  // Filtrar prendas por zona para cada carrusel
   const articulosTorso = articulos.filter((a) =>
     a.zonasCubiertas?.includes('TORSO'),
   );
@@ -302,7 +301,7 @@ export default function CrearOutfit() {
                           ? articulosPies
                           : articulos
                   }
-                  options={{ loop: true, spacing: 8, itemWidth: cardWidth }}
+                  options={{ loop: true, spacing: 20, itemWidth: cardWidth }}
                   initialIndex={0}
                   onSelect={(logicalIndex, item) => {
                     if (!item) return;
