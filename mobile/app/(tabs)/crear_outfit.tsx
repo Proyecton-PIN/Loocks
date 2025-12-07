@@ -12,6 +12,7 @@ import {
   Dimensions,
   FlatList,
   Image,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -32,6 +33,8 @@ type Articulo = {
 export default function CrearOutfit() {
   const [articulos, setArticulos] = useState<Articulo[]>([]);
   const [slots, setSlots] = useState<Array<number | null>>([null, null, null]);
+  const [accesoriosSeleccionados, setAccesoriosSeleccionados] = useState<number[]>([]);
+  const [accesoriosModalVisible, setAccesoriosModalVisible] = useState(false);
   const [mood, setMood] = useState('');
   const [nombre, setNombre] = useState<string>('');
   const [estacion, setEstacion] = useState('PRIMAVERA');
@@ -115,7 +118,8 @@ export default function CrearOutfit() {
 
   async function guardar() {
     const selectedIds = slots.filter((s) => s !== null).map((s) => s as number);
-    if (selectedIds.length === 0) {
+    const allSelectedIds = [...selectedIds, ...accesoriosSeleccionados];
+    if (allSelectedIds.length === 0) {
       Alert.alert(
         'Sin prendas',
         'Selecciona al menos una prenda para el outfit.',
@@ -147,11 +151,11 @@ export default function CrearOutfit() {
         mood: mood ?? null,
         estacion: estacion ?? 'PRIMAVERA',
         estilo: estilo ?? 'CASUAL',
-        articulosIds: selectedIds,
+        articulosIds: allSelectedIds,
         perfilId: String(perfilId),
         satisfaccion: satisfaccion ?? null,
         isFavorito: Boolean(isFavorito),
-        articulos: selectedIds.map((id) => {
+        articulos: allSelectedIds.map((id) => {
           const a = articulos.find((x) => x.id === id) as any;
           return {
             id: a?.id ?? id,
@@ -233,6 +237,21 @@ export default function CrearOutfit() {
     a.zonasCubiertas?.includes('PIES'),
   );
 
+  // Filtrar accesorios
+  const accesorios = articulos.filter((a) =>
+    a.zonasCubiertas?.some((z) => ['CABEZA', 'MANOS', 'CUELLO'].includes(z)),
+  );
+
+  function toggleAccesorio(id: number) {
+    setAccesoriosSeleccionados((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
+  }
+
+  function clearAccesorios() {
+    setAccesoriosSeleccionados([]);
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: '#FFFFFF', padding: 16 }}>
       <Stack.Screen options={{ title: 'Crear Outfit' }} />
@@ -249,7 +268,7 @@ export default function CrearOutfit() {
           >
             ¡Hola {userData.username}!
           </Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 35 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 85 }}>
             <Text
               style={{
                 color: '#222222',
@@ -358,7 +377,7 @@ export default function CrearOutfit() {
           }}
         >
           <TouchableOpacity
-            onPress={() => setModalVisible(true)}
+            onPress={() => setAccesoriosModalVisible(true)}
             style={{
               marginTop: 6,
               width: '35%',
@@ -372,7 +391,9 @@ export default function CrearOutfit() {
               alignSelf: 'stretch',
             }}
           >
-            <Text className="text-[#686868]">Accesorios +</Text>
+            <Text style={{ color: '#686868', fontWeight: '600' }}>
+              Accesorios {accesoriosSeleccionados.length > 0 ? `(${accesoriosSeleccionados.length})` : '+'}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -394,6 +415,143 @@ export default function CrearOutfit() {
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* Modal for accessories selection */}
+      {accesoriosModalVisible && (
+        <View
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <View
+            style={{
+              width: '90%',
+              maxHeight: '80%',
+              backgroundColor: '#fff',
+              borderRadius: 12,
+              padding: 16,
+            }}
+          >
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <Text style={{ fontSize: 18, fontWeight: '600' }}>
+                Seleccionar accesorios
+              </Text>
+              <TouchableOpacity onPress={() => setAccesoriosModalVisible(false)}>
+                <Ionicons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+
+            {accesoriosSeleccionados.length > 0 && (
+              <TouchableOpacity
+                onPress={clearAccesorios}
+                style={{
+                  backgroundColor: '#f3f4f6',
+                  paddingVertical: 8,
+                  paddingHorizontal: 12,
+                  borderRadius: 6,
+                  marginBottom: 12,
+                  alignSelf: 'flex-start',
+                }}
+              >
+                <Text style={{ color: '#374151', fontSize: 13 }}>
+                  Quitar selección ({accesoriosSeleccionados.length})
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            <ScrollView style={{ maxHeight: 400 }}>
+              {accesorios.length === 0 ? (
+                <Text style={{ color: '#6B7280', textAlign: 'center', marginVertical: 20 }}>
+                  No hay accesorios disponibles
+                </Text>
+              ) : (
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                  {accesorios.map((acc) => {
+                    const isSelected = accesoriosSeleccionados.includes(acc.id);
+                    return (
+                      <TouchableOpacity
+                        key={acc.id}
+                        onPress={() => toggleAccesorio(acc.id)}
+                        style={{
+                          width: '48%',
+                          aspectRatio: 1,
+                          borderRadius: 8,
+                          borderWidth: 2,
+                          borderColor: isSelected ? '#5639F8' : '#E5E7EB',
+                          backgroundColor: isSelected ? '#EEE9FE' : '#FFFFFF',
+                          padding: 8,
+                          position: 'relative',
+                        }}
+                      >
+                        {isSelected && (
+                          <View
+                            style={{
+                              position: 'absolute',
+                              top: 4,
+                              right: 4,
+                              backgroundColor: '#5639F8',
+                              borderRadius: 12,
+                              width: 24,
+                              height: 24,
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              zIndex: 10,
+                            }}
+                          >
+                            <Ionicons name="checkmark" size={16} color="white" />
+                          </View>
+                        )}
+                        {acc.imageUrl ? (
+                          <Image
+                            source={{ uri: acc.imageUrl }}
+                            style={{ width: '100%', height: '80%' }}
+                            resizeMode="contain"
+                          />
+                        ) : (
+                          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <Ionicons name="bag-outline" size={40} color="#9CA3AF" />
+                          </View>
+                        )}
+                        <Text
+                          style={{
+                            fontSize: 11,
+                            color: '#374151',
+                            textAlign: 'center',
+                            marginTop: 4,
+                          }}
+                          numberOfLines={1}
+                        >
+                          {acc.nombre ?? `#${acc.id}`}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              )}
+            </ScrollView>
+
+            <TouchableOpacity
+              onPress={() => setAccesoriosModalVisible(false)}
+              style={{
+                backgroundColor: '#5639F8',
+                paddingVertical: 12,
+                borderRadius: 8,
+                alignItems: 'center',
+                marginTop: 16,
+              }}
+            >
+              <Text style={{ color: 'white', fontWeight: '600' }}>Listo</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
       {/* Modal for final outfit details */}
       {modalVisible && (
