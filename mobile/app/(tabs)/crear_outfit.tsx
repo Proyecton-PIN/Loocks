@@ -25,6 +25,7 @@ type Articulo = {
   id: number;
   imageUrl?: string;
   nombre?: string;
+  zonasCubiertas?: string[];
 };
 
 export default function CrearOutfit() {
@@ -221,6 +222,14 @@ export default function CrearOutfit() {
   const cardHeight = Math.min(cardWidth, Math.floor(availableForSlots / 3));
   const [modalVisible, setModalVisible] = useState(false);
 
+  // Filtrar prendas por zona para cada carrusel
+  const articulosTorso = articulos.filter((a) => a.zonasCubiertas?.includes('TORSO'));
+  const articulosPiernas = articulos.filter((a) => a.zonasCubiertas?.includes('PIERNAS'));
+  const articulosPies = articulos.filter((a) => a.zonasCubiertas?.includes('PIES'));
+
+
+
+
   return (
     <View style={{ flex: 1, backgroundColor: '#FFFFFF', padding: 16 }}>
       <Stack.Screen options={{ title: 'Crear Outfit' }} />
@@ -240,12 +249,23 @@ export default function CrearOutfit() {
             return (
               <View key={slotIndex} style={{ marginBottom: 6 }}>
                 <EmblaCarousel
-                  slides={articulos}
-                  options={{ loop: true, spacing: 6, itemWidth: cardWidth }}
+                  slides={
+                    slotIndex === 0
+                      ? articulosTorso.length > 0
+                        ? articulosTorso
+                        : articulos
+                      : slotIndex === 1
+                      ? articulosPiernas.length > 0
+                        ? articulosPiernas
+                        : articulos
+                      : articulosPies.length > 0
+                      ? articulosPies
+                      : articulos
+                  }
+                  options={{ loop: true, spacing: 7, itemWidth: cardWidth }}
                   initialIndex={0}
                   onSelect={(logicalIndex, item) => {
                     if (!item) return;
-                    // set the slot to the selected item's id
                     setSlots((prev) => {
                       const copy = [...prev];
                       copy[slotIndex] = item.id;
@@ -280,11 +300,32 @@ export default function CrearOutfit() {
           {/* Options moved into modal (Nombre, Estación, Estilo, Favorito) */}
         </View>
 
-        <View style={{ paddingTop: 6 }}>
+        <View style={{ paddingTop: 6, display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 100 }}>
+          <TouchableOpacity
+  onPress={() => setModalVisible(true)}
+  style={{
+    marginTop: 6,
+    width: '35%',
+    backgroundColor: 'white',
+    borderColor: '#686868',
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    alignSelf: 'stretch',
+  }}
+>
+  <Text className="text-[#686868]">
+    Accesorios +
+  </Text>
+</TouchableOpacity>
+
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
             style={{
               marginTop: 6,
+              width: '35%',
               backgroundColor: '#5639F8',
               paddingVertical: 10,
               paddingHorizontal: 14,

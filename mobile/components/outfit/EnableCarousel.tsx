@@ -20,7 +20,7 @@ const EmblaCarousel: React.FC<PropType> = ({ slides, options, renderSlide, onSel
   const screenWidth = Dimensions.get('window').width
   const spacing = options?.spacing ?? 8
   const itemWidth = Math.round((options?.itemWidth ?? Math.min(screenWidth - 80, 260)))
-  const loop = options?.loop ?? false
+  const loop = options?.loop ?? true
 
   const looped = useMemo(() => {
     if (!loop || slides.length <= 1) return slides
