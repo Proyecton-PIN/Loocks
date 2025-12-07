@@ -12,7 +12,7 @@ import Collapsible from 'react-native-collapsible';
 export default function PrendaCategoriaCard({
   initialName,
   initialColor,
-  initialIcon,
+  initialIcon: IconComponent,
   cantidad,
   tipo,
   expanded,
@@ -20,14 +20,13 @@ export default function PrendaCategoriaCard({
 }: {
   initialName: string;
   initialColor?: string;
-  initialIcon: string;
+  initialIcon: React.ElementType;
   cantidad: number;
   tipo: string;
   expanded: boolean;
   onPress: () => void;
 }) {
   const [name] = useState(initialName);
-  const [icon] = useState(initialIcon);
   const [color] = useState(initialColor || '#FFF');
   const [articulos, setArticulos] = useState<Articulo[]>([]);
   const [loading, setLoading] = useState(false);
@@ -126,7 +125,7 @@ export default function PrendaCategoriaCard({
         )}
         style={{ backgroundColor: color }}
       >
-        <Text className="text-4xl mr-4">{icon}</Text>
+        <View className="text-4xl mr-4"><IconComponent /></View>
         <TextInput
           value={name}
           editable={false}
@@ -149,7 +148,7 @@ export default function PrendaCategoriaCard({
           )}
           {!loading && !hayArticulos ? (
             <Text className="text-center text-lg text-gray-600 my-4">
-              No hay artículos en esta categoría.
+              No hay artículos en esta categoría
             </Text>
           ) : (
           <FlatList
