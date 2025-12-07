@@ -291,7 +291,7 @@ export default function LooksPage() {
                 onPress={() => setShowFavorites((s) => !s)}
                 className={clsx(
                   'py-2 px-3 rounded-full mr-2 mb-2 border',
-                  showFavorites ? 'bg-purple-500 border-purple-500' : 'bg-white border-gray-300'
+                  showFavorites ? 'bg-[#5639F8] border-[#5639F8]' : 'bg-white border-gray-300'
                 )}
               >
                 <Text className={clsx('text-sm', showFavorites ? 'text-white' : 'text-gray-700')}>
