@@ -26,13 +26,14 @@ export default function PrendaCategoriaCard({
   expanded: boolean;
   onPress: () => void;
 }) {
-  const [name, setName] = useState(initialName);
-  const [icon, setIcon] = useState(initialIcon);
-  const [color, setColor] = useState(initialColor || '#FFF');
+  const [name] = useState(initialName);
+  const [icon] = useState(initialIcon);
+  const [color] = useState(initialColor || '#FFF');
   const [articulos, setArticulos] = useState<Articulo[]>([]);
   const [loading, setLoading] = useState(false);
   const itemMargin = 8;
   const numColumns = 2;
+  const hayArticulos = articulos.length > 0;
 
   useEffect(() => {
     let mounted = true;
@@ -146,6 +147,11 @@ export default function PrendaCategoriaCard({
               style={{ marginBottom: 8 }}
             />
           )}
+          {!loading && !hayArticulos ? (
+            <Text className="text-center text-lg text-gray-600 my-4">
+              No hay artículos en esta categoría.
+            </Text>
+          ) : (
           <FlatList
             data={gridArticulos}
             numColumns={2}
@@ -216,6 +222,7 @@ export default function PrendaCategoriaCard({
             style={{ marginBottom: 8, marginHorizontal: -itemMargin / 2 }}
             ListFooterComponent={renderFooter}
           />
+          )}
         </View>
       </Collapsible>
     </View>

@@ -1,4 +1,4 @@
-import { AccesoriosIcon, CamisetasIcon, GorrasIcon, PantalonesIcon, SudaderasIcon, VestidosIcon } from '@/constants/icons';
+import { AccesoriosIcon, CamisetasIcon, ChaquetaIcon, GorrasIcon, PantalonesIcon, StarIcon, SudaderasIcon, VestidosIcon, ZapatosIcon } from '@/constants/icons';
 import { useEffect, useRef, useState } from 'react';
 import { FlatList, View } from 'react-native';
 import PrendaCategoriaCard from '../../../components/prenda/prendaCategoriaCard';
@@ -56,7 +56,7 @@ const categorias = [
     id: 7,
     nombre: 'Zapatos',
     color: '#a6d0f0',
-    icon: '👞',
+    icon: ZapatosIcon,
     cantidad: 8,
     tipo: 'ZAPATOS',
   },
@@ -64,7 +64,7 @@ const categorias = [
     id: 8,
     nombre: 'Chaquetas',
     color: '#f8e0ac',
-    icon: '👞',
+    icon: ChaquetaIcon,
     cantidad: 8,
     tipo: 'CHAQUETAS',
   },
@@ -72,7 +72,7 @@ const categorias = [
     id: 9,
     nombre: 'Todas',
     color: '#fff',
-    icon: '⭐',
+    icon: StarIcon,
     cantidad: 14,
     tipo: 'TODAS',
   },
@@ -87,6 +87,7 @@ export default function PrendasPage() {
       flatListRef.current?.scrollToIndex({ index: expandedIndex, viewPosition: 0.5, animated: true });
     }
   }, [expandedIndex]);
+
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F6F6F6', paddingTop: 8 }}>
@@ -119,7 +120,6 @@ export default function PrendasPage() {
           try {
             flatListRef.current?.scrollToOffset({ offset: idx * estimatedHeight, animated: true });
           } catch (e) {
-            // ignore
           }
         }}
       />
