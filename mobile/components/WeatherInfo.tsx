@@ -21,9 +21,8 @@ function weatherEmoji(code: number) {
 }
 
 export default function WeatherInfo({
-  // optional coords; default set to Madrid (40.4168, -3.7038)
-  latitude = 40.4168,
-  longitude = -3.7038,
+  latitude = 39.4699,
+  longitude = -0.3763,
 }: {
   latitude?: number;
   longitude?: number;
@@ -98,6 +97,6 @@ const styles = StyleSheet.create({
   },
   smallText: {
     color: '#222222',
-    fontSize: 12,
+    fontSize: 14,
   },
 });

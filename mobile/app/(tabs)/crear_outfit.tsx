@@ -4,6 +4,7 @@ import http from '@/lib/data/http';
 import { createOutfit as createOutfitService } from '@/lib/logic/services/outfit-service';
 import { SecureStore } from '@/lib/logic/services/secure-store-service';
 import { Ionicons } from '@expo/vector-icons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { Picker } from '@react-native-picker/picker';
 import { Stack } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -33,7 +34,9 @@ type Articulo = {
 export default function CrearOutfit() {
   const [articulos, setArticulos] = useState<Articulo[]>([]);
   const [slots, setSlots] = useState<Array<number | null>>([null, null, null]);
-  const [accesoriosSeleccionados, setAccesoriosSeleccionados] = useState<number[]>([]);
+  const [accesoriosSeleccionados, setAccesoriosSeleccionados] = useState<
+    number[]
+  >([]);
   const [accesoriosModalVisible, setAccesoriosModalVisible] = useState(false);
   const [mood, setMood] = useState('');
   const [nombre, setNombre] = useState<string>('');
@@ -267,18 +270,25 @@ export default function CrearOutfit() {
           >
             ¡Hola {userData.username}!
           </Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 85 }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 60,
+            }}
+          >
             <Text
               style={{
                 color: '#222222',
-                fontSize: 20,
+                fontSize: 23,
                 fontWeight: 'bold',
               }}
             >
               Tu outfit para hoy
             </Text>
             <View style={{ marginRight: 8, marginTop: -40 }}>
-              <WeatherInfo/>
+              <WeatherInfo />
             </View>
           </View>
 
@@ -372,7 +382,7 @@ export default function CrearOutfit() {
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'center',
-            gap: 100,
+            gap: 70,
           }}
         >
           <TouchableOpacity
@@ -384,34 +394,49 @@ export default function CrearOutfit() {
               borderColor: '#686868',
               borderWidth: 1,
               paddingVertical: 10,
-              paddingHorizontal: 14,
               borderRadius: 8,
               alignItems: 'center',
-              alignSelf: 'stretch',
             }}
           >
-            <Text style={{ color: '#686868', fontWeight: '600' }}>
-              Accesorios {accesoriosSeleccionados.length > 0 ? `(${accesoriosSeleccionados.length})` : '+'}
-            </Text>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={{ color: '#686868', fontWeight: '600' }}>
+                Accesorios{' '}
+                {accesoriosSeleccionados.length > 0
+                  ? `(${accesoriosSeleccionados.length})`
+                  : '+'}
+              </Text>
+            </View>
           </TouchableOpacity>
 
-          <TouchableOpacity
+            <TouchableOpacity
             onPress={() => setModalVisible(true)}
             style={{
               marginTop: 6,
-              width: '35%',
-              backgroundColor: '#5639F8',
-              paddingVertical: 10,
-              paddingHorizontal: 14,
-              borderRadius: 8,
+              width: '45%',
+              backgroundColor: '#E0DBFF',
+              paddingVertical: 6, 
+              borderRadius: 30,
               alignItems: 'center',
               alignSelf: 'stretch',
             }}
-          >
-            <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>
-              {loading ? 'Creando...' : 'Crear Outfit'}
+            >
+            <View className="flex-row items-center gap-2">
+              <View style={{
+              width: 35,
+              height: 35,
+              marginLeft: -20,
+              borderRadius: 17,
+              backgroundColor: '#5639F8',
+              alignItems: 'center',
+              justifyContent: 'center',
+              }}>
+              <AntDesign name="unlock" size={15} color="white" />
+              </View>
+            <Text style={{ color: '#5639F8', fontWeight: '600', fontSize: 14 }}>
+              {loading ? 'Creando...' : 'Guardar Outfit'}
             </Text>
-          </TouchableOpacity>
+            </View>
+            </TouchableOpacity>
         </View>
       </View>
 
@@ -438,11 +463,20 @@ export default function CrearOutfit() {
               padding: 16,
             }}
           >
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 12,
+              }}
+            >
               <Text style={{ fontSize: 18, fontWeight: '600' }}>
                 Seleccionar accesorios
               </Text>
-              <TouchableOpacity onPress={() => setAccesoriosModalVisible(false)}>
+              <TouchableOpacity
+                onPress={() => setAccesoriosModalVisible(false)}
+              >
                 <Ionicons name="close" size={24} color="#333" />
               </TouchableOpacity>
             </View>
@@ -467,11 +501,19 @@ export default function CrearOutfit() {
 
             <ScrollView style={{ maxHeight: 400 }}>
               {accesorios.length === 0 ? (
-                <Text style={{ color: '#6B7280', textAlign: 'center', marginVertical: 20 }}>
+                <Text
+                  style={{
+                    color: '#6B7280',
+                    textAlign: 'center',
+                    marginVertical: 20,
+                  }}
+                >
                   No hay accesorios disponibles
                 </Text>
               ) : (
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                <View
+                  style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}
+                >
                   {accesorios.map((acc) => {
                     const isSelected = accesoriosSeleccionados.includes(acc.id);
                     return (
@@ -504,7 +546,11 @@ export default function CrearOutfit() {
                               zIndex: 10,
                             }}
                           >
-                            <Ionicons name="checkmark" size={16} color="white" />
+                            <Ionicons
+                              name="checkmark"
+                              size={16}
+                              color="white"
+                            />
                           </View>
                         )}
                         {acc.imageUrl ? (
@@ -514,8 +560,18 @@ export default function CrearOutfit() {
                             resizeMode="contain"
                           />
                         ) : (
-                          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            <Ionicons name="bag-outline" size={40} color="#9CA3AF" />
+                          <View
+                            style={{
+                              flex: 1,
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <Ionicons
+                              name="bag-outline"
+                              size={40}
+                              color="#9CA3AF"
+                            />
                           </View>
                         )}
                         <Text
