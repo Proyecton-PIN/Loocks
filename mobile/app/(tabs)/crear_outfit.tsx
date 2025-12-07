@@ -15,8 +15,9 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
+import WeatherInfo from '../../components/WeatherInfo';
 import EmblaCarousel from './../../components/outfit/EnableCarousel';
 
 const OPTIONS = { loop: true } as const;
@@ -49,12 +50,12 @@ export default function CrearOutfit() {
 
   const flatlistRefs = useRef<Array<FlatList<Articulo> | null>>([]);
   const loadOutfits = useOutfit((s) => s.loadOutfits);
-  
+
   useEffect(() => {
     if (!profile) {
       void fetchProfile();
     }
-    fetchArticulos().then(_ => loadOutfits());
+    fetchArticulos().then((_) => loadOutfits());
   }, []);
 
   const userData = {
@@ -132,8 +133,7 @@ export default function CrearOutfit() {
             'Introduce el id de perfil a usar (userId):',
             (t: string) => (perfilId = t),
           );
-        } catch (e) {
-        }
+        } catch (e) {}
       }
 
       if (!perfilId) {
@@ -214,21 +214,24 @@ export default function CrearOutfit() {
   const ITEM_SPACING = 6;
 
   const TOP_RESERVED = 120;
-  const BOTTOM_RESERVED = 180; 
+  const BOTTOM_RESERVED = 180;
   const availableForSlots = Math.max(
     0,
     screenHeight - TOP_RESERVED - BOTTOM_RESERVED - 32,
-  ); 
+  );
   const cardHeight = Math.min(cardWidth, Math.floor(availableForSlots / 3));
   const [modalVisible, setModalVisible] = useState(false);
 
   // Filtrar prendas por zona para cada carrusel
-  const articulosTorso = articulos.filter((a) => a.zonasCubiertas?.includes('TORSO'));
-  const articulosPiernas = articulos.filter((a) => a.zonasCubiertas?.includes('PIERNAS'));
-  const articulosPies = articulos.filter((a) => a.zonasCubiertas?.includes('PIES'));
-
-
-
+  const articulosTorso = articulos.filter((a) =>
+    a.zonasCubiertas?.includes('TORSO'),
+  );
+  const articulosPiernas = articulos.filter((a) =>
+    a.zonasCubiertas?.includes('PIERNAS'),
+  );
+  const articulosPies = articulos.filter((a) =>
+    a.zonasCubiertas?.includes('PIES'),
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: '#FFFFFF', padding: 16 }}>
@@ -236,12 +239,29 @@ export default function CrearOutfit() {
 
       <View style={{ flex: 1, justifyContent: 'space-between' }}>
         <View>
-          <Text style={{ color: '#222222', fontSize: 16, marginTop: 10, marginBottom: 6 }}>
+          <Text
+            style={{
+              color: '#222222',
+              fontSize: 16,
+              marginTop: 10,
+              marginBottom: 6,
+            }}
+          >
             ¡Hola {userData.username}!
           </Text>
-          <Text style={{ color: '#222222', fontSize: 20, fontWeight: 'bold', marginBottom: 55 }}>
-            Tu outfit para hoy
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text
+              style={{
+                color: '#222222',
+                fontSize: 20,
+                fontWeight: 'bold',
+              }}
+            >
+              Tu outfit para hoy
+            </Text>
+            <WeatherInfo />
+          </View>
+          <View style={{ height: 22 }} />
 
           {/* Nombre + opciones moved to modal */}
 
@@ -255,14 +275,14 @@ export default function CrearOutfit() {
                         ? articulosTorso
                         : articulos
                       : slotIndex === 1
-                      ? articulosPiernas.length > 0
-                        ? articulosPiernas
-                        : articulos
-                      : articulosPies.length > 0
-                      ? articulosPies
-                      : articulos
+                        ? articulosPiernas.length > 0
+                          ? articulosPiernas
+                          : articulos
+                        : articulosPies.length > 0
+                          ? articulosPies
+                          : articulos
                   }
-                  options={{ loop: true, spacing: 7, itemWidth: cardWidth }}
+                  options={{ loop: true, spacing: 8, itemWidth: cardWidth }}
                   initialIndex={0}
                   onSelect={(logicalIndex, item) => {
                     if (!item) return;
@@ -275,19 +295,46 @@ export default function CrearOutfit() {
                   renderSlide={(item) => (
                     <TouchableOpacity
                       activeOpacity={0.95}
-                      onPress={() => setSlots((prev) => {
-                        const copy = [...prev];
-                        copy[slotIndex] = item.id;
-                        return copy;
-                      })}
-                      style={{ width: '100%', height: cardHeight, alignItems: 'center', justifyContent: 'center' }}
+                      onPress={() =>
+                        setSlots((prev) => {
+                          const copy = [...prev];
+                          copy[slotIndex] = item.id;
+                          return copy;
+                        })
+                      }
+                      style={{
+                        width: '100%',
+                        height: cardHeight,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
                     >
                       {item.imageUrl ? (
-                        <Image source={{ uri: item.imageUrl }} style={{ width: '100%', height: '100%', backgroundColor: '#FFFFFF' }} resizeMode="contain" />
+                        <Image
+                          source={{ uri: item.imageUrl }}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: '#FFFFFF',
+                          }}
+                          resizeMode="contain"
+                        />
                       ) : (
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                          <Ionicons name="shirt-outline" size={48} color="#555" />
-                          <Text style={{ color: '#222222', marginTop: 6 }}>{item.nombre ?? `#${item.id}`}</Text>
+                        <View
+                          style={{
+                            flex: 1,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Ionicons
+                            name="shirt-outline"
+                            size={48}
+                            color="#555"
+                          />
+                          <Text style={{ color: '#222222', marginTop: 6 }}>
+                            {item.nombre ?? `#${item.id}`}
+                          </Text>
                         </View>
                       )}
                     </TouchableOpacity>
@@ -300,26 +347,32 @@ export default function CrearOutfit() {
           {/* Options moved into modal (Nombre, Estación, Estilo, Favorito) */}
         </View>
 
-        <View style={{ paddingTop: 6, display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 100 }}>
+        <View
+          style={{
+            paddingTop: 6,
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            gap: 100,
+          }}
+        >
           <TouchableOpacity
-  onPress={() => setModalVisible(true)}
-  style={{
-    marginTop: 6,
-    width: '35%',
-    backgroundColor: 'white',
-    borderColor: '#686868',
-    borderWidth: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    alignSelf: 'stretch',
-  }}
->
-  <Text className="text-[#686868]">
-    Accesorios +
-  </Text>
-</TouchableOpacity>
+            onPress={() => setModalVisible(true)}
+            style={{
+              marginTop: 6,
+              width: '35%',
+              backgroundColor: 'white',
+              borderColor: '#686868',
+              borderWidth: 1,
+              paddingVertical: 10,
+              paddingHorizontal: 14,
+              borderRadius: 8,
+              alignItems: 'center',
+              alignSelf: 'stretch',
+            }}
+          >
+            <Text className="text-[#686868]">Accesorios +</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
@@ -343,19 +396,32 @@ export default function CrearOutfit() {
 
       {/* Modal for final outfit details */}
       {modalVisible && (
-        <View style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.4)',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-          <View style={{ width: '90%', backgroundColor: '#fff', borderRadius: 12, padding: 16 }}>
-            <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 8 }}>Detalles del outfit</Text>
-            <Text style={{ color: '#6B7280', marginBottom: 6 }}>Nombre del outfit</Text>
+        <View
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <View
+            style={{
+              width: '90%',
+              backgroundColor: '#fff',
+              borderRadius: 12,
+              padding: 16,
+            }}
+          >
+            <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 8 }}>
+              Detalles del outfit
+            </Text>
+            <Text style={{ color: '#6B7280', marginBottom: 6 }}>
+              Nombre del outfit
+            </Text>
             <TextInput
               value={nombre}
               onChangeText={setNombre}
@@ -371,39 +437,101 @@ export default function CrearOutfit() {
               }}
             />
 
-            <Text style={{ color: '#222222', marginBottom: 6, fontSize: 13 }}>Estación</Text>
-            <View style={{ backgroundColor: '#DFDFDF', borderRadius: 8, marginBottom: 8 }}>
-              <Picker selectedValue={estacion} onValueChange={(v) => setEstacion(String(v))}>
+            <Text style={{ color: '#222222', marginBottom: 6, fontSize: 13 }}>
+              Estación
+            </Text>
+            <View
+              style={{
+                backgroundColor: '#DFDFDF',
+                borderRadius: 8,
+                marginBottom: 8,
+              }}
+            >
+              <Picker
+                selectedValue={estacion}
+                onValueChange={(v) => setEstacion(String(v))}
+              >
                 {estacionOptions.map((e) => (
                   <Picker.Item key={e} label={e} value={e} />
                 ))}
               </Picker>
             </View>
 
-            <Text style={{ color: '#222222', marginBottom: 6, fontSize: 13 }}>Estilo</Text>
-            <View style={{ backgroundColor: '#DFDFDF', borderRadius: 8, marginBottom: 8 }}>
-              <Picker selectedValue={estilo} onValueChange={(v) => setEstilo(String(v))}>
+            <Text style={{ color: '#222222', marginBottom: 6, fontSize: 13 }}>
+              Estilo
+            </Text>
+            <View
+              style={{
+                backgroundColor: '#DFDFDF',
+                borderRadius: 8,
+                marginBottom: 8,
+              }}
+            >
+              <Picker
+                selectedValue={estilo}
+                onValueChange={(v) => setEstilo(String(v))}
+              >
                 {estiloOptions.map((k) => (
                   <Picker.Item key={k} label={k} value={k} />
                 ))}
               </Picker>
             </View>
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-              <TouchableOpacity onPress={() => setIsFavorito((s) => !s)} style={{ marginRight: 8 }}>
-                <View style={{ width: 20, height: 20, borderRadius: 4, backgroundColor: isFavorito ? '#ffcc00' : '#DFDFDF', alignItems: 'center', justifyContent: 'center' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 12,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => setIsFavorito((s) => !s)}
+                style={{ marginRight: 8 }}
+              >
+                <View
+                  style={{
+                    width: 20,
+                    height: 20,
+                    borderRadius: 4,
+                    backgroundColor: isFavorito ? '#ffcc00' : '#DFDFDF',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
                   <Text style={{ fontSize: 12 }}>{isFavorito ? '★' : ''}</Text>
                 </View>
               </TouchableOpacity>
               <Text style={{ color: '#222222' }}>Marcar como favorito</Text>
             </View>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8 }}>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={{ paddingVertical: 10, paddingHorizontal: 14 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                gap: 8,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={{ paddingVertical: 10, paddingHorizontal: 14 }}
+              >
                 <Text style={{ color: '#333' }}>Cancelar</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={async () => { setModalVisible(false); await guardar(); }} style={{ backgroundColor: '#5639F8', paddingVertical: 10, paddingHorizontal: 14, borderRadius: 8 }}>
-                <Text style={{ color: 'white', fontWeight: '600' }}>{loading ? 'Creando...' : 'Crear'}</Text>
+              <TouchableOpacity
+                onPress={async () => {
+                  setModalVisible(false);
+                  await guardar();
+                }}
+                style={{
+                  backgroundColor: '#5639F8',
+                  paddingVertical: 10,
+                  paddingHorizontal: 14,
+                  borderRadius: 8,
+                }}
+              >
+                <Text style={{ color: 'white', fontWeight: '600' }}>
+                  {loading ? 'Creando...' : 'Crear'}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
