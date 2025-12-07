@@ -249,7 +249,7 @@ export default function CrearOutfit() {
           >
             ¡Hola {userData.username}!
           </Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 35 }}>
             <Text
               style={{
                 color: '#222222',
@@ -259,9 +259,10 @@ export default function CrearOutfit() {
             >
               Tu outfit para hoy
             </Text>
-            <WeatherInfo />
+            <View style={{ marginRight: 8, marginTop: -40 }}>
+              <WeatherInfo/>
+            </View>
           </View>
-          <View style={{ height: 22 }} />
 
           {/* Nombre + opciones moved to modal */}
 

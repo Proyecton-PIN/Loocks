@@ -84,15 +84,17 @@ export default function WeatherInfo({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.smallText}>{weatherEmoji(weather.weathercode)} {Math.round(weather.temperature)}°</Text>
-      <Text style={styles.smallText}>{Math.round(weather.windspeed)} km/h</Text>
+      <Text style={styles.smallText}>
+        {weatherEmoji(weather.weathercode)} {Math.round(weather.temperature)}° · {Math.round(weather.windspeed)} km/h
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   smallText: {
     color: '#222222',
