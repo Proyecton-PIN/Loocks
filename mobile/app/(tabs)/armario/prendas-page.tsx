@@ -90,7 +90,7 @@ export default function PrendasPage() {
 
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F6F6F6', paddingTop: 8 }}>
+    <View style={{ flex: 1, backgroundColor: '#F6F6F6'}}>
       <FlatList
         ref={flatListRef}
         data={categorias}
@@ -107,16 +107,14 @@ export default function PrendasPage() {
           />
         )}
         ItemSeparatorComponent={() => <View style={{ height: 0 }} />}
-        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 6 }}
         extraData={expandedIndex}
         getItemLayout={(_data, index) => {
-          const estimatedHeight = 180; // must match the visual card height approximation
+          const estimatedHeight = 180; 
           return { length: estimatedHeight, offset: estimatedHeight * index, index };
         }}
         onScrollToIndexFailed={(info) => {
-          // If scrollToIndex fails (item not measured yet), fall back to a sensible offset
           const idx = info.index ?? 0;
-          const estimatedHeight = 180; // estimate per-category card height
+          const estimatedHeight = 180;
           try {
             flatListRef.current?.scrollToOffset({ offset: idx * estimatedHeight, animated: true });
           } catch (e) {

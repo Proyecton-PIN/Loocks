@@ -14,8 +14,6 @@ export default function PrendaCard({ data, onPress }: Props) {
       className="w-[48%] h-44 rounded-xl mb-3 overflow-hidden items-center justify-center"
     >
       {data.imageUrl ? (
-        // For PNGs with transparency, show the image centered with contain so the
-        // transparent areas remain visible and the picture doesn't get stretched.
         <Image
           source={{ uri: data.imageUrl }}
           className="w-full h-full"
@@ -23,7 +21,7 @@ export default function PrendaCard({ data, onPress }: Props) {
           resizeMode="contain"
         />
       ) : (
-        <View className="w-full h-full bg-neutral-800 items-center justify-center">
+        <View className="borderw-full h-full bg-neutral-800 items-center justify-center">
           <Ionicons name="shirt-outline" size={40} color="#555" />
         </View>
       )}

@@ -1,7 +1,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { router } from 'expo-router';
 import React, { useEffect } from 'react';
-import Inicio from './inicio';
+import PrendasPage from './(tabs)/armario/prendas-page';
 
 export default function RootIndex() {
   const checkAuth = useAuth((s) => s.checkAuth);
@@ -12,5 +12,5 @@ export default function RootIndex() {
     });
   }, []);
 
-  return <Inicio/>;
+  return <PrendasPage/>;
 }

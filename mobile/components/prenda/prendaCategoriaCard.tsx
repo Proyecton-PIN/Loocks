@@ -94,7 +94,7 @@ export default function PrendaCategoriaCard({
               overflow: 'hidden',
               padding: 8,
               aspectRatio: 1 / 1.5,
-              margin: itemMargin / 2, // Mantenemos el margen del grid
+              margin: itemMargin / 2, 
             }}
           >
             {imgUri ? (
@@ -120,7 +120,7 @@ export default function PrendaCategoriaCard({
       <Pressable
         onPress={onPress}
         className={clsx(
-          'rounded-t-2xl px-6 pt-5 pb-[30px] mb-[-30px] shadow-[0_-10px_20px_rgba(0,0,0,1.7)] bg-[#FFFFFF] flex-row items-center',
+          'rounded-t-3xl px-6 pt-5 pb-[30px] mb-[-19px] shadow-[0_-10px_20px_rgba(0,0,0,1.7)] bg-[#FFFFFF] flex-row items-center',
           expanded && 'border-blue-400',
         )}
         style={{ backgroundColor: color }}
@@ -131,7 +131,7 @@ export default function PrendaCategoriaCard({
           editable={false}
           className="flex-1 text-lg text-[26px] text-gray-900"
         />
-        <Text className="ml-4 text-gray-400 text-base">{cantidad} prendas</Text>
+        <Text className="ml-4 text-[#222222] text-base">{cantidad} prendas</Text>
       </Pressable>
       <Collapsible collapsed={!expanded} duration={300}>
         <View
