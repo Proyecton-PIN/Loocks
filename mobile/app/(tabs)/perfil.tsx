@@ -9,7 +9,7 @@ import {
 import { Colors } from '@/constants/theme';
 import { useAuth } from '@/hooks/useAuth';
 import { SecureStore } from '@/lib/logic/services/secure-store-service';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
@@ -37,6 +37,12 @@ export default function ProfileSettingsScreen() {
       void fetchProfile();
     }
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchProfile();
+    }, [fetchProfile])
+  );
 
   const userData = {
     profileImage: profile?.fotoPerfilUrl ? { uri: profile.fotoPerfilUrl } : require('@/assets/images/imagen.png'),
