@@ -2,6 +2,9 @@ package pin.loocks.domain.models;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,14 +30,15 @@ public class OutfitLog {
   private Long id;
 
   @Column(nullable = false)
-  @Temporal(TemporalType.DATE)
+  @JsonFormat(pattern = "dd-MM-YYY")
   private LocalDate fechaInicio;
   
-  @Temporal(TemporalType.DATE)
+  @JsonFormat(pattern = "dd-MM-YYY")
   private LocalDate fechaFin;
 
   @ManyToOne
   @JoinColumn(name = "planificacion_id")
+  @JsonIgnore 
   private Planificacion planificacion;
 
   @ManyToOne

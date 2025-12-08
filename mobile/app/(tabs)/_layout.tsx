@@ -18,7 +18,7 @@ type NavBarItem = {
 
 const tabConfig: NavBarItem[] = [
   { name: 'crear_outfit', label: 'Home', icon: HomeIcon },
-  { name: 'calendario', label: 'Calendario', icon: CalendarioIcon },
+  { name: 'planificador', label: 'Planificador', icon: CalendarioIcon },
   { name: 'armario', label: 'Armario', icon: ArmarioIcon },
   { name: 'perfil', label: 'Perfil', icon: PersonaIcon },
 ];
