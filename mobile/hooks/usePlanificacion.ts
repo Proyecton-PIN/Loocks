@@ -1,36 +1,65 @@
-import http from '@/lib/data/http'; 
+import { create } from 'zustand';
+import { 
+    getPlansRange, 
+    createPlan, 
+    addOutfitToPlan,
+    getAllPlans
+} from '@/lib/logic/services/planificacion-service'
 import { Planificacion } from '@/lib/domain/models/planificacion';
 
-export async function getPlansRange(start: string, end: string): Promise<Planificacion[]> {
-  try {
-    return await http.get<Planificacion[]>(`planning/range?start=${start}&end=${end}`);
-  } catch (e) {
-    console.error("Error fetching plans:", e);
-    return [];
-  }
+interface State {
+  plans: Planificacion[];      
+  allPlans: Planificacion[];  
+  isLoading: boolean;
+
+  fetchMonthPlans: (year: number, month: number) => Promise<void>;
+  fetchAllPlans: () => Promise<void>;
+  createNewPlan: (plan: Partial<Planificacion>) => Promise<boolean>;
 }
 
-export async function createPlan(plan: Partial<Planificacion>): Promise<Planificacion | null> {
-  try {
-    // CORRECCIÓN: Tu http.ts necesita que los datos vayan en 'body' como string
-    return await http.post<Planificacion>('planning/create', {
-        body: JSON.stringify(plan)
-    });
-  } catch (e) {
-    console.error("Error creating plan:", e);
-    return null;
-  }
-}
+export const usePlanning = create<State>((set, get) => ({
+  plans: [],
+  allPlans: [],
+  isLoading: false,
 
-export async function addOutfitToPlan(planId: number, outfitId: number, fecha: string): Promise<boolean> {
-  try {
-    // CORRECCIÓN: Igual aquí, envolvemos los datos
-    await http.post('planning/add-outfit', {
-        body: JSON.stringify({ planId, outfitId, fecha })
+  fetchMonthPlans: async (year: number, month: number) => {
+    set({ isLoading: true });
+    
+    const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+    const lastDay = new Date(year, month, 0).getDate();
+    const endDate = `${year}-${String(month).padStart(2, '0')}-${lastDay}`;
+
+    const data = await getPlansRange(startDate, endDate);
+    
+    set({ plans: data, isLoading: false });
+  },
+
+  fetchAllPlans: async () => {
+    set({ isLoading: true });
+  
+    const data = await getAllPlans();
+
+    const sortedData = data.sort((a, b) => {
+        return new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime();
     });
-    return true;
-  } catch (e) {
-    console.error("Error adding outfit to plan:", e);
-    return false;
+
+    set({ allPlans: sortedData, isLoading: false }); 
+  },
+
+  createNewPlan: async (plan) => {
+     set({ isLoading: true });
+     
+     const result = await createPlan(plan); 
+     
+     if (result) {
+         set(state => ({ 
+             plans: [...state.plans, result], 
+             allPlans: [result, ...state.allPlans], 
+         }));
+         return true;
+     }
+     
+     set({ isLoading: false });
+     return false;
   }
-}
+}));

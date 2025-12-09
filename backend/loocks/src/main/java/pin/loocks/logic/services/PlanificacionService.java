@@ -32,7 +32,7 @@ public class PlanificacionService {
     private OutfitRepository outfitRepository;
 
     @Autowired
-    private OutfitSuggestionService outfitSuggestionService; // <--- INYECTAMOS EL GENERADOR
+    private OutfitSuggestionService outfitSuggestionService; 
 
     @Transactional
     public Planificacion createPlan(Planificacion plan, String userId) {
@@ -50,8 +50,8 @@ public class PlanificacionService {
     }
 
     private void autoFillOutfits(Planificacion plan, String userId) {
-        LocalDate start = plan.getFechaInicio().toLocalDate();
-        LocalDate end = plan.getFechaFin().toLocalDate();
+        LocalDate start = plan.getFechaInicio();
+        LocalDate end = plan.getFechaFin();
         
         long daysBetween = ChronoUnit.DAYS.between(start, end) + 1; 
         
@@ -90,7 +90,7 @@ public class PlanificacionService {
         planificacionRepository.save(plan);
     }
 
-    public List<Planificacion> getPlansForMonth(String userId, Date start, Date end) {
+    public List<Planificacion> getPlansForMonth(String userId, LocalDate start, LocalDate end) {
         return planificacionRepository.findByUserIdAndRange(userId, start, end);
     }
 
@@ -98,14 +98,14 @@ public class PlanificacionService {
         return planificacionRepository.findByPerfilId(userId);
     }
 
-    public void addOutfitToPlan(Long planId, Long outfitId, Date fechaUso, String userId) {
+    public void addOutfitToPlan(Long planId, Long outfitId, LocalDate fechaUso, String userId) {
         Planificacion plan = planificacionRepository.findById(planId)
             .orElseThrow(() -> new RuntimeException("Plan no encontrado"));
 
         if (!plan.getPerfil().getId().equals(userId)) throw new RuntimeException("No tienes permiso");
 
         plan.getOutfitLogs().removeIf(log -> 
-            log.getFechaInicio().equals(fechaUso.toLocalDate()));
+            log.getFechaInicio().equals(fechaUso));
 
         Outfit outfit = outfitRepository.findById(outfitId)
             .orElseThrow(() -> new RuntimeException("Outfit no encontrado"));
@@ -113,7 +113,7 @@ public class PlanificacionService {
         OutfitLog log = new OutfitLog();
         log.setPlanificacion(plan);
         log.setOutfit(outfit);
-        log.setFechaInicio(fechaUso.toLocalDate());
+        log.setFechaInicio(fechaUso);
 
         plan.getOutfitLogs().add(log);
         planificacionRepository.save(plan);

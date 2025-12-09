@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import java.time.LocalDate;
 
 import pin.loocks.domain.models.Planificacion;
 
@@ -18,6 +19,6 @@ public interface PlanificacionRepository extends JpaRepository<Planificacion, Lo
            "((p.fechaInicio BETWEEN :start AND :end) OR " +
            "(p.fechaFin BETWEEN :start AND :end))")
     List<Planificacion> findByUserIdAndRange(@Param("userId") String userId, 
-                                             @Param("start") Date start, 
-                                             @Param("end") Date end);
+                                             @Param("start") LocalDate start, 
+                                             @Param("end") LocalDate end);
 }
