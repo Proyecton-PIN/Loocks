@@ -1,7 +1,6 @@
 package pin.loocks.domain.models;
 
-import java.sql.Date;
-import java.time.LocalDate;
+import java.time.LocalDate; // Solo importamos LocalDate
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -16,8 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.Getter; 
 import lombok.Setter;
 
@@ -30,13 +27,11 @@ public class Planificacion {
   private Long id;
  
   @Column(nullable = false)
-  @Temporal(TemporalType.DATE)
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Europe/Madrid")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
   private LocalDate fechaInicio;
  
   @Column(nullable = false)
-  @Temporal(TemporalType.DATE)
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Europe/Madrid")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
   private LocalDate fechaFin;
 
   @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
