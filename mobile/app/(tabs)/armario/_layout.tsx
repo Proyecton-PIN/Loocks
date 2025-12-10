@@ -14,7 +14,7 @@ type NavBarItem = {
 };
 
 const tabConfig: NavBarItem[] = [
-  { name: 'prendas-page', label: 'PRENDAS' },
+  { name: 'prendas-page', label: 'ARTICULO' },
   { name: 'outfits-page', label: 'OUTFITS' },
   { name: 'looks-page', label: 'LOOCKBOOK' },
 ];
