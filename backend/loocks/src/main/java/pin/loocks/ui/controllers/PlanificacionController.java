@@ -1,6 +1,6 @@
 package pin.loocks.ui.controllers;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import pin.loocks.domain.models.CustomUserDetails;
 import pin.loocks.domain.models.Planificacion;
 import pin.loocks.logic.services.PlanificacionService;
-
-import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/planning")
