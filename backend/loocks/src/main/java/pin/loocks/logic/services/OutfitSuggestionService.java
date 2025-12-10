@@ -33,7 +33,7 @@ public class OutfitSuggestionService {
     List<Outfit> outfits = new ArrayList<>(List.of());
 
     for (Articulo torso : torsos) {
-      if (torso.getZonasCubiertas().size() > 1) {
+      if (torso.getZonasCubiertas().containsAll(List.of(Zona.TORSO, Zona.PIERNAS))) {
         for (Articulo pie : pies) {
           processOutfit(outfits, torso, null, pie);
         }
@@ -41,7 +41,7 @@ public class OutfitSuggestionService {
       }
 
       for (Articulo pierna : piernas) {
-        if (pierna.getZonasCubiertas().size() > 1)
+        if (pierna.getZonasCubiertas().containsAll(List.of(Zona.TORSO, Zona.PIERNAS)))
           continue;
 
         for (Articulo pie : pies) {
@@ -79,11 +79,40 @@ public class OutfitSuggestionService {
     }
 
     Collections.shuffle(finalResults);
+    Collections.shuffle(finalResults);
+
+    int limit = request.getLimit() > finalResults.size()
+        ? finalResults.size()
+        : request.getLimit();
+
+    if (!request.getCanRepeatTorso())
+      return removeRepeated(finalResults, limit, torsos.size());
+
     return finalResults.subList(
-        0,
-        request.getLimit() > finalResults.size()
-            ? finalResults.size()
-            : request.getLimit());
+        0, limit);
+  }
+
+  private List<Outfit> removeRepeated(List<Outfit> outfits, int limit, int cantTorsos) {
+    List<Long> viewedTorsos = new ArrayList<>();
+    List<Outfit> results = new ArrayList<>();
+
+    for (Outfit o : outfits) {
+      Long torsoId = o.getArticulos().get(0).getId();
+      if (viewedTorsos.contains(torsoId)
+          && !o.getArticulos().getLast().getPuedePonerseEncimaDeOtraPrenda())
+        continue;
+
+      results.add(o);
+      viewedTorsos.add(torsoId);
+
+      if (results.size() >= limit)
+        break;
+
+      if (viewedTorsos.size() >= cantTorsos)
+        viewedTorsos.clear();
+    }
+
+    return results;
   }
 
   private void processOutfit(List<Outfit> outfits, Articulo torso, Articulo pierna, Articulo pie) {
@@ -91,7 +120,7 @@ public class OutfitSuggestionService {
     double estiloScore = getEstiloScore(torso, pierna, pie);
     double score = colorScore * 0.6 + estiloScore * 0.4;
 
-    if (score < 0.6)
+    if (score < 0.4)
       return;
 
     outfits.add(new Outfit(torso, pierna, pie));

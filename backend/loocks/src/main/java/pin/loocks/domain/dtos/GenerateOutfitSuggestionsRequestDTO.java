@@ -8,13 +8,14 @@ import lombok.Setter;
 import pin.loocks.domain.enums.Estacion;
 import pin.loocks.domain.enums.Estilo;
 import pin.loocks.domain.models.Articulo;
-import pin.loocks.domain.models.Outfit;
 
 @Data
 @Getter
 @Setter
 public class GenerateOutfitSuggestionsRequestDTO {
-  private List<Outfit> outfitsBaneados;
+  // private List<Outfit> outfitsBaneados;
+  private Boolean canRepeatTorso = false;
+  private List<Long> articulosBaneados;
   private Double temperatura;
   private Estilo estilo;
   private Estacion estacion;
