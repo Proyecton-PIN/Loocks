@@ -275,7 +275,7 @@ export default function CrearOutfit() {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginBottom: 60,
+              marginBottom: 40,
             }}
           >
             <Text
