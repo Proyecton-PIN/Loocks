@@ -18,7 +18,7 @@ export async function login(
     http.init(resp.token);
     SecureStore.save('userId', resp.userId);
 
-    router.replace('/(tabs)/principal');
+    router.replace('/(tabs)/crear_outfit');
 
   } catch (e) {
     if (e instanceof NetworkError) {
