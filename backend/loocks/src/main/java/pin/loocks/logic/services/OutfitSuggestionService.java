@@ -50,10 +50,24 @@ public class OutfitSuggestionService {
       }
     }
 
+    Collections.shuffle(outfits);
+    Collections.shuffle(outfits);
+
+    int limit = request.getLimit() > outfits.size()
+        ? outfits.size()
+        : request.getLimit();
+
+    if (!request.getCanRepeatTorso())
+      return addAbrigos(request, userId, removeRepeated(outfits, limit, torsos.size()));
+
+    return addAbrigos(request, userId, outfits.subList(0, limit));
+  }
+
+  private List<Outfit> addAbrigos(GenerateOutfitSuggestionsRequestDTO request, String userId, List<Outfit> outfits) {
     List<Articulo> abrigos = getAbrigos(userId);
     double nivelDeAbrigo = getNivelOfAbrigo(request.getTemperatura(), request.getEstacion());
 
-    List<Outfit> finalResults = new ArrayList<>(List.of());
+    List<Outfit> results = new ArrayList<>(List.of());
     for (Outfit o : outfits) {
       if (o.getNivelDeAbrigo(null) < nivelDeAbrigo) {
         Articulo abrigo = null;
@@ -75,21 +89,10 @@ public class OutfitSuggestionService {
 
         o.addArticulo(abrigo);
       }
-      finalResults.add(o);
+      results.add(o);
     }
 
-    Collections.shuffle(finalResults);
-    Collections.shuffle(finalResults);
-
-    int limit = request.getLimit() > finalResults.size()
-        ? finalResults.size()
-        : request.getLimit();
-
-    if (!request.getCanRepeatTorso())
-      return removeRepeated(finalResults, limit, torsos.size());
-
-    return finalResults.subList(
-        0, limit);
+    return results;
   }
 
   private List<Outfit> removeRepeated(List<Outfit> outfits, int limit, int cantTorsos) {
