@@ -1,4 +1,4 @@
-import { AccesoriosIcon, CamisetasIcon, GorrasIcon, PantalonesIcon, SudaderasIcon, VestidosIcon } from '@/constants/icons';
+import { AccesoriosIcon, CamisetasIcon, ChaquetaIcon, GorrasIcon, PantalonesIcon, StarIcon, SudaderasIcon, VestidosIcon, ZapatosIcon } from '@/constants/icons';
 import { useEffect, useRef, useState } from 'react';
 import { FlatList, View } from 'react-native';
 import PrendaCategoriaCard from '../../../components/prenda/prendaCategoriaCard';
@@ -56,7 +56,7 @@ const categorias = [
     id: 7,
     nombre: 'Zapatos',
     color: '#a6d0f0',
-    icon: '👞',
+    icon: ZapatosIcon,
     cantidad: 8,
     tipo: 'ZAPATOS',
   },
@@ -64,7 +64,7 @@ const categorias = [
     id: 8,
     nombre: 'Chaquetas',
     color: '#f8e0ac',
-    icon: '👞',
+    icon: ChaquetaIcon,
     cantidad: 8,
     tipo: 'CHAQUETAS',
   },
@@ -72,7 +72,7 @@ const categorias = [
     id: 9,
     nombre: 'Todas',
     color: '#fff',
-    icon: '⭐',
+    icon: StarIcon,
     cantidad: 14,
     tipo: 'TODAS',
   },
@@ -88,8 +88,9 @@ export default function PrendasPage() {
     }
   }, [expandedIndex]);
 
+
   return (
-    <View style={{ flex: 1, backgroundColor: '#F6F6F6', paddingTop: 8 }}>
+    <View style={{ flex: 1, backgroundColor: '#F6F6F6'}}>
       <FlatList
         ref={flatListRef}
         data={categorias}
@@ -106,20 +107,17 @@ export default function PrendasPage() {
           />
         )}
         ItemSeparatorComponent={() => <View style={{ height: 0 }} />}
-        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 6 }}
         extraData={expandedIndex}
         getItemLayout={(_data, index) => {
-          const estimatedHeight = 180; // must match the visual card height approximation
+          const estimatedHeight = 180; 
           return { length: estimatedHeight, offset: estimatedHeight * index, index };
         }}
         onScrollToIndexFailed={(info) => {
-          // If scrollToIndex fails (item not measured yet), fall back to a sensible offset
           const idx = info.index ?? 0;
-          const estimatedHeight = 180; // estimate per-category card height
+          const estimatedHeight = 180;
           try {
             flatListRef.current?.scrollToOffset({ offset: idx * estimatedHeight, animated: true });
           } catch (e) {
-            // ignore
           }
         }}
       />

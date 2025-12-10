@@ -80,4 +80,23 @@ public class Outfit {
     this.estilo = dto.getEstilo();
     this.perfil = perfil;
   }
+
+  public void addArticulo(Articulo a) {
+    this.articulos.add(a);
+  }
+
+  public double getNivelDeAbrigo(Articulo ar) {
+    if (this.articulos.size() == 0)
+      return 0;
+
+    double result = 0;
+    for (Articulo a : this.articulos) {
+      result += a.getNivelDeAbrigo();
+    }
+
+    if (ar != null)
+      result += ar.getNivelDeAbrigo();
+
+    return result / this.articulos.size() + (ar != null ? 1 : 0);
+  }
 }

@@ -4,12 +4,18 @@ import SuggestedOutfitsRow from '@/components/outfit/suggested-outfits-row';
 import { useOutfit } from '@/hooks/useOutfits';
 import clsx from 'clsx';
 import { router } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
 export default function OutfitsPage() {
   const logs = useOutfit((s) => s.logs);
   const loadOutfits = useOutfit((s) => s.loadOutfits);
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     loadOutfits();
+  //   }, [loadOutfits])
+  // );
 
   // Filter state
   const [selectedEstacion, setSelectedEstacion] = useState<string | null>(null);
@@ -38,10 +44,6 @@ export default function OutfitsPage() {
       arr.sort((a, b) => b.fechaInicio.getTime() - a.fechaInicio.getTime());
     return arr;
   }, [logs, selectedEstacion, selectedEstilo, sortNewest]);
-
-  useEffect(() => {
-    loadOutfits();
-  }, []);
 
   return (
     <View className="flex-1">
@@ -131,8 +133,8 @@ export default function OutfitsPage() {
               <Pressable
                 onPress={() => setSortNewest((s) => !s)}
                 style={{
-                  backgroundColor: sortNewest ? '#7C3AED' : '#FFFFFF',
-                  paddingVertical: 6,
+                  backgroundColor: sortNewest ? '#5639F8' : '#FFFFFF',
+                  paddingVertical: 7,
                   paddingHorizontal: 12,
                   borderRadius: 20,
                   marginRight: 8,
@@ -207,6 +209,16 @@ export default function OutfitsPage() {
         )}
       />
       <ProbadorOutfitModal />
+
+      <Pressable
+        className="absolute bottom-5 left-5 w-14 h-14 rounded-full justify-center items-center shadow-lg shadow-indigo-300"
+        style={{ backgroundColor: '#5639F8' }}
+        onPress={() => {
+          // Navegamos a la pantalla del generador
+          router.push('/generador-outfit');
+        }}
+      ></Pressable>
+      {/* ------------------------------------------- */}
     </View>
   );
 }

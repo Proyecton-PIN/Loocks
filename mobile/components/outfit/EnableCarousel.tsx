@@ -19,8 +19,8 @@ type PropType = {
 const EmblaCarousel: React.FC<PropType> = ({ slides, options, renderSlide, onSelect, initialIndex = 0 }) => {
   const screenWidth = Dimensions.get('window').width
   const spacing = options?.spacing ?? 8
-  const itemWidth = options?.itemWidth ?? Math.min(screenWidth - 80, 260)
-  const loop = options?.loop ?? false
+  const itemWidth = Math.round((options?.itemWidth ?? Math.min(screenWidth - 80, 260)))
+  const loop = options?.loop ?? true
 
   const looped = useMemo(() => {
     if (!loop || slides.length <= 1) return slides
@@ -36,11 +36,11 @@ const EmblaCarousel: React.FC<PropType> = ({ slides, options, renderSlide, onSel
     const start = loop && slides.length > 1 ? initialIndex + 1 : initialIndex
     const itemSize = itemWidth + spacing
     setTimeout(() => {
-      scrollRef.current?.scrollTo({ x: itemSize * start, animated: false })
-    }, 30)
+      scrollRef.current?.scrollTo({ x: itemSize * start, animated: true })
+    }, 20)
   }, [initialIndex, itemWidth, spacing, loop, slides.length])
 
-  const containerPadding = (screenWidth - itemWidth) / 2
+  const containerPadding =  screenWidth / 2 - itemWidth / 2 - 15;
   const itemSize = itemWidth + spacing
 
   function handleMomentum(e: NativeSyntheticEvent<NativeScrollEvent>) {
@@ -88,12 +88,13 @@ const EmblaCarousel: React.FC<PropType> = ({ slides, options, renderSlide, onSel
         contentContainerStyle={{ paddingHorizontal: containerPadding, alignItems: 'center' }}
         onMomentumScrollEnd={handleMomentum}
       >
-        <View style={[styles.container, { gap: spacing }]}> 
+        <View style={styles.container}>
           {looped.map((s, i) => {
             const base = s && (s.id ?? s.key) ? String(s.id ?? s.key) : 'slide'
             const uniqueKey = `${base}-${i}`
+            const isLast = i === looped.length - 1
             return (
-              <View key={uniqueKey} style={{ width: itemWidth }}>
+              <View key={uniqueKey} style={{ width: itemWidth, marginRight: isLast ? 0 : spacing }}>
                 {renderSlide ? renderSlide(s, i) : null}
               </View>
             )

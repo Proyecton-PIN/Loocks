@@ -32,6 +32,7 @@ import pin.loocks.domain.dtos.ClothingAnalysisDTO;
 import pin.loocks.domain.dtos.FilterRequestDTO;
 import pin.loocks.domain.models.Articulo;
 import pin.loocks.domain.models.CustomUserDetails;
+import pin.loocks.logic.services.ArticuloFilterService;
 import pin.loocks.logic.services.ArticuloService;
 
 
@@ -45,6 +46,9 @@ public class ArticuloController {
 
   @Autowired
   private ArticuloService articuloService;
+
+  @Autowired
+  private ArticuloFilterService articuloFilterService;
 
   @PostMapping(value = "generateDetailsAndCreate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<List<Articulo>> generateDetailsAndCreate(
@@ -142,7 +146,7 @@ public class ArticuloController {
       @AuthenticationPrincipal CustomUserDetails userDetails,
       @RequestBody FilterRequestDTO request) {
     try {
-      List<Articulo> articulos = articuloService.getFilteredArticulos(request, userDetails.getId());
+      List<Articulo> articulos = articuloFilterService.getFilteredArticulos(request, userDetails.getId());
       return ResponseEntity.ok().body(articulos);
     } catch (Exception e) {
       System.out.println(e.getMessage());
@@ -173,7 +177,7 @@ public class ArticuloController {
         }
       }
 
-      List<Articulo> articulos = articuloService.getArticulosByTipo(tipo, userDetails.getId());
+      List<Articulo> articulos = articuloFilterService.getArticulosByTipo(tipo, userDetails.getId());
       return ResponseEntity.ok(articulos);
     } catch (Exception e) {
       System.out.println(e.getMessage());

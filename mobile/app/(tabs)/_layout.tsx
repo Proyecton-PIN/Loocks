@@ -17,8 +17,8 @@ type NavBarItem = {
 };
 
 const tabConfig: NavBarItem[] = [
-  { name: 'principal', label: 'Home', icon: HomeIcon },
-  { name: 'calendario', label: 'Calendario', icon: CalendarioIcon },
+  { name: 'crear_outfit', label: 'Home', icon: HomeIcon },
+  { name: 'planificador', label: 'Planificador', icon: CalendarioIcon },
   { name: 'armario', label: 'Armario', icon: ArmarioIcon },
   { name: 'perfil', label: 'Perfil', icon: PersonaIcon },
 ];
@@ -46,7 +46,6 @@ export default function TabLayout() {
               >
                 <tab.icon bold={isFocused} />
                 <Text
-                  // className={`text-md ${isFocused ? 'text-[#5639F8] font-bold' : 'text-[#91919F]'}`}
                   className="text-md font-normal"
                   style={{ color: isFocused ? Colors.black : Colors.muted }}
                 >

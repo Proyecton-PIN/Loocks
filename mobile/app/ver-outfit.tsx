@@ -184,7 +184,10 @@ export default function VerOutfit() {
       
         <Pressable
           className="rounded-2xl py-4 justify-center items-center bg-red-50 mb-10 border border-red-100"
-          onPress={() => removeOutfit(selected.outfit.id!)}
+          onPress={async () => {
+            await removeOutfit(selected.outfit.id!);
+            router.push('/(tabs)/armario/outfits-page');
+          }}
         >
           <Text className="text-red-500 font-bold text-lg">
             Eliminar articulo 🗑️

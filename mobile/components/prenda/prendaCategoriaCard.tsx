@@ -4,14 +4,33 @@ import http from '@/lib/data/http';
 import { Articulo } from '@/lib/domain/models/articulo';
 import clsx from 'clsx';
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Image, Pressable, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import Collapsible from 'react-native-collapsible';
+
+// Helper function to adjust color brightness
+function adjustColorBrightness(color: string, amount: number): string {
+  const usePound = color[0] === '#';
+  const col = usePound ? color.slice(1) : color;
+  const num = parseInt(col, 16);
+  const r = Math.min(255, Math.max(0, (num >> 16) + Math.round(255 * amount)));
+  const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + Math.round(255 * amount)));
+  const b = Math.min(255, Math.max(0, (num & 0x0000FF) + Math.round(255 * amount)));
+  return (usePound ? '#' : '') + (0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1);
+}
 
 export default function PrendaCategoriaCard({
   initialName,
   initialColor,
-  initialIcon,
+  initialIcon: IconComponent,
   cantidad,
   tipo,
   expanded,
@@ -19,17 +38,19 @@ export default function PrendaCategoriaCard({
 }: {
   initialName: string;
   initialColor?: string;
-  initialIcon: string;
+  initialIcon: React.ElementType;
   cantidad: number;
   tipo: string;
   expanded: boolean;
   onPress: () => void;
 }) {
-  const [name, setName] = useState(initialName);
-  const [icon, setIcon] = useState(initialIcon);
-  const [color, setColor] = useState(initialColor || '#FFF');
+  const [name] = useState(initialName);
+  const [color] = useState(initialColor || '#FFF');
   const [articulos, setArticulos] = useState<Articulo[]>([]);
   const [loading, setLoading] = useState(false);
+  const itemMargin = 8;
+  const numColumns = 2;
+  const hayArticulos = articulos.length > 0;
 
   useEffect(() => {
     let mounted = true;
@@ -51,143 +72,187 @@ export default function PrendaCategoriaCard({
     };
   }, [expanded, tipo]);
 
-  const ICONS = ['👕', '🧢', '👗', '👜', '⭐', '🧥'];
-  const COLORS = [
-    '#FFF',
-    '#FDE68A',
-    '#BFDBFE',
-    '#FECACA',
-    '#DBEAFE',
-    '#C7D2FE',
-  ];
+  const gridArticulos = useMemo(() => {
+    // Si el número es impar, excluimos el último elemento de la lista principal
+    if (articulos.length % numColumns !== 0) {
+      return articulos.slice(0, -1); // Excluye el último
+    }
+    return articulos; // Si es par, usamos todos
+  }, [articulos, numColumns]);
+
+  const renderFooter = () => {
+    if (articulos.length % 2 !== 0) {
+      const ultimoArticulo = articulos[articulos.length - 1];
+      const imgUri = ultimoArticulo.imageUrl
+        ? ultimoArticulo.imageUrl.startsWith('http')
+          ? ultimoArticulo.imageUrl
+          : ultimoArticulo.imageUrl.startsWith('/')
+            ? ApiUrl + ultimoArticulo.imageUrl
+            : ApiUrl + '/' + ultimoArticulo.imageUrl
+        : ultimoArticulo.base64Img
+          ? `data:image/jpeg;base64,${ultimoArticulo.base64Img}`
+          : '';
+
+      return (
+        // Contenedor que centra el Pressable
+        <View style={{ width: '100%', alignItems: 'center' }}>
+          <Pressable
+            onPress={() => {
+              try {
+                useArticulos.getState().selectArticulo(ultimoArticulo);
+              } catch (e) {
+                console.warn('Could not select articulo in store', e);
+              }
+              router.push('/ver-articulo');
+            }}
+            style={{
+              width: '50%',
+              backgroundColor: 'white',
+              borderRadius: 12,
+              overflow: 'hidden',
+              padding: 8,
+              aspectRatio: 1 / 1.5,
+              margin: itemMargin / 2,
+            }}
+          >
+            {imgUri ? (
+              <Image
+                source={{ uri: imgUri }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: 8,
+                }}
+                resizeMode="contain"
+              />
+            ) : null}
+          </Pressable>
+        </View>
+      );
+    }
+    return null;
+  };
 
   return (
     <View>
       <Pressable
         onPress={onPress}
         className={clsx(
-          'rounded-t-2xl px-6 pt-5 pb-[30px] mb-[-30px] shadow-[0_-10px_20px_rgba(0,0,0,1.7)] bg-[#FFFFFF] flex-row items-center',
+          'rounded-t-3xl px-5 pt-4 pb-[30px] mb-[-19px] shadow-[0_-10px_20px_rgba(0,0,0,1.7)] bg-[#FFFFFF] flex-col ',
           expanded && 'border-blue-400',
         )}
         style={{ backgroundColor: color }}
       >
-        <Text className="text-4xl mr-4">{icon}</Text>
-        <TextInput
-          value={name}
-          editable={false}
-          className="flex-1 text-lg text-[26px] text-gray-900"
-        />
-        <Text className="ml-4 text-gray-400 text-base">{cantidad} prendas</Text>
+        <View className="flex-row">
+          <TextInput
+        value={name}
+        editable={false}
+        className="flex-1 mt-[-10px] text-lg text-[28px] font-medium text-[#222222]"
+          />
+          <View 
+        className="w-16 h-16 rounded-full items-center justify-center"
+        style={{ 
+          backgroundColor: adjustColorBrightness(color, -0.1)
+        }}
+          >
+        <View className="text-4xl">
+          <IconComponent />
+        </View>
+          </View>
+        </View>
+        <Text className="mt-[-15px] ml-0 text-[#222222] ">
+          {cantidad} prendas
+        </Text>
       </Pressable>
       <Collapsible collapsed={!expanded} duration={300}>
         <View
-          className="px-6 py-4 mt-4 rounded-2xl"
+          className="px-6 py-4 mt-4 roundedBottom-2xl"
           style={{ backgroundColor: color }}
         >
-          <Text className="text-xs mb-1">Nombre</Text>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            className="border-b border-gray-300 mb-2 text-lg font-bold"
-          />
-          <Text className="text-xs mb-1">Icono</Text>
-          <View className="flex-row mb-2">
-            {ICONS.map((ic) => (
-              <Pressable
-                key={ic}
-                onPress={() => setIcon(ic)}
-                style={{ marginRight: 8 }}
-              >
-                <Text style={{ fontSize: 24 }}>{ic}</Text>
-              </Pressable>
-            ))}
-          </View>
-          <Text className="text-xs mb-1">Color</Text>
-          <View className="flex-row mb-4">
-            {COLORS.map((c) => (
-              <Pressable
-                key={c}
-                onPress={() => setColor(c)}
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 14,
-                  backgroundColor: c,
-                  marginRight: 8,
-                  borderWidth: color === c ? 2 : 0,
-                  borderColor: '#333',
-                }}
-              />
-            ))}
-          </View>
           <Text className="font-bold mb-2 text-lg">Artículos</Text>
           {loading && (
             <ActivityIndicator
-              size="small"
+              size="large"
               color="#3B82F6"
               style={{ marginBottom: 8 }}
             />
           )}
-          <FlatList
-            data={articulos}
-            horizontal
-            keyExtractor={(item, index) =>
-              item?.id ? item.id.toString() : String(index)
-            }
-            renderItem={({ item }) => {
-              const imgUri = item.imageUrl
-                ? item.imageUrl.startsWith('http')
-                  ? item.imageUrl
-                  : item.imageUrl.startsWith('/')
-                    ? ApiUrl + item.imageUrl
-                    : ApiUrl + '/' + item.imageUrl
-                : item.base64Img
-                  ? `data:image/jpeg;base64,${item.base64Img}`
-                  : '';
-              return (
-                <Pressable
-                  onPress={() => {
-                    // set selected articulo in store then navigate
-                    try {
-                      useArticulos.getState().selectArticulo(item);
-                    } catch (e) {
-                      console.warn('Could not select articulo in store', e);
-                    }
-                    router.push('/ver-articulo');
-                  }}
-                >
-                  {imgUri ? (
-                    <Image
-                      source={{ uri: imgUri }}
-                      style={{
-                        width: 90,
-                        height: 120,
-                        borderRadius: 16,
-                        marginRight: 8,
-                      }}
-                      resizeMode="cover"
-                    />
-                  ) : (
-                    <View
-                      style={{
-                        width: 90,
-                        height: 120,
-                        borderRadius: 16,
-                        marginRight: 8,
-                        backgroundColor: '#F4F4F4',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <Text style={{ color: '#999' }}>No image</Text>
-                    </View>
-                  )}
-                </Pressable>
-              );
-            }}
-            showsHorizontalScrollIndicator={false}
-            style={{ marginBottom: 8 }}
-          />
+          {!loading && !hayArticulos ? (
+            <Text className="text-center text-lg text-gray-600 my-4">
+              No hay artículos en esta categoría
+            </Text>
+          ) : (
+            <FlatList
+              data={gridArticulos}
+              numColumns={2}
+              keyExtractor={(item, index) =>
+                item?.id ? item.id.toString() : String(index)
+              }
+              renderItem={({ item }) => {
+                const imgUri = item.imageUrl
+                  ? item.imageUrl.startsWith('http')
+                    ? item.imageUrl
+                    : item.imageUrl.startsWith('/')
+                      ? ApiUrl + item.imageUrl
+                      : ApiUrl + '/' + item.imageUrl
+                  : item.base64Img
+                    ? `data:image/jpeg;base64,${item.base64Img}`
+                    : '';
+                return (
+                  <Pressable
+                    onPress={() => {
+                      // set selected articulo in store then navigate
+                      try {
+                        useArticulos.getState().selectArticulo(item);
+                      } catch (e) {
+                        console.warn('Could not select articulo in store', e);
+                      }
+                      router.push('/ver-articulo');
+                    }}
+                    style={{
+                      flex: 1,
+                      margin: itemMargin / 2,
+                      backgroundColor: 'white',
+                      borderRadius: 12,
+                      overflow: 'hidden',
+                      padding: 10,
+                      aspectRatio: 1 / 1.5,
+                    }}
+                  >
+                    {imgUri ? (
+                      <Image
+                        source={{ uri: imgUri }}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          borderRadius: 8,
+                        }}
+                        resizeMode="contain"
+                      />
+                    ) : (
+                      <View
+                        style={{
+                          flex: 1,
+                          margin: imgUri.length / 2,
+                          width: '100%',
+                          height: '100%',
+                          borderRadius: 8,
+                          backgroundColor: '#F4F4F4',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Text style={{ color: '#999' }}>No image</Text>
+                      </View>
+                    )}
+                  </Pressable>
+                );
+              }}
+              showsHorizontalScrollIndicator={false}
+              style={{ marginBottom: 8, marginHorizontal: -itemMargin / 2 }}
+              ListFooterComponent={renderFooter}
+            />
+          )}
         </View>
       </Collapsible>
     </View>

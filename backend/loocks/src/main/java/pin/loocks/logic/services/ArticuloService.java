@@ -79,63 +79,6 @@ public class ArticuloService {
     return articuloRepository.save(newArticulo);
   }
 
-  public List<Articulo> getFilteredArticulos(FilterRequestDTO filter, String userId) {
-    Pageable pageable = PageRequest.of(filter.getOffset() / filter.getLimit(), filter.getLimit());
-    Specification<Articulo> specs = getFilterSpecs(filter, userId);
-
-    Page<Articulo> result = articuloRepository.findAll(specs, pageable);
-
-    return result.getContent();
-  }
-
-    public List<Articulo> getArticulosByTipo(pin.loocks.domain.enums.TipoArticulo tipo, String userId) {
-      if (tipo == null) return List.of();
-      return articuloRepository.findByUserIdAndTipo(userId, tipo);
-    }
-
-  private Specification<Articulo> getFilterSpecs(FilterRequestDTO filter, String userId) {
-    return (Root<Articulo> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-      Predicate p = cb.conjunction();
-
-      p = cb.and(p, cb.equal(root.get("userId"), userId));
-
-      if (filter.getEstilo() != null) {
-        p = cb.and(p, cb.equal(root.get("estilo"), filter.getEstilo()));
-      }
-
-      if (filter.getEstacion() != null) {
-        p = cb.and(p, cb.equal(root.get("estacion"), filter.getEstacion()));
-      }
-
-      if (filter.getPrimaryColor() != null && !filter.getPrimaryColor().isBlank()) {
-        p = cb.and(p, cb.equal(root.get("colorPrimario"), filter.getPrimaryColor()));
-      }
-
-      if (filter.getIsFavorito() != null) {
-        p = cb.and(p, cb.equal(root.get("isFavorito"), filter.getIsFavorito()));
-      }
-
-      if (filter.getPuedePonerseEncimaDeOtraPrenda() != null) {
-        p = cb.and(p, cb.equal(root.get("puedePonerseEncimaDeOtraPrenda"), filter.getPuedePonerseEncimaDeOtraPrenda()));
-      }
-
-      if (filter.getNivelDeAbrigo() != null) {
-        // Ejemplo: filtro por nivelDeAbrig >= nivelDeAbrigo deseado
-        p = cb.and(p, cb.greaterThanOrEqualTo(root.get("nivelDeAbrig"), filter.getNivelDeAbrigo()));
-      }
-
-      // Filtrar por zonasCubiertas (ManyToMany)
-      List<Zona> zonas = filter.getZonasCubiertas();
-      if (zonas != null && !zonas.isEmpty()) {
-        // zonasCubiertas es una colección de enums -> join directo
-        Join<Articulo, Zona> zonasJoin = root.join("zonasCubiertas");
-        p = cb.and(p, zonasJoin.in(zonas));
-        query.distinct(true); // evita duplicados por el join
-      }
-
-      return p;
-    };
-  }
 
   public void deleteArticuloById(Long id, String userId){
     Articulo articulo = articuloRepository.findById(id).orElseThrow(() -> new RuntimeException("El articulo no existe"));

@@ -1,6 +1,6 @@
 import { Articulo } from '@/lib/domain/models/articulo';
 import { OutfitLog } from '@/lib/domain/models/outfit-log';
-import { Outfit } from '@/lib/domain/models/outift';
+import { Outfit } from '@/lib/domain/models/outfits';
 import {
   createOutfit,
   getOutfitLogs,
@@ -11,18 +11,29 @@ import {
 import { router } from 'expo-router';
 import { create } from 'zustand';
 
+type SuggestionParams = {
+    temperatura?: number;
+    estilo?: string;
+    estacion?: string;
+    limit?: number;
+};
+
 interface State {
   suggested: Outfit[];
   logs: OutfitLog[];
   selectedOutfit?: OutfitLog;
   outfitProbadoImg?: string;
   isOpenProbadorOutfit: boolean;
+  isLoading: boolean;
 
   loadOutfits(): Promise<void>;
+  generateWithFilters(params: SuggestionParams): Promise<void>;
+  
   createOutfit(outfit: Partial<Outfit>): Promise<void>;
   removeOutfit(id: number): Promise<boolean>;
   selectOutfit?(o?: OutfitLog): void;
   addOutfitLog(log: OutfitLog): void;
+
   unSelectProbarEnAvatar(): void;
   probarEnAvatar(uri: string, articulos: Articulo[]): Promise<void>;
 }
@@ -31,17 +42,36 @@ export const useOutfit = create<State>((set, get) => ({
   suggested: [],
   logs: [],
   isOpenProbadorOutfit: false,
+  isLoading: false,
 
   async loadOutfits() {
-    const [suggested, logs] = await Promise.all([
-      await getOutfitSuggestions(),
-      await getOutfitLogs(),
-    ]);
+    set({ isLoading: true });
+    try{
+      const [suggested, logs] = await Promise.all([
+        await getOutfitSuggestions(),
+        await getOutfitLogs(),
+      ]);
 
-    set({
-      suggested,
-      logs,
-    });
+      set({
+        suggested,
+        logs,
+        isLoading: false
+      });
+    }catch(e){
+      console.error("Error cargando outfits:", e);
+      set({ isLoading: false });
+    }
+  },
+
+  async generateWithFilters(params) {
+    set({ isLoading: true });
+    try {
+        const suggested = await getOutfitSuggestions(params);
+        set({ suggested, isLoading: false });
+    } catch (e) {
+        console.error("Error generando sugerencias:", e);
+        set({ isLoading: false });
+    }
   },
 
   async createOutfit(outfit: Partial<Outfit>) {
@@ -69,7 +99,12 @@ export const useOutfit = create<State>((set, get) => ({
       logs: s.logs.filter((l) => l.outfit.id !== id),
       selectedOutfit: undefined,
     }));
-    router.back();
+    
+    // Navigate back to outfits page
+    router.push('/(tabs)/armario/outfits-page');
+    
+    // Reload outfits to ensure fresh data
+    await get().loadOutfits();
 
     return true;
   },

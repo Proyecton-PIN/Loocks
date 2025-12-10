@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/theme';
-import { Outfit } from '@/lib/domain/models/outift';
+import { Outfit } from '@/lib/domain/models/outfits';
 import clsx from 'clsx';
 import React from 'react';
 import { FlatList, Image, View } from 'react-native';

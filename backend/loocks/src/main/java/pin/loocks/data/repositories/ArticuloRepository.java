@@ -14,6 +14,7 @@ public interface ArticuloRepository extends JpaRepository<Articulo, Long>, JpaSp
     List<Articulo> findByArmarioId(Long armarioId);
     List<Articulo> findByNombreContainingIgnoreCase(String nombrePart);
     List<Articulo> findByUserIdAndTipo(String userId, pin.loocks.domain.enums.TipoArticulo tipo);
+    long countByUserId(String userId);
 
     @Query("""
             SELECT a FROM Articulo a

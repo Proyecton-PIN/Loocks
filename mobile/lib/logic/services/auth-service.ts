@@ -18,7 +18,7 @@ export async function login(
     http.init(resp.token);
     SecureStore.save('userId', resp.userId);
 
-    router.replace('/(tabs)/principal');
+    router.replace('/(tabs)/crear_outfit');
 
   } catch (e) {
     if (e instanceof NetworkError) {
@@ -47,4 +47,15 @@ export async function checkAuth(): Promise<boolean> {
   }
 
   return authenticated;
+}
+
+import { ProfileInfoDto } from '@/lib/domain/dtos/profile-info-dto';
+
+export async function getInformacion(): Promise<ProfileInfoDto | undefined> {
+  try {
+    const info = await http.get<ProfileInfoDto>('auth/info');
+    return info;
+  } catch (e) {
+    return undefined;
+  }
 }
