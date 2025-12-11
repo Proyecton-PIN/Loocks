@@ -24,6 +24,16 @@ LocaleConfig.locales['es'] = {
 };
 LocaleConfig.defaultLocale = 'es';
 
+const COLORES = [
+    { hex: '#FFFFFF', name: 'Blanco' },
+    { hex: '#000000', name: 'Negro' },
+    { hex: '#1F2937', name: 'Gris' },
+    { hex: '#1D4ED8', name: 'Azul' },
+    { hex: '#DC2626', name: 'Rojo' },
+    { hex: '#D97706', name: 'Beige' },
+    { hex: '#059669', name: 'Verde' },
+];
+
 export default function CrearPlan() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -35,9 +45,11 @@ export default function CrearPlan() {
   
   const [fechaInicio, setFechaInicio] = useState(new Date().toISOString().split('T')[0]);
   const [fechaFin, setFechaFin] = useState(new Date().toISOString().split('T')[0]);
-
   const [modalVisible, setModalVisible] = useState(false);
   const [tipoFecha, setTipoFecha] = useState<'inicio' | 'fin'>('inicio');
+
+  const [temperatura, setTemperatura] = useState('22');
+  const [colorSeleccionado, setColorSeleccionado] = useState<string | null>(null);
 
   const handleDayPress = (day: any) => {
       if (tipoFecha === 'inicio') {
@@ -73,10 +85,16 @@ export default function CrearPlan() {
         isMaleta: isViaje,
         fechaInicio: fechaInicio, 
         fechaFin: fechaFin,
+        temperaturaMedia: parseFloat(temperatura),
     });
 
     if (success) {
-        Alert.alert("¡Plan Creado!", isViaje ? "Estamos preparando tu maleta con la IA..." : "Evento guardado.");
+        Alert.alert(
+            "¡Plan Creado!", 
+            isViaje 
+                ? `Maleta generada para ${temperatura}°C ${colorSeleccionado ? 'en tonos seleccionados' : ''}.` 
+                : "Evento guardado."
+        );
         router.back();
     } else {
         Alert.alert("Error", "No se pudo guardar el plan.");
@@ -98,8 +116,8 @@ export default function CrearPlan() {
       </View>
 
       <ScrollView className="flex-1 px-5" contentContainerStyle={{ paddingVertical: 20 }}>
-
-        <View className="gap-6">
+        
+        <View className="gap-6 mb-8">
             <View>
                 <Text className="text-sm font-bold text-gray-700 mb-2">Título</Text>
                 <TextInput 
@@ -121,7 +139,6 @@ export default function CrearPlan() {
             </View>
 
             <View className="flex-row gap-4">
-                
                 <View className="flex-1">
                     <Text className="text-sm font-bold text-gray-700 mb-2">Desde</Text>
                     <Pressable
@@ -154,10 +171,57 @@ export default function CrearPlan() {
             </View>
         </View>
 
+        <Text className="text-sm font-bold text-gray-700 mb-3">Preferencias IA</Text>
+        <View className="bg-[#F8F8F8] p-6 rounded-[32px] mb-8">
+            
+            <View className="flex-row justify-between items-center mb-6 border-b border-gray-200 pb-6">
+                <View>
+                    <Text className="font-bold text-gray-400 text-xs uppercase tracking-widest mb-1">CLIMA</Text>
+                    <Text className="text-gray-800 font-medium text-sm">Temperatura media</Text>
+                </View>
+                <View className="flex-row items-end border-b border-gray-300 pb-1">
+                    <TextInput 
+                        value={temperatura}
+                        onChangeText={setTemperatura}
+                        keyboardType="numeric"
+                        className="text-4xl font-bold text-black text-right min-w-[50px]"
+                        maxLength={2}
+                    />
+                    <Text className="text-2xl text-gray-400 mb-1 ml-1">°C</Text>
+                </View>
+            </View>
+
+            <Text className="font-bold text-gray-400 text-xs uppercase tracking-widest mb-3">PREFERENCIA DE COLOR</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-2 px-2">
+                <Pressable
+                    onPress={() => setColorSeleccionado(null)}
+                    className={`w-10 h-10 rounded-full mr-3 items-center justify-center border ${
+                        colorSeleccionado === null ? 'border-black border-2' : 'border-gray-300 border-dashed'
+                    }`}
+                >
+                    <Text className="text-xs text-gray-400">Todo</Text>
+                </Pressable>
+
+                {COLORES.map((color) => {
+                    const isSelected = colorSeleccionado === color.hex;
+                    return (
+                        <Pressable
+                            key={color.hex}
+                            onPress={() => setColorSeleccionado(color.hex)}
+                            className={`w-10 h-10 rounded-full mr-3 border-2 ${
+                                isSelected ? 'border-black scale-110' : 'border-gray-200'
+                            }`}
+                            style={{ backgroundColor: color.hex }}
+                        />
+                    );
+                })}
+            </ScrollView>
+        </View>
+
         {isViaje && (
-            <View className="mt-6 bg-purple-50 p-4 rounded-2xl border border-purple-100">
+            <View className="mb-4 bg-purple-50 p-4 rounded-2xl border border-purple-100">
                 <Text className="text-purple-800 text-sm">
-                    ✨ Al guardar un viaje, <Text className="font-bold">la IA generará automáticamente</Text> una maleta con outfits para cada día basándose en el clima.
+                    ✨ La IA usará la temperatura ({temperatura}°C) y tus colores favoritos para llenar la maleta.
                 </Text>
             </View>
         )}
@@ -168,13 +232,13 @@ export default function CrearPlan() {
         <Pressable
             onPress={handleGuardar}
             disabled={isLoading}
-            className={`w-full py-4 rounded-2xl items-center shadow-lg ${isViaje ? 'bg-purple-600 shadow-purple-200' : 'bg-blue-600 shadow-blue-200'}`}
+            className={`w-full py-4 rounded-2xl items-center shadow-lg ${isViaje ? 'bg-[#5639F8] shadow-indigo-200' : 'bg-blue-600 shadow-blue-200'}`}
         >
             {isLoading ? (
                 <ActivityIndicator color="white" />
             ) : (
                 <Text className="text-white font-bold text-lg">
-                    {isViaje ? 'Crear Viaje y Generar Maleta' : 'Guardar Evento'}
+                    {isViaje ? 'Crear y Generar Outfits' : 'Guardar Evento'}
                 </Text>
             )}
         </Pressable>
