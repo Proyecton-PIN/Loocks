@@ -30,10 +30,8 @@ public class OutfitLog {
   private Long id;
 
   @Column(nullable = false)
-  @JsonFormat(pattern = "dd-MM-yyyy")
   private LocalDate fechaInicio;
   
-  @JsonFormat(pattern = "dd-MM-yyyy")
   private LocalDate fechaFin;
 
   @ManyToOne

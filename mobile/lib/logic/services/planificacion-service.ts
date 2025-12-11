@@ -14,7 +14,6 @@ const formatDateSpanish = (dateString: string | Date | undefined) => {
 
 const formatDateISO = (dateString: string | Date | undefined) => {
     if (!dateString) return '';
-    // Si ya viene como string ISO (2024-01-01T...), cortamos la T
     if (typeof dateString === 'string' && dateString.includes('T')) {
         return dateString.split('T')[0];
     }
@@ -24,7 +23,7 @@ const formatDateISO = (dateString: string | Date | undefined) => {
     const month = String(d.getMonth() + 1).padStart(2, '0'); 
     const year = d.getFullYear();
 
-    return `${year}-${month}-${day}`; 
+    return `${day}-${month}-${year}`; 
 };
 
 export async function createPlan(plan: Partial<Planificacion>): Promise<Planificacion | null> {

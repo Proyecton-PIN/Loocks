@@ -49,5 +49,5 @@ public class Planificacion {
   @ManyToOne
   @JoinColumn(name = "perfil_id", nullable = false)
   @JsonIgnore
-  private Perfil perfil;
+  private Perfil perfil; 
 }

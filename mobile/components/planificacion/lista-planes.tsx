@@ -26,12 +26,9 @@ export default function PlansList() {
         <Pressable 
             className="bg-white p-4 rounded-3xl mb-4 border border-gray-100 shadow-sm"
             onPress={() => {
-                // Aquí iremos al detalle del plan
-                // router.push(`/plan-detalles?id=${item.id}`);
                 alert("Ir a detalles de: " + item.titulo);
             }}
         >
-            {/* CABECERA: Título y Fechas */}
             <View className="flex-row justify-between items-start mb-3">
                 <View>
                     <Text className="text-lg font-bold text-black">{item.titulo || "Viaje sin nombre"}</Text>
@@ -46,19 +43,16 @@ export default function PlansList() {
                 </View>
             </View>
 
-            {/* FECHAS */}
             <Text className="text-gray-500 text-sm mb-4">
                 📅 {new Date(item.fechaInicio).toLocaleDateString()} - {new Date(item.fechaFin).toLocaleDateString()}
             </Text>
 
-            {/* PREVIEW DE OUTFITS (Carrusel pequeño) */}
             {item.outfitLogs && item.outfitLogs.length > 0 ? (
                 <View>
                     <Text className="text-xs text-gray-400 mb-2 font-bold">OUTFITS PLANIFICADOS</Text>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                         {item.outfitLogs.map((log, i) => (
                             <View key={i} className="mr-2">
-                                {/* Mostramos la primera prenda del outfit como preview */}
                                 <Image 
                                     source={{ uri: log.outfit.articulos[0]?.imageUrl }} 
                                     className="w-12 h-12 rounded-xl bg-gray-100 border border-gray-200"
