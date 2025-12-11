@@ -8,16 +8,17 @@ export interface Articulo extends ClothingAnalysisDTO {
   nombre: string;
   marca?: string;
   fechaCompra?: Date;
-  fechaUltimoUso? : Date;
+  fechaUltimoUso?: Date;
 
   imageUrl?: string;
   base64Img?: string;
 
-  isFavorito?: boolean; 
-  usos?: number;       
-  
+  isFavorito?: boolean;
+  usos?: number;
+
   estacion: Estacion;
   estilo: Estilo;
   tipo: TipoArticulo;
-  colores: any[]; 
+  colores: any[];
+  zonasCubiertas?: string[];
 }

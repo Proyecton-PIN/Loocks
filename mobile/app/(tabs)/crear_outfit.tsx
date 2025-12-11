@@ -1,6 +1,8 @@
+import { useArticulos } from '@/hooks/useArticulos';
 import { useAuth } from '@/hooks/useAuth';
 import { useOutfit } from '@/hooks/useOutfits';
 import http from '@/lib/data/http';
+import { Articulo } from '@/lib/domain/models/articulo';
 import { createOutfit as createOutfitService } from '@/lib/logic/services/outfit-service';
 import { SecureStore } from '@/lib/logic/services/secure-store-service';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,17 +21,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import WeatherInfo from '../../components/WeatherInfo';
 import EmblaCarousel from './../../components/outfit/EnableCarousel';
 
 const OPTIONS = { loop: true } as const;
-
-type Articulo = {
-  id: number;
-  imageUrl?: string;
-  nombre?: string;
-  zonasCubiertas?: string[];
-};
 
 export default function CrearOutfit() {
   const [articulos, setArticulos] = useState<Articulo[]>([]);
@@ -76,6 +72,7 @@ export default function CrearOutfit() {
         `articulos?userId=${encodeURIComponent(String(UserId))}`,
       );
       setArticulos(data ?? []);
+      useArticulos.getState().divideArticulosByTipo(data ?? []);
     } catch (e) {
       console.error(e);
       Alert.alert('Error', 'No se pudieron cargar las prendas.');
@@ -87,7 +84,7 @@ export default function CrearOutfit() {
 
   useEffect(() => {
     if (articulos.length === 0) return;
-    setSlots((prev) => prev.map((s) => (s === null ? articulos[0].id : s)));
+    setSlots((prev) => prev.map((s) => (s === null ? articulos[0].id! : s)));
     setTimeout(() => {
       for (let i = 0; i < 3; i++) {
         try {
@@ -254,8 +251,17 @@ export default function CrearOutfit() {
     setAccesoriosSeleccionados([]);
   }
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={{ flex: 1, backgroundColor: '#FFFFFF', padding: 16 }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+        padding: 16,
+        paddingTop: insets.top + 16,
+      }}
+    >
       <Stack.Screen options={{ title: 'Crear Outfit' }} />
 
       <View style={{ flex: 1, justifyContent: 'space-between' }}>
@@ -398,7 +404,13 @@ export default function CrearOutfit() {
               alignItems: 'center',
             }}
           >
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
               <Text style={{ color: '#686868', fontWeight: '600' }}>
                 Accesorios{' '}
                 {accesoriosSeleccionados.length > 0
@@ -408,35 +420,39 @@ export default function CrearOutfit() {
             </View>
           </TouchableOpacity>
 
-            <TouchableOpacity
+          <TouchableOpacity
             onPress={() => setModalVisible(true)}
             style={{
               marginTop: 6,
               width: '45%',
               backgroundColor: '#E0DBFF',
-              paddingVertical: 6, 
+              paddingVertical: 6,
               borderRadius: 30,
               alignItems: 'center',
               alignSelf: 'stretch',
             }}
-            >
+          >
             <View className="flex-row items-center gap-2">
-              <View style={{
-              width: 35,
-              height: 35,
-              marginLeft: -20,
-              borderRadius: 17,
-              backgroundColor: '#5639F8',
-              alignItems: 'center',
-              justifyContent: 'center',
-              }}>
-              <AntDesign name="unlock" size={15} color="white" />
+              <View
+                style={{
+                  width: 35,
+                  height: 35,
+                  marginLeft: -20,
+                  borderRadius: 17,
+                  backgroundColor: '#5639F8',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <AntDesign name="unlock" size={15} color="white" />
               </View>
-            <Text style={{ color: '#5639F8', fontWeight: '600', fontSize: 14 }}>
-              {loading ? 'Creando...' : 'Guardar Outfit'}
-            </Text>
+              <Text
+                style={{ color: '#5639F8', fontWeight: '600', fontSize: 14 }}
+              >
+                {loading ? 'Creando...' : 'Guardar Outfit'}
+              </Text>
             </View>
-            </TouchableOpacity>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -515,11 +531,13 @@ export default function CrearOutfit() {
                   style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}
                 >
                   {accesorios.map((acc) => {
-                    const isSelected = accesoriosSeleccionados.includes(acc.id);
+                    const isSelected = accesoriosSeleccionados.includes(
+                      acc.id!,
+                    );
                     return (
                       <TouchableOpacity
                         key={acc.id}
-                        onPress={() => toggleAccesorio(acc.id)}
+                        onPress={() => toggleAccesorio(acc.id!)}
                         style={{
                           width: '48%',
                           aspectRatio: 1,

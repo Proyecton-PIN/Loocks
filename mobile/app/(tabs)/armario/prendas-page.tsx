@@ -50,7 +50,7 @@ const categorias = [
     color: '#fca5a5',
     icon: SudaderasIcon,
     cantidad: 8,
-    tipo: 'SUADADERAS',
+    tipo: 'SUDADERAS',
   },
   {
     id: 7,
@@ -81,16 +81,22 @@ const categorias = [
 export default function PrendasPage() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const flatListRef = useRef<FlatList<any> | null>(null);
+  const [nothing, setNothing] = useState(false);
+
+  const updateView = () => setNothing(!nothing);
 
   useEffect(() => {
     if (expandedIndex !== null) {
-      flatListRef.current?.scrollToIndex({ index: expandedIndex, viewPosition: 0.5, animated: true });
+      flatListRef.current?.scrollToIndex({
+        index: expandedIndex,
+        viewPosition: 0.5,
+        animated: true,
+      });
     }
   }, [expandedIndex]);
 
-
   return (
-    <View style={{ flex: 1, backgroundColor: '#F6F6F6'}}>
+    <View style={{ flex: 1, backgroundColor: '#F6F6F6' }}>
       <FlatList
         ref={flatListRef}
         data={categorias}
@@ -100,25 +106,34 @@ export default function PrendasPage() {
             initialName={item.nombre}
             initialColor={item.color}
             initialIcon={item.icon}
-            cantidad={item.cantidad}
             tipo={item.tipo}
-            expanded={expandedIndex === index}
-            onPress={() => setExpandedIndex(index === expandedIndex ? null : index)}
+            onClose={(name, color) => {
+              const idx = categorias.findIndex((v) => v.tipo === item.tipo);
+              categorias[idx].nombre = name;
+              if (color) categorias[idx].color = color;
+              updateView();
+            }}
           />
         )}
         ItemSeparatorComponent={() => <View style={{ height: 0 }} />}
         extraData={expandedIndex}
         getItemLayout={(_data, index) => {
-          const estimatedHeight = 180; 
-          return { length: estimatedHeight, offset: estimatedHeight * index, index };
+          const estimatedHeight = 180;
+          return {
+            length: estimatedHeight,
+            offset: estimatedHeight * index,
+            index,
+          };
         }}
         onScrollToIndexFailed={(info) => {
           const idx = info.index ?? 0;
           const estimatedHeight = 180;
           try {
-            flatListRef.current?.scrollToOffset({ offset: idx * estimatedHeight, animated: true });
-          } catch (e) {
-          }
+            flatListRef.current?.scrollToOffset({
+              offset: idx * estimatedHeight,
+              animated: true,
+            });
+          } catch (e) {}
         }}
       />
     </View>

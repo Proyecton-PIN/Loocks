@@ -1,227 +1,216 @@
-import { ApiUrl } from '@/constants/api-constants';
 import { useArticulos } from '@/hooks/useArticulos';
-import http from '@/lib/data/http';
-import { Articulo } from '@/lib/domain/models/articulo';
 import clsx from 'clsx';
 import { router } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   Image,
+  Modal,
   Pressable,
+  StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
-import Collapsible from 'react-native-collapsible';
 
-// Helper function to adjust color brightness
-function adjustColorBrightness(color: string, amount: number): string {
-  const usePound = color[0] === '#';
-  const col = usePound ? color.slice(1) : color;
-  const num = parseInt(col, 16);
-  const r = Math.min(255, Math.max(0, (num >> 16) + Math.round(255 * amount)));
-  const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + Math.round(255 * amount)));
-  const b = Math.min(255, Math.max(0, (num & 0x0000FF) + Math.round(255 * amount)));
-  return (usePound ? '#' : '') + (0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1);
-}
+export const defaultColors = [
+  '#F6B9F8',
+  '#E272AF',
+  '#FF7E8D',
+  '#FFA90B',
+  '#FFDEB3',
+  '#A0E4E7',
+  '#9BCCFF',
+  '#B3B9FF',
+  '#CFEB9D',
+  '#F7F7F7',
+  '#CFCFCF',
+  '#D8D2AD',
+];
 
 export default function PrendaCategoriaCard({
   initialName,
   initialColor,
   initialIcon: IconComponent,
-  cantidad,
   tipo,
-  expanded,
-  onPress,
+  onClose,
 }: {
   initialName: string;
   initialColor?: string;
   initialIcon: React.ElementType;
-  cantidad: number;
   tipo: string;
-  expanded: boolean;
-  onPress: () => void;
+  onClose(name: string, color?: string): void;
 }) {
-  const [name] = useState(initialName);
-  const [color] = useState(initialColor || '#FFF');
-  const [articulos, setArticulos] = useState<Articulo[]>([]);
-  const [loading, setLoading] = useState(false);
-  const itemMargin = 8;
-  const numColumns = 2;
-  const hayArticulos = articulos.length > 0;
+  const articulos = useArticulos((s) => s.armarioArticulos)[tipo];
+  const [color, setColor] = useState(initialColor);
+  const [name, setName] = useState(initialName);
+  const [selected, setSelected] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
-    async function load() {
-      if (!expanded) return;
-      setLoading(true);
-      try {
-        const data = await http.get<Articulo[]>(`articulos/tipo/${tipo}`);
-        if (mounted) setArticulos(data ?? []);
-      } catch (e) {
-        if (mounted) setArticulos([]);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    }
-    load();
-    return () => {
-      mounted = false;
-    };
-  }, [expanded, tipo]);
-
-  const gridArticulos = useMemo(() => {
-    // Si el número es impar, excluimos el último elemento de la lista principal
-    if (articulos.length % numColumns !== 0) {
-      return articulos.slice(0, -1); // Excluye el último
-    }
-    return articulos; // Si es par, usamos todos
-  }, [articulos, numColumns]);
-
-  const renderFooter = () => {
-    if (articulos.length % 2 !== 0) {
-      const ultimoArticulo = articulos[articulos.length - 1];
-      const imgUri = ultimoArticulo.imageUrl
-        ? ultimoArticulo.imageUrl.startsWith('http')
-          ? ultimoArticulo.imageUrl
-          : ultimoArticulo.imageUrl.startsWith('/')
-            ? ApiUrl + ultimoArticulo.imageUrl
-            : ApiUrl + '/' + ultimoArticulo.imageUrl
-        : ultimoArticulo.base64Img
-          ? `data:image/jpeg;base64,${ultimoArticulo.base64Img}`
-          : '';
-
-      return (
-        // Contenedor que centra el Pressable
-        <View style={{ width: '100%', alignItems: 'center' }}>
-          <Pressable
-            onPress={() => {
-              try {
-                useArticulos.getState().selectArticulo(ultimoArticulo);
-              } catch (e) {
-                console.warn('Could not select articulo in store', e);
-              }
-              router.push('/ver-articulo');
-            }}
-            style={{
-              width: '50%',
-              backgroundColor: 'white',
-              borderRadius: 12,
-              overflow: 'hidden',
-              padding: 8,
-              aspectRatio: 1 / 1.5,
-              margin: itemMargin / 2,
-            }}
-          >
-            {imgUri ? (
-              <Image
-                source={{ uri: imgUri }}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: 8,
-                }}
-                resizeMode="contain"
-              />
-            ) : null}
-          </Pressable>
-        </View>
-      );
-    }
-    return null;
-  };
+  const [colorSelector, setColorSelector] = useState(false);
 
   return (
     <View>
       <Pressable
-        onPress={onPress}
+        onPress={() => setSelected(true)}
         className={clsx(
-          'rounded-t-3xl px-5 pt-4 pb-[30px] mb-[-19px] shadow-[0_-10px_20px_rgba(0,0,0,1.7)] bg-[#FFFFFF] flex-col ',
-          expanded && 'border-blue-400',
+          'px-[9px] pt-[10px] flex-row rounded-t-3xl pb-[30px] mb-[-18px]',
         )}
         style={{ backgroundColor: color }}
       >
-        <View className="flex-row">
-          <TextInput
-        value={name}
-        editable={false}
-        className="flex-1 mt-[-10px] text-lg text-[28px] font-medium text-[#222222]"
-          />
-          <View 
-        className="w-16 h-16 rounded-full items-center justify-center"
-        style={{ 
-          backgroundColor: adjustColorBrightness(color, -0.1)
-        }}
-          >
-        <View className="text-4xl">
+        <View className="flex-1 gap-[10px] px-[9px]">
+          <Text className="flex-1 text-[32px] font-medium text-[#222222]">
+            {name}
+          </Text>
+          <Text className={clsx(!articulos && 'opacity-0')}>
+            {articulos?.length} prendas
+          </Text>
+        </View>
+        <View className="rounded-full w-[44px] h-[44px] bg-black/10 items-center justify-center">
           <IconComponent />
         </View>
-          </View>
-        </View>
-        <Text className="mt-[-15px] ml-0 text-[#222222] ">
-          {cantidad} prendas
-        </Text>
       </Pressable>
-      <Collapsible collapsed={!expanded} duration={300}>
+
+      <Modal
+        visible={selected}
+        animationType="slide"
+        onRequestClose={() => {
+          setSelected(false);
+          onClose(name, color);
+        }}
+      >
         <View
-          className="px-6 py-4 mt-4 roundedBottom-2xl"
-          style={{ backgroundColor: color }}
+          style={{
+            backgroundColor: color,
+            flex: 1,
+            paddingTop: 40,
+          }}
         >
-          <Text className="font-bold mb-2 text-lg">Artículos</Text>
-          {loading && (
-            <ActivityIndicator
-              size="large"
-              color="#3B82F6"
-              style={{ marginBottom: 8 }}
-            />
-          )}
-          {!loading && !hayArticulos ? (
-            <Text className="text-center text-lg text-gray-600 my-4">
-              No hay artículos en esta categoría
-            </Text>
-          ) : (
+          <View className="bg-white flex-1 rounded-t-3xl px-[19px] pt-[10px]">
+            <View className="items-center w-full">
+              <View
+                style={{
+                  backgroundColor: '#F3F3F3',
+                  width: 50,
+                  height: 4,
+                  borderRadius: '999',
+                  marginBottom: 12,
+                }}
+              />
+            </View>
+            <View className="flex-row gap-[11px]">
+              <TextInput
+                value={name}
+                onChangeText={(v) => setName(v)}
+                style={{
+                  borderColor: '#686868',
+                  borderWidth: 1,
+                  borderStyle: 'dashed',
+                  borderRadius: 12,
+                  paddingHorizontal: 12,
+                  flex: 1,
+                }}
+              />
+
+              <Pressable
+                onPress={() => setColorSelector(true)}
+                style={{
+                  backgroundColor: color,
+                  outlineColor: '#686868',
+                  outlineWidth: 1,
+                  outlineStyle: 'dashed',
+                  borderRadius: 999,
+                  width: 44,
+                  height: 44,
+                }}
+              />
+
+              <View style={{ backgroundColor: color, borderRadius: 1000 }}>
+                <View className="rounded-full w-[44px] h-[44px] bg-black/10 items-center justify-center">
+                  <IconComponent />
+                </View>
+              </View>
+            </View>
+
+            <Modal
+              animationType="fade" // O "slide"
+              transparent={true}
+              visible={colorSelector}
+              onRequestClose={() => setColorSelector(false)} // Para el botón de atrás en Android
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <Text style={styles.modalTitle}>Selecciona un Color</Text>
+
+                  {/* Cuadrícula de Círculos */}
+                  <FlatList
+                    data={defaultColors}
+                    renderItem={({ item }) => (
+                      <Pressable
+                        onPress={() => {
+                          setColor(item);
+                          setColorSelector(false);
+                        }}
+                        style={{
+                          backgroundColor: item,
+                          borderRadius: 999,
+                          width: 44,
+                          height: 44,
+                          margin: 10,
+                        }}
+                      />
+                    )}
+                    numColumns={4} // Define el número de columnas de la cuadrícula
+                    contentContainerStyle={styles.colorGrid}
+                  />
+
+                  <Pressable
+                    style={styles.closeButton}
+                    onPress={() => setColorSelector(false)}
+                  >
+                    <Text style={styles.closeButtonText}>Cerrar</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
+
             <FlatList
-              data={gridArticulos}
+              style={{ marginTop: 20 }}
               numColumns={2}
-              keyExtractor={(item, index) =>
-                item?.id ? item.id.toString() : String(index)
-              }
-              renderItem={({ item }) => {
-                const imgUri = item.imageUrl
-                  ? item.imageUrl.startsWith('http')
-                    ? item.imageUrl
-                    : item.imageUrl.startsWith('/')
-                      ? ApiUrl + item.imageUrl
-                      : ApiUrl + '/' + item.imageUrl
-                  : item.base64Img
-                    ? `data:image/jpeg;base64,${item.base64Img}`
-                    : '';
+              data={articulos}
+              ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
+              ListFooterComponent={() => <View style={{ height: 100 }} />}
+              renderItem={({ item, index }) => {
                 return (
                   <Pressable
                     onPress={() => {
                       // set selected articulo in store then navigate
                       try {
                         useArticulos.getState().selectArticulo(item);
+                        router.push('/ver-articulo');
                       } catch (e) {
                         console.warn('Could not select articulo in store', e);
                       }
-                      router.push('/ver-articulo');
                     }}
                     style={{
                       flex: 1,
-                      margin: itemMargin / 2,
                       backgroundColor: 'white',
-                      borderRadius: 12,
                       overflow: 'hidden',
-                      padding: 10,
-                      aspectRatio: 1 / 1.5,
+                      marginLeft: index % 2 === 1 ? 4 : 0,
+                      marginRight: index % 2 === 0 ? 4 : 0,
                     }}
                   >
-                    {imgUri ? (
+                    <View
+                      style={{
+                        borderColor: '#F3F3F3',
+                        borderWidth: 1,
+                        borderRadius: 12,
+                        marginBottom: 5,
+                        padding: 10,
+                        aspectRatio: 1 / 1.5,
+                      }}
+                    >
                       <Image
-                        source={{ uri: imgUri }}
+                        source={{ uri: item.imageUrl }}
                         style={{
                           width: '100%',
                           height: '100%',
@@ -229,32 +218,108 @@ export default function PrendaCategoriaCard({
                         }}
                         resizeMode="contain"
                       />
-                    ) : (
+                    </View>
+                    <View className="flex-1 items-center">
                       <View
                         style={{
-                          flex: 1,
-                          margin: imgUri.length / 2,
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: 8,
-                          backgroundColor: '#F4F4F4',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          backgroundColor: '#F3F3F3',
+                          width: 38,
+                          height: 4,
+                          borderRadius: '999',
                         }}
-                      >
-                        <Text style={{ color: '#999' }}>No image</Text>
-                      </View>
-                    )}
+                      />
+                    </View>
                   </Pressable>
                 );
               }}
-              showsHorizontalScrollIndicator={false}
-              style={{ marginBottom: 8, marginHorizontal: -itemMargin / 2 }}
-              ListFooterComponent={renderFooter}
             />
-          )}
+          </View>
         </View>
-      </Collapsible>
+      </Modal>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+
+  // --- Estilos del Botón de Despliegue ---
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#333',
+    padding: 15,
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    marginRight: 10,
+  },
+  previewCircle: {
+    width: 25,
+    height: 25,
+    borderRadius: 12.5,
+    borderWidth: 2,
+    borderColor: 'white',
+  },
+
+  // --- Estilos del Modal (Desplegable) ---
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // Fondo semi-transparente para el overlay
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 15,
+    padding: 25,
+    alignItems: 'center',
+    width: '80%', // Ajusta el ancho del modal
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+
+  // --- Estilos de la Cuadrícula ---
+  colorGrid: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 15,
+  },
+  colorCircle: {
+    width: 45,
+    height: 45,
+    borderRadius: 22.5,
+    margin: 8, // Espacio entre los círculos
+    borderWidth: 1,
+    borderColor: '#CCC',
+  },
+
+  // --- Estilos del Botón de Cerrar ---
+  closeButton: {
+    marginTop: 15,
+    backgroundColor: '#DEDEDE',
+    padding: 10,
+    borderRadius: 8,
+  },
+  closeButtonText: {
+    color: '#333',
+    fontWeight: 'bold',
+  },
+});

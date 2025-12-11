@@ -6,6 +6,7 @@ import { useArticulos } from '@/hooks/useArticulos';
 import { Tabs } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type NavBarIcon = (props: IconProps) => React.JSX.Element;
 type NavBarItem = {
@@ -22,10 +23,10 @@ const tabConfig: NavBarItem[] = [
 export default function ArmarioLayout() {
   const generateDetails = useArticulos((s) => s.generateDetails);
   const [isLoading, setIsLoading] = useState(false);
+  const insets = useSafeAreaInsets();
 
   return (
     <View className="flex-1">
-
       <Tabs
         screenOptions={{
           headerShown: false,
@@ -41,6 +42,7 @@ export default function ArmarioLayout() {
               shadowOffset: { height: 10, width: 0 },
               shadowOpacity: 1,
               shadowRadius: 5,
+              marginTop: insets.top + 10,
             }}
           >
             {tabConfig.map((tab, idx) => {
