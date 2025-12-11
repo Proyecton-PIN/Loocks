@@ -1,7 +1,8 @@
 import { CloseIcon } from '@/constants/icons';
 import { usePlanning } from '@/hooks/usePlanificacion'; 
-import { Stack, useRouter } from 'expo-router'; // <--- 1. CAMBIO: Importamos useRouter
+import { Stack, useRouter } from 'expo-router';
 import React, { useState } from 'react';
+import { Calendar, LocaleConfig } from 'react-native-calendars';
 import {
   ActivityIndicator,
   Pressable,
@@ -9,13 +10,23 @@ import {
   Text,
   TextInput,
   View,
-  Alert
+  Alert,
+  Modal 
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+LocaleConfig.locales['es'] = {
+  monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+  monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+  dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+  dayNamesShort: ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],
+  today: 'Hoy'
+};
+LocaleConfig.defaultLocale = 'es';
+
 export default function CrearPlan() {
   const insets = useSafeAreaInsets();
-  const router = useRouter(); // <--- 2. CAMBIO: Usamos el Hook (Más seguro)
+  const router = useRouter();
   const { createNewPlan, isLoading } = usePlanning();
 
   const [titulo, setTitulo] = useState('');
@@ -24,6 +35,31 @@ export default function CrearPlan() {
   
   const [fechaInicio, setFechaInicio] = useState(new Date().toISOString().split('T')[0]);
   const [fechaFin, setFechaFin] = useState(new Date().toISOString().split('T')[0]);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [tipoFecha, setTipoFecha] = useState<'inicio' | 'fin'>('inicio');
+
+  const handleDayPress = (day: any) => {
+      if (tipoFecha === 'inicio') {
+          setFechaInicio(day.dateString); 
+      } else {
+          setFechaFin(day.dateString);
+      }
+      setModalVisible(false);
+  };
+
+  const formatearFechaDisplay = (fechaISO: string) => {
+      if (!fechaISO) return 'Seleccionar';
+      const [year, month, day] = fechaISO.split('-');
+      return `${day}-${month}-${year}`; 
+  };
+
+  const getMarkedDates = () => {
+      const marks: any = {};
+      if (fechaInicio) marks[fechaInicio] = { selected: true, color: '#5639F8', startingDay: true };
+      if (fechaFin) marks[fechaFin] = { selected: true, color: '#5639F8', endingDay: true };
+      return marks;
+  };
 
   const handleGuardar = async () => {
     if (!titulo || !ubicacion) {
@@ -51,38 +87,18 @@ export default function CrearPlan() {
     <View className="flex-1 bg-white">
       <Stack.Screen options={{ headerShown: false }} />
 
-      {/* HEADER */}
       <View
         className="flex-row items-center justify-between px-5 pb-4 border-b border-gray-100"
         style={{ paddingTop: insets.top + 10 }}
       >
         <Text className="text-xl font-bold text-black">Nuevo Plan</Text>
-        {/* 3. CAMBIO: Función flecha para asegurar que router existe */}
         <Pressable onPress={() => router.back()} className="p-2">
            <CloseIcon color="black" /> 
         </Pressable>
       </View>
 
       <ScrollView className="flex-1 px-5" contentContainerStyle={{ paddingVertical: 20 }}>
-        
-        {/* TIPO DE PLAN (Selector) */}
-        <Text className="text-xs font-bold text-gray-400 uppercase mb-3">¿QUÉ VAMOS A HACER?</Text>
-        <View className="flex-row bg-gray-50 p-1 rounded-xl mb-8">
-            <Pressable 
-                onPress={() => setIsViaje(true)}
-                className={`flex-1 py-3 rounded-lg items-center ${isViaje ? 'bg-white shadow-sm' : ''}`}
-            >
-                <Text className={`font-bold ${isViaje ? 'text-purple-600' : 'text-gray-400'}`}>✈️ VIAJE</Text>
-            </Pressable>
-            <Pressable 
-                onPress={() => setIsViaje(false)}
-                className={`flex-1 py-3 rounded-lg items-center ${!isViaje ? 'bg-white shadow-sm' : ''}`}
-            >
-                <Text className={`font-bold ${!isViaje ? 'text-blue-600' : 'text-gray-400'}`}>📅 EVENTO</Text>
-            </Pressable>
-        </View>
 
-        {/* DATOS BÁSICOS */}
         <View className="gap-6">
             <View>
                 <Text className="text-sm font-bold text-gray-700 mb-2">Título</Text>
@@ -104,30 +120,40 @@ export default function CrearPlan() {
                 />
             </View>
 
-            {/* FECHAS */}
             <View className="flex-row gap-4">
+                
                 <View className="flex-1">
                     <Text className="text-sm font-bold text-gray-700 mb-2">Desde</Text>
-                    <TextInput 
-                        value={fechaInicio}
-                        onChangeText={setFechaInicio}
-                        placeholder="YYYY-MM-DD"
-                        className="bg-gray-50 p-4 rounded-2xl text-base text-center"
-                    />
+                    <Pressable
+                        onPress={() => {
+                            setTipoFecha('inicio');
+                            setModalVisible(true);
+                        }}
+                        className="bg-gray-50 p-4 rounded-2xl border border-gray-100 active:bg-gray-100"
+                    >
+                        <Text className="text-base text-center text-black font-medium">
+                            {formatearFechaDisplay(fechaInicio)}
+                        </Text>
+                    </Pressable>
                 </View>
+
                 <View className="flex-1">
                     <Text className="text-sm font-bold text-gray-700 mb-2">Hasta</Text>
-                    <TextInput 
-                        value={fechaFin}
-                        onChangeText={setFechaFin}
-                        placeholder="YYYY-MM-DD"
-                        className="bg-gray-50 p-4 rounded-2xl text-base text-center"
-                    />
+                    <Pressable
+                        onPress={() => {
+                            setTipoFecha('fin');
+                            setModalVisible(true);
+                        }}
+                        className="bg-gray-50 p-4 rounded-2xl border border-gray-100 active:bg-gray-100"
+                    >
+                        <Text className="text-base text-center text-black font-medium">
+                            {formatearFechaDisplay(fechaFin)}
+                        </Text>
+                    </Pressable>
                 </View>
             </View>
         </View>
 
-        {/* INFO ADICIONAL */}
         {isViaje && (
             <View className="mt-6 bg-purple-50 p-4 rounded-2xl border border-purple-100">
                 <Text className="text-purple-800 text-sm">
@@ -138,7 +164,6 @@ export default function CrearPlan() {
 
       </ScrollView>
 
-      {/* BOTÓN GUARDAR */}
       <View className="px-5 mb-8">
         <Pressable
             onPress={handleGuardar}
@@ -154,6 +179,39 @@ export default function CrearPlan() {
             )}
         </Pressable>
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View className="flex-1 justify-end bg-black/50">
+            <View className="bg-white rounded-t-3xl p-5 pb-10 shadow-xl">
+                <View className="flex-row justify-between items-center mb-4">
+                    <Text className="text-lg font-bold text-gray-800">
+                        Seleccionar fecha {tipoFecha === 'inicio' ? 'de inicio' : 'de fin'}
+                    </Text>
+                    <Pressable onPress={() => setModalVisible(false)} className="p-2">
+                        <Text className="text-blue-600 font-bold">Cerrar</Text>
+                    </Pressable>
+                </View>
+
+                <Calendar
+                    current={fechaInicio || new Date().toISOString().split('T')[0]}
+                    onDayPress={handleDayPress}
+                    markedDates={getMarkedDates()}
+                    theme={{
+                        selectedDayBackgroundColor: '#5639F8',
+                        todayTextColor: '#5639F8',
+                        arrowColor: '#5639F8',
+                        textDayFontWeight: '500',
+                        textMonthFontWeight: 'bold',
+                    }}
+                />
+            </View>
+        </View>
+      </Modal>
 
     </View>
   );
