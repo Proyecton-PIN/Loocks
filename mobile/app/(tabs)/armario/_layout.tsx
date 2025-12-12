@@ -95,7 +95,7 @@ export default function ArmarioLayout() {
           </Pressable>
         )}
       />
-      <ImageAnalyzingModal show={isLoading} />
+      <ImageAnalyzingModal show={isLoading} text="Recortando imagen" />
     </View>
   );
 }
