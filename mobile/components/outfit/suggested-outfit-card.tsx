@@ -2,9 +2,10 @@ import { AddIcon, IAIcon } from '@/constants/icons';
 import { Colors } from '@/constants/theme';
 import { useOutfit } from '@/hooks/useOutfits';
 import { Outfit } from '@/lib/domain/models/outfits';
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import CustomCamera from '../camera/custom-camera';
+import ImageAnalyzingModal from '../camera/image-analyzing-modal';
 import OutfitCard from './outfit-card';
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 export default function SuggestedOutfitCard({ data }: Props) {
   const createOutfit = useOutfit((s) => s.createOutfit);
   const probarEnAvatar = useOutfit((s) => s.probarEnAvatar);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <View
@@ -42,7 +44,10 @@ export default function SuggestedOutfitCard({ data }: Props) {
           onTakeImage={(uri) => {
             if (!uri) return;
             if (!data.articulos || data.articulos.length === 0) return;
-            probarEnAvatar(uri, data.articulos);
+            setIsLoading(true);
+            probarEnAvatar(uri, data.articulos).then((_) =>
+              setIsLoading(false),
+            );
           }}
           trigger={(solicitarPermisos) => (
             <Pressable onPress={solicitarPermisos}>
@@ -51,6 +56,7 @@ export default function SuggestedOutfitCard({ data }: Props) {
           )}
         />
       </View>
+      <ImageAnalyzingModal show={isLoading} text="Generando vista previa" />
     </View>
   );
 }
