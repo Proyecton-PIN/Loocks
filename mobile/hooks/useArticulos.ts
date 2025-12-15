@@ -52,6 +52,8 @@ export const useArticulos = create<State>((set, get) => ({
       armarioArticulos[a.tipo].push(a);
     }
 
+    armarioArticulos['TODAS'] = articulos;
+
     set({ armarioArticulos });
   },
 
