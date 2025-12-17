@@ -35,7 +35,10 @@ export default function PrendaCategoriaCard({
   tipo: string;
   onClose(name: string, color?: string): void;
 }) {
-  const articulos = useArticulos((s) => s.armarioArticulos)[tipo];
+  // Aseguramos que articulos nunca sea undefined
+  const articulosData = useArticulos((s) => s.armarioArticulos)[tipo];
+  const articulos = articulosData || []; 
+
   const [color, setColor] = useState(initialColor);
   const [name, setName] = useState(initialName);
   
@@ -44,18 +47,16 @@ export default function PrendaCategoriaCard({
   const dimensions = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
-  // --- LÓGICA DEL GESTO PARA CERRAR ---
+  // --- GESTO PARA CERRAR ---
   const panResponder = useRef(
     PanResponder.create({
-      // Preguntar: ¿Quiere este componente ser el que responda al toque?
       onStartShouldSetPanResponder: () => true,
+      // Solo activamos si el movimiento es vertical hacia abajo y mayor que el horizontal
       onMoveShouldSetPanResponder: (_, gestureState) => {
-        // Solo robamos el foco si se mueve verticalmente hacia abajo
-        // y el movimiento vertical es mayor que el horizontal
         return gestureState.dy > 5 && Math.abs(gestureState.dy) > Math.abs(gestureState.dx);
       },
       onPanResponderRelease: (_, gestureState) => {
-        // Si deslizó hacia abajo más de 30px (más sensible), cerramos
+        // Umbral de 30px para cerrar
         if (gestureState.dy > 30) {
           sheetRef.current?.close();
         }
@@ -72,7 +73,9 @@ export default function PrendaCategoriaCard({
       >
         <View className="flex-1 gap-[10px] px-[9px]">
           <Text className="flex-1 text-[32px] font-medium text-[#222222]">{name}</Text>
-          <Text className={clsx(!articulos && 'opacity-0')}>{articulos?.length} prendas</Text>
+          <Text className={clsx(articulos.length === 0 && 'opacity-0')}>
+            {articulos.length} prendas
+          </Text>
         </View>
         <View className="rounded-full w-[44px] h-[44px] bg-black/10 items-center justify-center">
           <IconComponent />
@@ -81,8 +84,7 @@ export default function PrendaCategoriaCard({
 
       <RBSheet
         height={dimensions.height - insets.top}
-        // IMPORTANTE: dragOnContent={false} evita que la librería pelee con tu FlatList
-        dragOnContent={false} 
+        dragOnContent={false} // Desactivado para evitar conflicto con FlatList
         ref={sheetRef}
         openDuration={300}
         customModalProps={{ animationType: 'fade', statusBarTranslucent: true }}
@@ -92,32 +94,21 @@ export default function PrendaCategoriaCard({
           container: { backgroundColor: 'transparent' },
         }}
         customAvoidingViewProps={{ enabled: false }}
-        // Al cerrar, guardamos los cambios
         onClose={() => onClose(name, color)}
       >
         <View className="flex-1 rounded-t-3xl">
           <View className="bg-white flex-1 rounded-t-3xl px-[19px] pt-[10px]">
             
-            {/* --- ZONA DE AGARRE (HANDLE) --- */}
-            {/* Solo esta View recibe el gesto de deslizar para cerrar */}
-            <View 
-                {...panResponder.panHandlers} 
-                style={{ 
-                    alignItems: 'center', 
-                    width: '100%', 
-                    paddingVertical: 10, // Aumentamos el área táctil vertical
-                    backgroundColor: 'transparent' // Transparente pero detectable
-                }}
-            >
+            {/* --- HEADER CON GESTO DE CIERRE --- */}
+            <View {...panResponder.panHandlers} style={{ alignItems: 'center', width: '100%', paddingVertical: 10, backgroundColor: 'transparent' }}>
                 <View style={{ backgroundColor: '#F3F3F3', width: 50, height: 4, borderRadius: 999 }} />
             </View>
 
-            {/* --- RESTO DEL HEADER (INPUTS) --- */}
-            {/* Esto está FUERA del panResponder para que puedas escribir sin problemas */}
-            <View className="flex-row gap-[11px] mb-2 mt-2">
+            {/* --- INPUTS (Fuera del gesto para poder escribir) --- */}
+            <View className="flex-row gap-[11px] mb-2">
                 <TextInput
                   value={name}
-                  onChangeText={(v) => setName(v)}
+                  onChangeText={setName}
                   style={{ borderColor: '#686868', borderWidth: 1, borderStyle: 'dashed', borderRadius: 12, paddingHorizontal: 12, flex: 1, height: 44 }}
                 />
                 <Pressable
@@ -151,23 +142,38 @@ export default function PrendaCategoriaCard({
               </View>
             </Modal>
 
-            {/* Lista de ropa */}
+            {/* --- LISTA DE ARTÍCULOS --- */}
             <FlatList
-              style={{ marginTop: 20 }}
+              style={{ marginTop: 20, flex: 1 }} // flex: 1 es CRUCIAL para que se vea
               numColumns={2}
               data={articulos}
+              keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
               ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
-              ListFooterComponent={() => <View style={{ height: 100 }} />}
-              // scrollEnabled siempre activo, ya no choca con el gesto
+              ListFooterComponent={() => <View style={{ height: 100 }} />} // Espacio extra abajo
               renderItem={({ item, index }) => (
                 <Pressable
                   onPress={() => {
+                    // 1. Cerramos la hoja
+                    sheetRef.current?.close();
+                    
                     try {
+                      // 2. Seleccionamos el artículo
                       useArticulos.getState().selectArticulo(item);
-                      router.push('/ver-articulo');
+                      
+                      // 3. Navegamos con un pequeño retraso para permitir que la hoja empiece a cerrarse
+                      // Esto soluciona que tengas que cerrar manualmente para ver la nueva pantalla
+                      setTimeout(() => {
+                        router.push('/ver-articulo');
+                      }, 250); 
                     } catch (e) { console.warn('Error selecting', e); }
                   }}
-                  style={{ flex: 1, backgroundColor: 'white', overflow: 'hidden', marginLeft: index % 2 === 1 ? 4 : 0, marginRight: index % 2 === 0 ? 4 : 0 }}
+                  style={{ 
+                    flex: 1, 
+                    backgroundColor: 'white', 
+                    overflow: 'hidden', 
+                    marginLeft: index % 2 === 1 ? 4 : 0, 
+                    marginRight: index % 2 === 0 ? 4 : 0 
+                  }}
                 >
                   <View style={{ borderColor: '#F3F3F3', borderWidth: 1, borderRadius: 12, marginBottom: 5, padding: 10, aspectRatio: 1 / 1.5 }}>
                     <Image source={{ uri: item.imageUrl }} style={{ width: '100%', height: '100%', borderRadius: 8 }} resizeMode="contain" />
