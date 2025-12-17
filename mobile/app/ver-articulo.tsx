@@ -118,8 +118,6 @@ export default function ArticuloDetalles() {
 
       </ScrollView>
     </View>
-
-    
   );
 
   function formatRelativeDate(dateString?: string | Date): string {

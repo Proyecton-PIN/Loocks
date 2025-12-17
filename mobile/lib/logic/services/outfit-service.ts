@@ -82,3 +82,18 @@ export async function removeOutfit(id: number): Promise<boolean> {
     return false;
   }
 }
+
+  export async function updateOutfit(
+  outfitId: number,
+  articulosIds: number[]
+): Promise<boolean> {
+  try {
+    await http.post(`outfits/update/${outfitId}`, {
+      body: JSON.stringify({ articulosIds }),
+    });
+    return true;
+  } catch (e) {
+    console.error('Error updating outfit:', e);
+    return false;
+  }
+}

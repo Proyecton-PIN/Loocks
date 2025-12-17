@@ -1,198 +1,192 @@
 import { LeftArrowIcon } from '@/constants/icons';
 import { useOutfit } from '@/hooks/useOutfits';
-import { Stack, router } from 'expo-router';
-import React from 'react';
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
+import React, { useState, useEffect } from 'react';
+import { Image, Pressable, ScrollView, Text, View, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useArticulos } from '@/hooks/useArticulos';
 
 export default function VerOutfit() {
   const selected = useOutfit((s) => s.selectedOutfit);
-  const insets = useSafeAreaInsets();
   const removeOutfit = useOutfit((s) => s.removeOutfit);
+  const insets = useSafeAreaInsets();
+  const router = useRouter();
 
-  React.useEffect(() => {
-    if (!selected) {    
-      router.back();
+  const [activePrenda, setActivePrenda] = useState(selected?.outfit?.articulos?.[0]);
+
+  useEffect(() => {
+    if (!selected) {
+      if (router.canGoBack()) {
+         router.back();
+      }
+      return;
+    }
+    if (selected.outfit.articulos && selected.outfit.articulos.length > 0 && !activePrenda) {
+        setActivePrenda(selected.outfit.articulos[0]);
     }
   }, [selected]);
-
-  if (!selected) return null;
-
+  if (!selected || !selected.outfit) return null;
   const outfit = selected.outfit;
-  const mainImage =
-    outfit.articulos && outfit.articulos.length > 0
-      ? outfit.articulos[0].imageUrl
-      : undefined;
+  // --- HANDLERS ---
 
+  const selectArticulo = useArticulos((s) => s.selectArticulo); 
+  const handleVerDetalles = () => {
+    if (!activePrenda) return;
+    selectArticulo(activePrenda);
+    router.push('/ver-articulo');
+};
+const handleEditarPrenda = () => {
+    router.push({
+        pathname:'/cambiar-prenda',
+        params: { prendaIdA_Reemplazar: activePrenda?.id }
+    })
+};
+  const handleEliminarOutfit = async () => {
+    Alert.alert(
+        "Eliminar Outfit",
+        "¿Estás seguro? Esta acción no se puede deshacer.",
+        [
+            { text: "Cancelar", style: "cancel" },
+            {
+                text: "Eliminar",
+                style: "destructive",
+                onPress: async () => {
+                    await removeOutfit(outfit.id!);
+                    router.back();
+                }
+            }
+        ]
+    );
+  };
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <View className="flex-1 bg-white">
       <Stack.Screen options={{ headerShown: false }} />
       <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          paddingHorizontal: 16,
-          paddingTop: insets.top + 10,
-          paddingBottom: 8,
-        }}
+        style={{ paddingTop: insets.top + 10 }}
+        className="px-5 pb-2 flex-row items-center justify-between"
       >
         <Pressable
-          onPress={router.back}
-          style={{ padding: 8, backgroundColor: '#F3F4F6', borderRadius: 999 }}
+          onPress={() => router.back()}
+          className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center"
         >
           <LeftArrowIcon color="black" />
         </Pressable>
-      </View>
-
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 80 }}>
-        {mainImage ? (
-          <Image
-            source={{ uri: mainImage }}
-            style={{
-              width: '100%',
-              aspectRatio: 3 / 4,
-              borderRadius: 20,
-              backgroundColor: '#f3f3f3',
-            }}
-            resizeMode="cover"
-          />
-        ) : (
-          <View
-            style={{
-              width: '100%',
-              aspectRatio: 3 / 4,
-              borderRadius: 20,
-              backgroundColor: '#f3f3f3',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Text>No image</Text>
-          </View>
-        )}
-
-        <View
-          style={{
-            marginTop: 12,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <View>
-            <Text style={{ fontSize: 20, fontWeight: '700' }}>
-              {selected?.outfit?.id
-                ? `Outfit #${selected.outfit.id}`
-                : 'Outfit'}
+        <View>
+            <Text className="text-lg font-bold text-center">Outfit #{outfit.id}</Text>
+            <Text className="text-xs text-gray-400 text-center">
+                {selected.fechaInicio ? new Date(selected.fechaInicio).toLocaleDateString() : ''}
             </Text>
-            <Text style={{ color: '#6B7280', marginTop: 4 }}>
-              {selected.fechaInicio.toDateString()}
-            </Text>
-          </View>
-          <Text style={{ fontSize: 24 }}>{outfit.isFavorito ? '★' : '☆'}</Text>
         </View>
-
-        <View
-          style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            gap: 8,
-            marginTop: 12,
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: '#F3F4F6',
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-              borderRadius: 20,
-              marginRight: 8,
-            }}
-          >
-            <Text style={{ color: '#374151', fontWeight: '600' }}>
-              {outfit.estacion}
-            </Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: '#F3F4F6',
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-              borderRadius: 20,
-            }}
-          >
-            <Text style={{ color: '#374151', fontWeight: '600' }}>
-              {String(outfit.estilo)}
-            </Text>
-          </View>
-        </View>
-
-        <Text style={{ fontSize: 16, fontWeight: '700', marginTop: 18 }}>
-          Prendas
-        </Text>
-        <View style={{ flexDirection: 'row', marginTop: 12, gap: 12 }}>
-          {outfit.articulos.map((a, i) => (
-            <View
-              key={i}
-              style={{
-                width: 96,
-                height: 128,
-                borderRadius: 12,
-                overflow: 'hidden',
-                backgroundColor: '#fff',
-                borderWidth: 1,
-                borderColor: '#E5E7EB',
-              }}
-            >
-              {a.imageUrl ? (
-                <Image
-                  source={{ uri: a.imageUrl }}
-                  style={{ width: '100%', height: '100%' }}
-                  resizeMode="cover"
-                />
-              ) : (
-                <View
-                  style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Text style={{ color: '#9CA3AF' }}>
-                    {a.nombre ?? `#${a.id}`}
-                  </Text>
-                </View>
-              )}
-            </View>
-          ))}
-        </View>
-
-        <View style={{ marginTop: 18 }}>
-          <Text style={{ fontSize: 16, fontWeight: '700' }}>Detalles</Text>
-          <View style={{ marginTop: 8 }}>
-            <Text style={{ color: '#374151' }}>
-              Número de prendas: {outfit.articulos.length}
-            </Text>
-            <Text style={{ color: '#374151', marginTop: 6 }}>
-              Favorito: {outfit.isFavorito ? 'Sí' : 'No'}
-            </Text>
-          </View>
-        </View>
-      </ScrollView>
-
-      
-        <Pressable
-          className="rounded-2xl py-4 justify-center items-center bg-red-50 mb-10 border border-red-100"
-          onPress={async () => {
-            await removeOutfit(selected.outfit.id!);
-            router.push('/(tabs)/armario/outfits-page');
-          }}
-        >
-          <Text className="text-red-500 font-bold text-lg">
-            Eliminar articulo 🗑️
-          </Text>
+        <Pressable className="w-10 items-end justify-center">
+            <Text className="text-2xl text-yellow-500">{outfit.isFavorito ? '★' : '☆'}</Text>
         </Pressable>
+      </View>
+      <View className="px-5 flex-row flex-wrap gap-2 mb-4 justify-center">
+          {outfit.estacion && (
+            <View className="bg-gray-100 px-3 py-1.5 rounded-full">
+              <Text className="text-gray-600 font-semibold text-xs uppercase">
+                {outfit.estacion}
+              </Text>
+            </View>
+          )}
+          {outfit.estilo && (
+            <View className="bg-gray-100 px-3 py-1.5 rounded-full">
+              <Text className="text-gray-600 font-semibold text-xs uppercase">
+                {String(outfit.estilo)}
+              </Text>
+            </View>
+          )}
+      </View>
+      <View className="flex-1">
+          {activePrenda ? (
+            <View className="px-5 pt-2 pb-4 flex-1 justify-center">
+                <View className="w-full aspect-[3/4] bg-gray-50 rounded-[32px] overflow-hidden shadow-sm border border-gray-100 relative">
+                    {activePrenda.imageUrl ? (
+                        <Image
+                            source={{ uri: activePrenda.imageUrl }}
+                            className="w-full h-full"
+                            resizeMode="contain"
+                        />
+                    ) : (
+                        <View className="flex-1 items-center justify-center">
+                            <Text className="text-gray-400">Sin imagen</Text>
+                        </View>
+                    )}
+                    <View className="absolute bottom-0 left-0 right-0 bg-white/90 p-4">
+                        <Text className="text-xl font-bold text-black text-center">
+                            {activePrenda.nombre || "Prenda sin nombre"}
+                        </Text>
+                        <Text className="text-gray-500 text-center text-xs uppercase tracking-widest">
+                            {activePrenda.tipo || "Prenda"}
+                        </Text>
+                    </View>
+                </View>
+                <View className="flex-row gap-3 mt-4">
+                    <Pressable
+                        onPress={handleEditarPrenda}
+                        className="flex-1 bg-black py-3.5 rounded-2xl items-center justify-center active:opacity-80"
+                    >
+                        <Text className="text-white font-bold">Editar</Text>
+                    </Pressable>
+                    <Pressable
+                        onPress={handleVerDetalles}
+                        className="flex-1 bg-gray-100 py-3.5 rounded-2xl items-center justify-center active:bg-gray-200"
+                    >
+                        <Text className="text-black font-bold">Detalles</Text>
+                    </Pressable>
+                </View>
+            </View>
+          ) : (
+             <View className="flex-1 justify-center items-center">
+                 <Text className="text-gray-400">No hay prendas en este outfit</Text>
+             </View>
+          )}
+          <View className="bg-gray-50 rounded-t-[32px] pt-6 pb-8 px-5 shadow-sm h-48">
+            <Text className="text-gray-400 font-bold text-xs uppercase mb-3 ml-1">
+                Composición ({outfit.articulos ? outfit.articulos.length : 0})
+            </Text>
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ gap: 12, paddingRight: 20 }}
+            >
+                {outfit.articulos && outfit.articulos.map((item, index) => {
+                    const isActive = activePrenda && activePrenda.id === item.id;
+                    return (
+                        <Pressable
+                            key={item.id || index}
+                            onPress={() => setActivePrenda(item)}
+                            className={`items-center transition-all ${isActive ? 'opacity-100' : 'opacity-60'}`}
+                        >
+                            <View
+                                className={`w-16 h-20 rounded-xl overflow-hidden border-2 bg-white ${
+                                    isActive ? 'border-black' : 'border-transparent'
+                                }`}
+                            >
+                                {item.imageUrl ? (
+                                    <Image
+                                        source={{ uri: item.imageUrl }}
+                                        className="w-full h-full"
+                                        resizeMode="contain"
+                                    />
+                                ) : (
+                                    <View className="flex-1 items-center justify-center bg-gray-100">
+                                        <Text className="text-[8px] text-gray-400">N/A</Text>
+                                    </View>
+                                )}
+                            </View>
+                        </Pressable>
+                    );
+                })}
+                <Pressable
+                    onPress={handleEliminarOutfit}
+                    className="w-16 h-20 rounded-xl bg-red-50 border border-red-100 items-center justify-center ml-2"
+                >
+                    <Text className="text-red-500 text-xs font-bold text-center">Eliminar</Text>
+                </Pressable>
+            </ScrollView>
+          </View>
+      </View>
     </View>
   );
 }

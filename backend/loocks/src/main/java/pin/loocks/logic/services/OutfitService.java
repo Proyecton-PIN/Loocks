@@ -25,6 +25,7 @@ import pin.loocks.data.repositories.OutfitLogRepository;
 import pin.loocks.data.repositories.OutfitRepository;
 import pin.loocks.domain.dtos.CreateOutfitRequestDTO;
 import pin.loocks.domain.dtos.FilterRequestDTO;
+import pin.loocks.domain.models.Articulo;
 import pin.loocks.domain.models.Outfit;
 import pin.loocks.domain.models.OutfitLog;
 import pin.loocks.domain.models.Perfil;
@@ -133,4 +134,14 @@ public class OutfitService {
       return p;
     };
   }
+
+  public Outfit updateOutfit(Long outfitId, List<Long> articulosIds) {
+        Outfit outfit = outfitRepository.findById(outfitId)
+            .orElseThrow(() -> new RuntimeException("Outfit no encontrado con id: " + outfitId));
+
+        List<Articulo> nuevosArticulos = articuloRepository.findAllById(articulosIds);
+
+        outfit.setArticulos(nuevosArticulos);
+        return outfitRepository.save(outfit);
+    }
 }

@@ -3,6 +3,8 @@ package pin.loocks.ui.controllers;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import pin.loocks.domain.dtos.CreateOutfitRequestDTO;
@@ -126,4 +129,17 @@ public class OutfitController {
       }
     }
 
+   @PostMapping("/update/{id}")
+    public ResponseEntity<Outfit> updateOutfit(
+            @PathVariable Long id,
+            @RequestBody Map<String, List<Object>> payload) { // Usamos Object para evitar ClassCastException
+        
+        // CONVERSIÓN SEGURA: De Integer/Number a Long
+        List<Object> rawIds = payload.get("articulosIds");
+        List<Long> articulosIds = rawIds.stream()
+            .map(obj -> ((Number) obj).longValue())
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(outfitService.updateOutfit(id, articulosIds));
+    }
 }

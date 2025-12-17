@@ -7,6 +7,7 @@ import {
   getOutfitSuggestions,
   probarOutfitEnAvatar,
   removeOutfit,
+  updateOutfit as updateOutfitService, 
 } from '@/lib/logic/services/outfit-service';
 import { router } from 'expo-router';
 import { create } from 'zustand';
@@ -37,6 +38,9 @@ interface State {
   unSelectProbarEnAvatar(): void;
   probarEnAvatar(uri: string, articulos: Articulo[]): Promise<void>;
   loadSuggestedOutfits(): Promise<void>;
+
+  // Solo dejamos updateOutfit, quitamos setArticulos de aquí
+  updateOutfit(outfitId: number, nuevosArticulos: Articulo[]): Promise<boolean>; 
 }
 
 export const useOutfit = create<State>((set, get) => ({
@@ -48,7 +52,6 @@ export const useOutfit = create<State>((set, get) => ({
   async loadSuggestedOutfits() {
     set({ isLoading: true });
     const suggested = await getOutfitSuggestions();
-
     set({ isLoading: false, suggested });
   },
 
@@ -108,10 +111,7 @@ export const useOutfit = create<State>((set, get) => ({
       selectedOutfit: undefined,
     }));
 
-    // Navigate back to outfits page
     router.push('/(tabs)/armario/outfits-page');
-
-    // Reload outfits to ensure fresh data
     await get().loadOutfits();
 
     return true;
@@ -126,5 +126,30 @@ export const useOutfit = create<State>((set, get) => ({
 
   unSelectProbarEnAvatar() {
     set({ isOpenProbadorOutfit: false });
+  },
+
+  async updateOutfit(outfitId: number, nuevosArticulos: Articulo[]) {
+      const ids = nuevosArticulos.map(a => a.id!);
+      const success = await updateOutfitService(outfitId, ids);
+      
+      if (success) {
+          set(state => ({
+              selectedOutfit: state.selectedOutfit ? {
+                  ...state.selectedOutfit,
+                  outfit: { 
+                      ...state.selectedOutfit.outfit, 
+                      articulos: nuevosArticulos 
+                  }
+              } : undefined,
+
+              logs: state.logs.map(log => 
+                  log.outfit.id === outfitId
+                      ? { ...log, outfit: { ...log.outfit, articulos: nuevosArticulos } }
+                      : log
+              )
+          }));
+          return true;
+      }
+      return false;
   },
 }));

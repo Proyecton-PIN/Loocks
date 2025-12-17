@@ -14,6 +14,7 @@ interface State {
   articulos: Articulo[];
   armarioArticulos: Record<string, Articulo[]>;
   selectedArticulo?: Articulo;
+
   selectArticulo(articulo: Articulo): void;
 
   fetchPrendas(): Promise<void>;
@@ -29,12 +30,15 @@ interface State {
     data: Partial<Record<string, any>>,
   ): Promise<any | undefined>;
   deleteArticulo(id: number): Promise<boolean>;
+  setArticulos: (lista: Articulo[]) => void;
 }
 
 export const useArticulos = create<State>((set, get) => ({
   isLoading: true,
   articulos: [],
   armarioArticulos: {},
+
+  setArticulos: (lista) => set({ articulos: lista }),
 
   async fetchPrendas() {
     const prendas = await fetchArticulos();
