@@ -54,7 +54,7 @@ export default function MaletaPage() {
         const data = await generarMaletaAutomatica(safePlanId);
         if (data && data.length > 0) {
             setItems(data);
-            Alert.alert("¡Magia hecha! ✨", "Hemos llenado tu lista con la ropa de tus outfits.");
+            Alert.alert("Hemos llenado tu lista con la ropa de tus plan.");
         } else {
             Alert.alert("Aviso", "No hemos encontrado ropa nueva que añadir.");
         }
@@ -144,7 +144,7 @@ export default function MaletaPage() {
                                 <>
                                     <IAIcon color="#5639F8" />
                                     <Text className="text-[#5639F8] font-bold ml-2 text-base">
-                                        Importar ropa de los Outfits
+                                        Generar maleta automaticamente
                                     </Text>
                                 </>
                             )}
