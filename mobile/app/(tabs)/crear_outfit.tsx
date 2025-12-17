@@ -269,7 +269,7 @@ export default function CrearOutfit() {
 
       <View style={{ flex: 1, justifyContent: 'space-between' }}>
         <View>
-          <View className='px-6'>
+          <View className="px-6">
             <Text
               style={{
                 color: '#222222',
@@ -427,36 +427,24 @@ export default function CrearOutfit() {
 
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
-            style={{
-              marginTop: 6,
-              width: '45%',
-              backgroundColor: '#E0DBFF',
-              paddingVertical: 6,
-              borderRadius: 30,
-              alignItems: 'center',
-              alignSelf: 'stretch',
-            }}
+            className="flex-row space-between items-center rounded-[30px] 
+            bg-[#E0DBFF] p-[5px] w-min"
           >
-            <View className="flex-row items-center gap-2">
-              <View
-                style={{
-                  width: 32,
-                  height: 32,
-                  marginLeft: -20,
-                  borderRadius: 17,
-                  backgroundColor: '#5639F8',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <AntDesign name="unlock" size={14} color="white" />
-              </View>
-              <Text
-                style={{ color: '#5639F8', fontWeight: '600', fontSize: 14 }}
-              >
-                {loading ? 'Creando...' : 'Guardar Outfit'}
-              </Text>
+            <View
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 99999,
+                backgroundColor: '#5639F8',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <AntDesign name="unlock" size={15} color="white" />
             </View>
+            <Text className="text-[14px] font-bold color-[#5639F8] px-2">
+              {loading ? 'Creando...' : 'Guardar Outfit'}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
