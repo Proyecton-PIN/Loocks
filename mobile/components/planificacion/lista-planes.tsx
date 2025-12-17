@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { View, Text, FlatList, Image, Pressable, ScrollView } from 'react-native';
 import { usePlanning } from '@/hooks/usePlanificacion';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router'; // <--- IMPORTANTE
 
 export default function PlansList() {
+  const router = useRouter(); // <--- Hook de navegación
   const { allPlans, fetchAllPlans, isLoading } = usePlanning();
 
   useEffect(() => {
@@ -24,9 +25,12 @@ export default function PlansList() {
       }
       renderItem={({ item }) => (
         <Pressable 
-            className="bg-white p-4 rounded-3xl mb-4 border border-gray-100 shadow-sm"
+            className="bg-white p-4 rounded-3xl mb-4 border border-gray-100 shadow-sm active:bg-gray-50"
             onPress={() => {
-                alert("Ir a detalles de: " + item.titulo);
+                router.push({
+                    pathname: '/plan-detalles',
+                    params: { planId: item.id }
+                });
             }}
         >
             <View className="flex-row justify-between items-start mb-3">
@@ -43,10 +47,12 @@ export default function PlansList() {
                 </View>
             </View>
 
+            {/* FECHAS */}
             <Text className="text-gray-500 text-sm mb-4">
                 📅 {new Date(item.fechaInicio).toLocaleDateString()} - {new Date(item.fechaFin).toLocaleDateString()}
             </Text>
 
+            {/* PREVIEW DE OUTFITS (Carrusel pequeño) */}
             {item.outfitLogs && item.outfitLogs.length > 0 ? (
                 <View>
                     <Text className="text-xs text-gray-400 mb-2 font-bold">OUTFITS PLANIFICADOS</Text>

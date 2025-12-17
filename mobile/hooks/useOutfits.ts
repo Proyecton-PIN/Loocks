@@ -32,7 +32,7 @@ interface State {
 
   createOutfit(outfit: Partial<Outfit>): Promise<void>;
   removeOutfit(id: number): Promise<boolean>;
-  selectOutfit?(o?: OutfitLog): void;
+  selectOutfit(o?: OutfitLog): void;
   addOutfitLog(log: OutfitLog): void;
 
   unSelectProbarEnAvatar(): void;
