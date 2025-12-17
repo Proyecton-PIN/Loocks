@@ -10,7 +10,7 @@ import { FlatList, Pressable, Text, View } from 'react-native';
 
 export default function OutfitsPage() {
   const logs = useOutfit((s) => s.logs);
-  const loadOutfits = useOutfit((s) => s.loadOutfits);
+  // const loadOutfits = useOutfit((s) => s.loadOutfits);
 
   // useFocusEffect(
   //   React.useCallback(() => {
@@ -195,13 +195,13 @@ export default function OutfitsPage() {
               useOutfit.getState().selectOutfit?.(e.item);
               router.push('/ver-outfit' as any);
             }}
-            style={{ flex: 1 }}
+            style={{ flex: 1, minHeight: 115 * 2 + 10 + 20 }}
           >
             <View className="flex-1">
               <OutfitCard
                 data={e.item.outfit}
                 className={clsx(
-                  'flex-1 h-[260]',
+                  'flex-1',
                   e.index % 1 === 1 ? 'ml-[5]' : 'mr-[5]',
                 )}
               />

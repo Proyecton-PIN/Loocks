@@ -2,7 +2,7 @@ import { Colors } from '@/constants/theme';
 import { Outfit } from '@/lib/domain/models/outfits';
 import clsx from 'clsx';
 import React from 'react';
-import { FlatList, Image, View } from 'react-native';
+import { FlatList, Image, useWindowDimensions, View } from 'react-native';
 
 interface Props {
   data: Partial<Outfit>;
@@ -11,6 +11,7 @@ interface Props {
 
 export default function OutfitCard({ data, className }: Props) {
   if (data.articulos?.length === 0) return;
+  const dimensions = useWindowDimensions();
 
   return (
     <View
@@ -20,7 +21,6 @@ export default function OutfitCard({ data, className }: Props) {
       }}
     >
       <FlatList
-        className="h-[240]"
         showsVerticalScrollIndicator={false}
         data={data.articulos}
         numColumns={2}

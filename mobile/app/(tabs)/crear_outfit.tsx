@@ -57,7 +57,8 @@ export default function CrearOutfit() {
     if (!profile) {
       void fetchProfile();
     }
-    fetchArticulos().then((_) => loadOutfits());
+    fetchArticulos();
+    loadOutfits();
   }, []);
 
   const userData = {
@@ -229,9 +230,11 @@ export default function CrearOutfit() {
   const articulosTorso = articulos.filter((a) =>
     a.zonasCubiertas?.includes('TORSO'),
   );
-  const articulosPiernas = articulos.filter((a) =>
-    a.zonasCubiertas?.includes('PIERNAS'),
+  const articulosPiernas: (Articulo | undefined)[] = articulos.filter(
+    (a) =>
+      a.zonasCubiertas?.includes('PIERNAS') && a.zonasCubiertas?.length === 1,
   );
+  articulosPiernas.push(undefined);
   const articulosPies = articulos.filter((a) =>
     a.zonasCubiertas?.includes('PIES'),
   );
@@ -320,10 +323,9 @@ export default function CrearOutfit() {
                   options={{ loop: true, spacing: 20, itemWidth: cardWidth }}
                   initialIndex={0}
                   onSelect={(logicalIndex, item) => {
-                    if (!item) return;
                     setSlots((prev) => {
                       const copy = [...prev];
-                      copy[slotIndex] = item.id;
+                      copy[slotIndex] = item?.id ?? null;
                       return copy;
                     });
                   }}
@@ -344,7 +346,7 @@ export default function CrearOutfit() {
                         justifyContent: 'center',
                       }}
                     >
-                      {item.imageUrl ? (
+                      {item?.imageUrl ? (
                         <Image
                           source={{ uri: item.imageUrl }}
                           style={{
@@ -362,14 +364,14 @@ export default function CrearOutfit() {
                             justifyContent: 'center',
                           }}
                         >
-                          <Ionicons
+                          {/* <Ionicons
                             name="shirt-outline"
                             size={48}
                             color="#555"
                           />
                           <Text style={{ color: '#222222', marginTop: 6 }}>
                             {item.nombre ?? `#${item.id}`}
-                          </Text>
+                          </Text> */}
                         </View>
                       )}
                     </TouchableOpacity>
@@ -387,7 +389,7 @@ export default function CrearOutfit() {
             paddingTop: 6,
             display: 'flex',
             flexDirection: 'row',
-            justifyContent: 'center',
+            justifyContent: 'space-between',
             gap: 70,
           }}
         >
@@ -422,36 +424,25 @@ export default function CrearOutfit() {
 
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
-            style={{
-              marginTop: 6,
-              width: '45%',
-              backgroundColor: '#E0DBFF',
-              paddingVertical: 6,
-              borderRadius: 30,
-              alignItems: 'center',
-              alignSelf: 'stretch',
-            }}
+            className="flex-row space-between items-center rounded-[30px] 
+            bg-[#E0DBFF] p-[5px] w-min"
           >
-            <View className="flex-row items-center gap-2">
-              <View
-                style={{
-                  width: 35,
-                  height: 35,
-                  marginLeft: -20,
-                  borderRadius: 17,
-                  backgroundColor: '#5639F8',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <AntDesign name="unlock" size={15} color="white" />
-              </View>
-              <Text
-                style={{ color: '#5639F8', fontWeight: '600', fontSize: 14 }}
-              >
-                {loading ? 'Creando...' : 'Guardar Outfit'}
-              </Text>
+            <View
+              style={{
+                width: 40,
+                height: 40,
+                // marginLeft: -20,
+                borderRadius: 99999,
+                backgroundColor: '#5639F8',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <AntDesign name="unlock" size={15} color="white" />
             </View>
+            <Text className="text-[14px] font-bold color-[#5639F8] px-2">
+              {loading ? 'Creando...' : 'Guardar Outfit'}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
