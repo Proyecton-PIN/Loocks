@@ -1,6 +1,7 @@
 import { LeftArrowIcon } from '@/constants/icons';
 import { usePlanning } from '@/hooks/usePlanificacion';
 import { useOutfit } from '@/hooks/useOutfits';
+import { Ionicons } from '@expo/vector-icons'; // Necesario para el icono de la maleta
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -25,14 +26,14 @@ export default function PlanDetalles() {
   // 1. BUSCAR EL PLAN EN MEMORIA
   const plan = allPlans.find(p => p.id?.toString() === planId?.toString());
 
-  // 2. ORDENAR LOS OUTFITS POR FECHA (Protegido con ?)
+  // 2. ORDENAR LOS OUTFITS POR FECHA
   const outfitsOrdenados = plan?.outfitLogs?.sort((a, b) => 
     new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime()
   ) || [];
 
   const handleVerOutfit = (log: any) => {
     selectOutfit(log);
-    // Ajusta esta ruta si tu pantalla de ver outfit está en otro lado
+    // Ajusta la ruta a donde tengas tu pantalla de ver outfit
     router.push('/ver-outfit'); 
   };
 
@@ -62,11 +63,39 @@ export default function PlanDetalles() {
         </Text>
       </View>
 
-      {/* LISTA DE DÍAS */}
+      {/* LISTA DE OUTFITS + BOTÓN MALETA (HEADER) */}
       <FlatList
         data={outfitsOrdenados}
         keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
         contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+        
+        // --- AQUÍ ESTABA EL ERROR: ListHeaderComponent va DENTRO del FlatList ---
+        ListHeaderComponent={
+            <View className="mb-8 mt-2">
+                {/* BOTÓN PARA IR A LA PÁGINA DE LA MALETA */}
+                <Pressable
+                    onPress={() => router.push({
+                        pathname: '/maleta', // Asegúrate de que creaste el archivo src/app/maleta.tsx
+                        params: { planId: planId }
+                    })}
+                    className="bg-[#5639F8] p-5 rounded-3xl shadow-lg shadow-indigo-200 flex-row items-center justify-between active:opacity-90"
+                >
+                    <View>
+                        <Text className="text-white font-bold text-lg">Preparar Maleta</Text>
+                        <Text className="text-indigo-200 text-xs mt-1">Gestiona tu equipaje aquí</Text>
+                    </View>
+                    <View className="bg-white/20 p-3 rounded-2xl">
+                        <Ionicons name="briefcase" size={24} color="white" />
+                    </View>
+                </Pressable>
+
+                <Text className="text-gray-400 font-bold uppercase text-xs mt-8 mb-2 ml-1">
+                    ITINERARIO DE OUTFITS
+                </Text>
+            </View>
+        }
+        // -----------------------------------------------------------------------
+
         ListEmptyComponent={
             <View className="mt-10 items-center">
                 <Text className="text-gray-400">No hay outfits generados para este plan.</Text>
@@ -80,7 +109,7 @@ export default function PlanDetalles() {
                 month: 'long' 
             });
 
-            // PROTECCIÓN: Verificamos si existe el outfit
+            // PROTECCIÓN
             const outfit = item.outfit;
             const articulos = outfit?.articulos || [];
 
@@ -97,10 +126,10 @@ export default function PlanDetalles() {
                         className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden"
                     >
                         <View className="p-4 flex-row items-center gap-4">
-                            {/* Collage de fotos (hasta 4 prendas) */}
+                            {/* Collage de fotos */}
                             <View className="w-20 h-20 bg-gray-50 rounded-2xl flex-row flex-wrap overflow-hidden bg-gray-100">
                                 {articulos.length > 0 ? (
-                                    articulos.slice(0, 4).map((art, i) => (
+                                    articulos.slice(0, 4).map((art: any, i: number) => (
                                         <Image 
                                             key={i}
                                             source={{ uri: art.imageUrl }} 
@@ -118,7 +147,6 @@ export default function PlanDetalles() {
                             {/* Info */}
                             <View className="flex-1">
                                 <Text className="text-lg font-bold text-black capitalize">
-                                    {/* TRUCO: (outfit as any).nombre para evitar el error de TS */}
                                     {(outfit as any)?.nombre || `Outfit Día ${index + 1}`}
                                 </Text>
                                 <Text className="text-gray-500 text-xs mt-1">

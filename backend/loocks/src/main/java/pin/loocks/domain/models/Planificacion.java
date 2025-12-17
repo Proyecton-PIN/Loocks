@@ -50,4 +50,7 @@ public class Planificacion {
   @JoinColumn(name = "perfil_id", nullable = false)
   @JsonIgnore
   private Perfil perfil; 
+
+  @OneToMany(mappedBy = "planificacion", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<ItemMaleta> itemsMaleta;
 }
