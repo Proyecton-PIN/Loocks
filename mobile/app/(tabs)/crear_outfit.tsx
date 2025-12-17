@@ -258,43 +258,45 @@ export default function CrearOutfit() {
       style={{
         flex: 1,
         backgroundColor: '#FFFFFF',
-        padding: 16,
         paddingTop: insets.top + 16,
+        paddingBottom: insets.bottom + 40,
       }}
     >
       <Stack.Screen options={{ title: 'Crear Outfit' }} />
 
       <View style={{ flex: 1, justifyContent: 'space-between' }}>
         <View>
-          <Text
-            style={{
-              color: '#222222',
-              fontSize: 16,
-              marginTop: 10,
-              marginBottom: 6,
-            }}
-          >
-            ¡Hola {userData.username}!
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: 40,
-            }}
-          >
+          <View className='px-6'>
             <Text
               style={{
                 color: '#222222',
-                fontSize: 23,
-                fontWeight: 'bold',
+                fontSize: 16,
+                marginTop: 10,
+                marginBottom: 6,
               }}
             >
-              Tu outfit para hoy
+              ¡Hola {userData.username}!
             </Text>
-            <View style={{ marginRight: 8, marginTop: -40 }}>
-              <WeatherInfo />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: 40,
+              }}
+            >
+              <Text
+                style={{
+                  color: '#222222',
+                  fontSize: 23,
+                  fontWeight: 'bold',
+                }}
+              >
+                Tu outfit para hoy
+              </Text>
+              <View style={{ marginRight: 8, marginTop: -40 }}>
+                <WeatherInfo />
+              </View>
             </View>
           </View>
 
@@ -387,6 +389,7 @@ export default function CrearOutfit() {
             paddingTop: 6,
             display: 'flex',
             flexDirection: 'row',
+            paddingHorizontal: 24,
             justifyContent: 'center',
             gap: 70,
           }}
@@ -394,13 +397,13 @@ export default function CrearOutfit() {
           <TouchableOpacity
             onPress={() => setAccesoriosModalVisible(true)}
             style={{
-              marginTop: 6,
+              marginTop: 8,
               width: '35%',
               backgroundColor: 'white',
               borderColor: '#686868',
               borderWidth: 1,
-              paddingVertical: 10,
-              borderRadius: 8,
+              paddingVertical: 6,
+              borderRadius: 15,
               alignItems: 'center',
             }}
           >
@@ -435,8 +438,8 @@ export default function CrearOutfit() {
             <View className="flex-row items-center gap-2">
               <View
                 style={{
-                  width: 35,
-                  height: 35,
+                  width: 32,
+                  height: 32,
                   marginLeft: -20,
                   borderRadius: 17,
                   backgroundColor: '#5639F8',
@@ -444,7 +447,7 @@ export default function CrearOutfit() {
                   justifyContent: 'center',
                 }}
               >
-                <AntDesign name="unlock" size={15} color="white" />
+                <AntDesign name="unlock" size={14} color="white" />
               </View>
               <Text
                 style={{ color: '#5639F8', fontWeight: '600', fontSize: 14 }}
