@@ -10,6 +10,8 @@ interface Props {
 }
 
 export default function OutfitCard({ data, className }: Props) {
+  if (data.articulos?.length === 0) return;
+
   return (
     <View
       className={clsx('rounded-xl overflow-clip p-[10]', className)}
@@ -18,8 +20,11 @@ export default function OutfitCard({ data, className }: Props) {
       }}
     >
       <FlatList
+        className="h-[240]"
+        showsVerticalScrollIndicator={false}
         data={data.articulos}
         numColumns={2}
+        keyExtractor={(e) => e.id!.toString()}
         scrollEnabled={false}
         ItemSeparatorComponent={(_) => <View className="h-[10px]" />}
         renderItem={(e) => (

@@ -77,32 +77,32 @@ export default function PrendaCategoriaCard({
         </View>
       </Pressable>
 
-      <RBSheet 
+      <RBSheet
         height={dimensions.height - insets.top}
         // draggable
         dragOnContent
         ref={sheetRef}
         openDuration={300}
         customModalProps={{
-          animationType: "fade",
+          animationType: 'fade',
           statusBarTranslucent: true,
         }}
         customStyles={{
           draggableIcon: {
-            backgroundColor: "#DFDFDF"
+            backgroundColor: '#DFDFDF',
           },
           wrapper: {
-            backgroundColor: color
+            backgroundColor: color,
           },
           container: {
-            backgroundColor: "transparent"
-          }
+            backgroundColor: 'transparent',
+          },
         }}
         customAvoidingViewProps={{
-          enabled: false
+          enabled: false,
         }}
       >
-        <View className='flex-1 rounded-t-3xl'>
+        <View className="flex-1 rounded-t-3xl">
           <View className="bg-white flex-1 rounded-t-3xl px-[19px] pt-[10px]">
             <View className="items-center w-full">
               <View

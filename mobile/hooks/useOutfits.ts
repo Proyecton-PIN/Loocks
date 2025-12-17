@@ -28,7 +28,7 @@ interface State {
 
   loadOutfits(): Promise<void>;
   generateWithFilters(params: SuggestionParams): Promise<void>;
-  
+
   createOutfit(outfit: Partial<Outfit>): Promise<void>;
   removeOutfit(id: number): Promise<boolean>;
   selectOutfit?(o?: OutfitLog): void;
@@ -36,6 +36,7 @@ interface State {
 
   unSelectProbarEnAvatar(): void;
   probarEnAvatar(uri: string, articulos: Articulo[]): Promise<void>;
+  loadSuggestedOutfits(): Promise<void>;
 }
 
 export const useOutfit = create<State>((set, get) => ({
@@ -44,9 +45,16 @@ export const useOutfit = create<State>((set, get) => ({
   isOpenProbadorOutfit: false,
   isLoading: false,
 
+  async loadSuggestedOutfits() {
+    set({ isLoading: true });
+    const suggested = await getOutfitSuggestions();
+
+    set({ isLoading: false, suggested });
+  },
+
   async loadOutfits() {
     set({ isLoading: true });
-    try{
+    try {
       const [suggested, logs] = await Promise.all([
         await getOutfitSuggestions(),
         await getOutfitLogs(),
@@ -55,10 +63,10 @@ export const useOutfit = create<State>((set, get) => ({
       set({
         suggested,
         logs,
-        isLoading: false
+        isLoading: false,
       });
-    }catch(e){
-      console.error("Error cargando outfits:", e);
+    } catch (e) {
+      console.error('Error cargando outfits:', e);
       set({ isLoading: false });
     }
   },
@@ -66,11 +74,11 @@ export const useOutfit = create<State>((set, get) => ({
   async generateWithFilters(params) {
     set({ isLoading: true });
     try {
-        const suggested = await getOutfitSuggestions(params);
-        set({ suggested, isLoading: false });
+      const suggested = await getOutfitSuggestions(params);
+      set({ suggested, isLoading: false });
     } catch (e) {
-        console.error("Error generando sugerencias:", e);
-        set({ isLoading: false });
+      console.error('Error generando sugerencias:', e);
+      set({ isLoading: false });
     }
   },
 
@@ -99,10 +107,10 @@ export const useOutfit = create<State>((set, get) => ({
       logs: s.logs.filter((l) => l.outfit.id !== id),
       selectedOutfit: undefined,
     }));
-    
+
     // Navigate back to outfits page
     router.push('/(tabs)/armario/outfits-page');
-    
+
     // Reload outfits to ensure fresh data
     await get().loadOutfits();
 

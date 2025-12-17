@@ -50,8 +50,8 @@ export default function SuggestedOutfitCard({ data }: Props) {
             );
           }}
           trigger={(solicitarPermisos) => (
-            <Pressable onPress={solicitarPermisos}>
-              <IAIcon />
+            <Pressable onPress={solicitarPermisos} className="mb-2">
+              <IAIcon color="black" />
             </Pressable>
           )}
         />
