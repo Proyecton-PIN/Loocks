@@ -182,13 +182,14 @@ export default function OutfitsPage() {
             </Text>
           </View>
         }
-        data={filtered.reverse()}
+        data={[...filtered].reverse()}
         numColumns={2}
         nestedScrollEnabled
-        ItemSeparatorComponent={(_) => <View className="h-10" />}
-        columnWrapperStyle={{ gap: 12, marginBottom: -10 }}
+        keyExtractor={(item, index) => String(item.outfit?.id ?? item.fechaInicio?.getTime() ?? index)}
+        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+        columnWrapperStyle={{ gap: 12 }}
         renderItem={(e) => (
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, minHeight: 320 }}>
             <OutfitCardWithProbar
               data={e.item}
               outfit={e.item.outfit}

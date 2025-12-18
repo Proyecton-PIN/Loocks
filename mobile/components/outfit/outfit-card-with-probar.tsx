@@ -28,13 +28,13 @@ export default function OutfitCardWithProbar({
   };
 
   return (
-    <View>
+    <View style={{ height: 310 }}>
       <Pressable
         onPress={() => {
           useOutfit.getState().selectOutfit?.(data);
           router.push('/ver-outfit' as any);
         }}
-        className="flex-1"
+        style={{}}
       >
         <OutfitCard
           data={outfit}

@@ -1,36 +1,40 @@
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { View } from 'react-native';
 import 'react-native-reanimated';
 import '../global.css';
 
+// Evita que la pantalla de carga se oculte automáticamente
+SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
-    'Satoshi': require('../assets/fonts/satoshi/Satoshi-Regular.otf'),
+  const [loaded, error] = useFonts({
     'Satoshi-Regular': require('../assets/fonts/satoshi/Satoshi-Regular.otf'),
   });
 
-  // Apply global default font once loaded
-  if (fontsLoaded) {
-    // Preserve any existing default styles
-    // and ensure Satoshi is the default across all Text components
-    // Note: defaultProps is safe for RN built-in components
-    // and helps avoid changing every Text usage individually.
-    Text.defaultProps = Text.defaultProps || {};
-    const existing = (Text.defaultProps.style || {}) as any;
-    Text.defaultProps.style = Array.isArray(existing)
-      ? [...existing, { fontFamily: 'Satoshi-Regular' }]
-      : { ...existing, fontFamily: 'Satoshi-Regular' };
-  }
+  useEffect(() => {
+    if (loaded || error) {
+      // Oculta la pantalla de carga una vez las fuentes están listas
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
 
-  if (!fontsLoaded) {
+  if (!loaded && !error) {
     return null;
   }
+
   return (
-    <View className="flex-1 bg-[#F3F3F3]">
+    <View style={{ flex: 1 }}>
       <StatusBar style="dark" translucent backgroundColor="transparent" />
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack screenOptions={{ 
+          headerShown: false,
+          // Puedes pasar la fuente aquí para que afecte a los títulos de los headers
+          headerTitleStyle: { fontFamily: 'Satoshi-Regular' } 
+        }} 
+      />
     </View>
   );
 }

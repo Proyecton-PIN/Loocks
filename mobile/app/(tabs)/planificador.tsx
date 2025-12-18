@@ -1,11 +1,11 @@
+import PlansList from '@/components/planificacion/lista-planes';
 import { Colors } from '@/constants/theme';
-import { usePlanning } from '@/hooks/usePlanificacion'; 
+import { usePlanning } from '@/hooks/usePlanificacion';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, View, Pressable } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import PlansList from '@/components/planificacion/lista-planes';
-import { router } from 'expo-router';
 
 LocaleConfig.locales['es'] = {
   monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
@@ -70,9 +70,9 @@ export default function CalendarioPage() {
               arrowColor: 'black',
               monthTextColor: 'black',
               indicatorColor: 'blue',
-              textDayFontFamily: 'System',
-              textMonthFontFamily: 'System',
-              textDayHeaderFontFamily: 'System',
+              textDayFontFamily: 'Satoshi',
+              textMonthFontFamily: 'Satoshi',
+              textDayHeaderFontFamily: 'Satoshi',
               textDayFontWeight: '300',
               textMonthFontWeight: 'bold',
               textDayHeaderFontWeight: '300',
@@ -129,7 +129,7 @@ export default function CalendarioPage() {
                   color: activeTab === 'calendar' ? Colors.white : Colors.black,
                   fontSize: 13,
                   fontWeight: '500',
-                  fontFamily: 'System', 
+                  fontFamily: 'Satoshi', 
                 }}
               >
                 CALENDARIO
@@ -149,7 +149,7 @@ export default function CalendarioPage() {
                   color: activeTab === 'list' ? Colors.white : Colors.black,
                   fontSize: 13,
                   fontWeight: '500',
-                  fontFamily: 'System',
+                  fontFamily: 'Satoshi',
                 }}
               >
                 MIS PLANES
