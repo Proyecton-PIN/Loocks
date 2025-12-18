@@ -1,7 +1,6 @@
 import OutfitCard from '@/components/outfit/outfit-card';
 import ProbadorOutfitModal from '@/components/outfit/probador-outfit-modal';
 import SuggestedOutfitsRow from '@/components/outfit/suggested-outfits-row';
-import { IAIcon } from '@/constants/icons';
 import { useOutfit } from '@/hooks/useOutfits';
 import clsx from 'clsx';
 import { router } from 'expo-router';
@@ -212,16 +211,6 @@ export default function OutfitsPage() {
       />
       <ProbadorOutfitModal />
 
-      <Pressable
-        className="absolute bottom-5 left-5 w-[58] h-[58] rounded-full justify-center items-center shadow-lg shadow-indigo-300"
-        style={{ backgroundColor: '#5639F8' }}
-        onPress={() => {
-          // Navegamos a la pantalla del generador
-          router.push('/generador-outfit');
-        }}
-      >
-        <IAIcon color="white" />
-      </Pressable>
       {/* ------------------------------------------- */}
     </View>
   );

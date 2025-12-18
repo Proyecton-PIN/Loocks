@@ -7,7 +7,6 @@ import { createOutfit as createOutfitService } from '@/lib/logic/services/outfit
 import { SecureStore } from '@/lib/logic/services/secure-store-service';
 import { Ionicons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { Picker } from '@react-native-picker/picker';
 import { Stack } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -15,12 +14,12 @@ import {
   Dimensions,
   FlatList,
   Image,
+  Modal,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  Modal,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import WeatherInfo from '../../components/WeatherInfo';
@@ -239,7 +238,7 @@ export default function CrearOutfit() {
                 ref={(el) => {(carouselRefs.current[slotIndex] = el)}}
                 slides={getDataForSlot(slotIndex)}
                 options={{ loop: true, spacing: 20, itemWidth: cardWidth }}
-                initialIndex={0}
+                initialIndex={1}
                 onSelect={(_, item) => {
                   setSlots((prev) => {
                     const copy = [...prev];
