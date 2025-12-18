@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef, forwardRef, useImperativeHandle } from 'react'
 import {
   Dimensions,
   NativeScrollEvent,
@@ -16,7 +16,12 @@ type PropType = {
   initialIndex?: number
 }
 
-const EmblaCarousel: React.FC<PropType> = ({ slides, options, renderSlide, onSelect, initialIndex = 0 }) => {
+// Definimos qué funciones pueden usarse desde fuera
+export type EmblaCarouselRef = {
+  scrollToIndex: (params: { index: number; animated?: boolean }) => void;
+}
+
+const EmblaCarousel = forwardRef<EmblaCarouselRef, PropType>(({ slides, options, renderSlide, onSelect, initialIndex = 0 }, ref) => {
   const screenWidth = Dimensions.get('window').width
   const spacing = options?.spacing ?? 8
   const itemWidth = Math.round((options?.itemWidth ?? Math.min(screenWidth - 80, 260)))
@@ -30,18 +35,31 @@ const EmblaCarousel: React.FC<PropType> = ({ slides, options, renderSlide, onSel
   }, [slides, loop])
 
   const scrollRef = useRef<ScrollView | null>(null)
+  const itemSize = itemWidth + spacing
+
+  // --- ESTA ES LA CLAVE PARA EL SCROLL AUTOMÁTICO ---
+  useImperativeHandle(ref, () => ({
+    scrollToIndex: ({ index, animated = true }) => {
+      if (!scrollRef.current) return;
+      
+      // Ajustamos el índice porque si hay loop, el array visual tiene un elemento extra al principio
+      const targetVisualIndex = (loop && slides.length > 1) ? index + 1 : index;
+      const offset = targetVisualIndex * itemSize;
+
+      scrollRef.current.scrollTo({ x: offset, animated });
+    }
+  }));
+  // --------------------------------------------------
 
   useEffect(() => {
     if (!scrollRef.current) return
     const start = loop && slides.length > 1 ? initialIndex + 1 : initialIndex
-    const itemSize = itemWidth + spacing
     setTimeout(() => {
-      scrollRef.current?.scrollTo({ x: itemSize * start, animated: true })
+      scrollRef.current?.scrollTo({ x: itemSize * start, animated: false }) // false al inicio para que no maree
     }, 20)
-  }, [initialIndex, itemWidth, spacing, loop, slides.length])
+  }, [initialIndex, itemWidth, spacing, loop, slides.length, itemSize])
 
-  const containerPadding =  screenWidth / 2 - itemWidth / 2 - 15;
-  const itemSize = itemWidth + spacing
+  const containerPadding = screenWidth / 2 - itemWidth / 2 - 15;
 
   function handleMomentum(e: NativeSyntheticEvent<NativeScrollEvent>) {
     const offset = e.nativeEvent.contentOffset.x
@@ -103,7 +121,7 @@ const EmblaCarousel: React.FC<PropType> = ({ slides, options, renderSlide, onSel
       </ScrollView>
     </View>
   )
-}
+});
 
 const styles = StyleSheet.create({
   embla: { width: '100%' },
