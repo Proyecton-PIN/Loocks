@@ -68,7 +68,7 @@ export default function ArmarioLayout() {
                       color: isFocused ? Colors.white : Colors.black,
                       fontSize: 13,
                       fontWeight: 500,
-                      fontFamily: 'Shatoshi',
+                      fontFamily: 'Satoshi',
                     }}
                   >
                     {tab.label}
