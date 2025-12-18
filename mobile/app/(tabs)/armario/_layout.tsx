@@ -98,7 +98,7 @@ export default function ArmarioLayout() {
             <Pressable
               onPress={() => {
                 setMenuOpen(false);
-                // TODO: Acción para Probar outfit
+                router.push('/probar-outfit');
               }}
               style={styles.menuItem}
             >
