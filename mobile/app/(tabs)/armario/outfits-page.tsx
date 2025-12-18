@@ -1,9 +1,7 @@
-import OutfitCard from '@/components/outfit/outfit-card';
+import OutfitCardWithProbar from '@/components/outfit/outfit-card-with-probar';
 import ProbadorOutfitModal from '@/components/outfit/probador-outfit-modal';
 import SuggestedOutfitsRow from '@/components/outfit/suggested-outfits-row';
 import { useOutfit } from '@/hooks/useOutfits';
-import clsx from 'clsx';
-import { router } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
@@ -188,25 +186,15 @@ export default function OutfitsPage() {
         numColumns={2}
         nestedScrollEnabled
         ItemSeparatorComponent={(_) => <View className="h-10" />}
+        columnWrapperStyle={{ gap: 12, marginBottom: -10 }}
         renderItem={(e) => (
-          <Pressable
-            onPress={() => {
-              useOutfit.getState().selectOutfit?.(e.item);
-              router.push('/ver-outfit' as any);
-            }}
-            style={{ flex: 1, minHeight: 115 * 2 + 10 + 20 }}
-          >
-            <View className="flex-1">
-              <OutfitCard
-                data={e.item.outfit}
-                className={clsx(
-                  'flex-1',
-                  e.index % 1 === 1 ? 'ml-[5]' : 'mr-[5]',
-                )}
-              />
-              <Text className="py-2">{e.item.fechaInicio.toDateString()}</Text>
-            </View>
-          </Pressable>
+          <View style={{ flex: 1 }}>
+            <OutfitCardWithProbar
+              data={e.item}
+              outfit={e.item.outfit}
+              index={e.index}
+            />
+          </View>
         )}
       />
       <ProbadorOutfitModal />
